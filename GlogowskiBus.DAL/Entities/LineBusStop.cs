@@ -15,7 +15,7 @@ namespace GlogowskiBus.DAL.Entities
         [Key, Column(Order = 1)]
         public int BusStopId { get; set; }
         public int Order { get; set; }
-        public int TimeOffsetMs { get; set; }
+        public int TimeOffsetInSeconds { get; set; }
 
         public virtual Line Line { get; set; }
         public virtual BusStop BusStop { get; set; }
