@@ -54,10 +54,8 @@
     <Compile Include="Concrete\GenericRepository.cs" />
     <Compile Include="Concrete\GlogowskiBusContext.cs" />
     <Compile Include="Concrete\UnitOfWork.cs" />
-    <Compile Include="Entities\BusStop.cs" />
     <Compile Include="Entities\Coordinates.cs" />
     <Compile Include="Entities\BusLine.cs" />
-    <Compile Include="Entities\BusLineBusStop.cs" />
     <Compile Include="Entities\Point.cs" />
     <Compile Include="Entities\Schedule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

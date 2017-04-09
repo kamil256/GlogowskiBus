@@ -88,25 +88,6 @@ namespace GlogowskiBus.UnitTests
             }
         };
 
-        //private static DAL.Entities.BusStop[] busStops = new DAL.Entities.BusStop[]
-        //{
-        //    new DAL.Entities.BusStop
-        //    {
-        //        BusStopId = 1,
-        //        Points = new Point[] { }
-        //    },
-        //    new DAL.Entities.BusStop
-        //    {
-        //        BusStopId = 2,
-        //        Points = new Point[] { points[0] }
-        //    },
-        //    new DAL.Entities.BusStop
-        //    {
-        //        BusStopId = 3,
-        //        Points = new Point[] { points[1], points[2] }
-        //    }
-        //};
-
         private IEnumerable<Point> getPoints(IEnumerable<Expression<Func<Point, bool>>> filters = null)
         {
             IQueryable<Point> query = points.AsQueryable();

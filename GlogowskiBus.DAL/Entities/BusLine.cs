@@ -14,6 +14,5 @@ namespace GlogowskiBus.DAL.Entities
 
         public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<Point> Points { get; set; }
-        public virtual ICollection<BusLineBusStop> BusLineBusStops { get; set; }
     }
 }
