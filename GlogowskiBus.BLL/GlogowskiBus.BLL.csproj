@@ -45,6 +45,12 @@
     <Compile Include="Concrete\BusStopService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GlogowskiBus.DAL\GlogowskiBus.DAL.csproj">
+      <Project>{98305d34-983e-48bf-b0d9-ec273770f02f}</Project>
+      <Name>GlogowskiBus.DAL</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
