@@ -12,6 +12,6 @@ namespace GlogowskiBus.DAL.Entities
         public string Name { get; set; }
 
         public virtual ICollection<Point> Points { get; set; }
-        public virtual ICollection<LineBusStop> LineBusStops { get; set; }
+        public virtual ICollection<BusLineBusStop> LineBusStops { get; set; }
     }
 }

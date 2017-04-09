@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace GlogowskiBus.DAL.Entities
 {
-    public class Line
+    public class BusLine
     {
-        public int LineId { get; set; }
+        public int BusLineId { get; set; }
         public string BusNumber { get; set; }
         public string Description { get; set; }
 
-        public virtual ICollection<Schedule> Schedule { get; set; }
+        public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<Point> Points { get; set; }
-        public virtual ICollection<LineBusStop> LineBusStops { get; set; }
+        public virtual ICollection<BusLineBusStop> BusLineBusStops { get; set; }
     }
 }
