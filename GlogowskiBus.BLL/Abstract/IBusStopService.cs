@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GlogowskiBus.BLL
+namespace GlogowskiBus.BLL.Abstract
 {
-    public class Class1
+    class IBusStopService
     {
     }
 }
