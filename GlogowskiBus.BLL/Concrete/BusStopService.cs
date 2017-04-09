@@ -1,5 +1,6 @@
 ﻿using GlogowskiBus.BLL.Abstract;
 using GlogowskiBus.DAL.Abstract;
+using GlogowskiBus.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,26 @@ namespace GlogowskiBus.BLL.Concrete
 
         public BusStop[] GetAllBusStops()
         {
-            return null;
+            List<BusStop> busStops = new List<BusStop>();
+
+            foreach (Point point in unitOfWork.PointRepository.Get())
+            {
+                if (point.IsBusStop) 
+                {
+                    BusStop busStop = busStops.SingleOrDefault(x => x.Latitude == point.Coordinates.Latitude && x.Longitude == point.Coordinates.Longitude);
+                    if (busStop == null)
+                        busStops.Add(new BusStop()
+                        {
+                            BusNumbers = new List<string> { point.BusLine.BusNumber },
+                            Latitude = point.Coordinates.Latitude,
+                            Longitude = point.Coordinates.Longitude
+                        });
+                    else
+                        busStop.BusNumbers.Add(point.BusLine.BusNumber);
+                }
+            } 
+
+            return busStops.ToArray();
         }
     }
 }

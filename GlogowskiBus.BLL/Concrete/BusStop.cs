@@ -8,7 +8,7 @@ namespace GlogowskiBus.BLL.Concrete
 {
     public class BusStop
     {
-        public string[] BusNumbers { get; set; }
+        public List<string> BusNumbers { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
     }

@@ -134,12 +134,12 @@ namespace GlogowskiBus.UnitTests
 
             // Assert
             Assert.AreEqual(2, result.Count());
-            Assert.AreEqual(2, result[0].BusNumbers.Length);
+            Assert.AreEqual(2, result[0].BusNumbers.Count);
             Assert.AreEqual("1", result[0].BusNumbers[0]);
             Assert.AreEqual("2", result[0].BusNumbers[1]);
             Assert.AreEqual(3.4, result[0].Latitude);
             Assert.AreEqual(4.5, result[0].Longitude);
-            Assert.AreEqual(1, result[1].BusNumbers.Length);
+            Assert.AreEqual(1, result[1].BusNumbers.Count);
             Assert.AreEqual("1", result[1].BusNumbers[0]);
             Assert.AreEqual(5.6, result[1].Latitude);
             Assert.AreEqual(6.7, result[1].Longitude);
