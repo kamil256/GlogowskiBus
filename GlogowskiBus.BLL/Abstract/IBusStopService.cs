@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GlogowskiBus.BLL.Abstract
 {
-    class IBusStopService
+    public class IBusStopService
     {
     }
 }

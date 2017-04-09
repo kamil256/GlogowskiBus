@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace GlogowskiBus.BLL.Concrete
 {
-    public class BusStopService
+    public class BusStop
     {
+        string[] BusNumbers;
+        double Latitude;
+        double Longitude;
     }
 }
