@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Concrete\GlogowskiBusContext.cs" />
     <Compile Include="Entities\BusStop.cs" />
     <Compile Include="Entities\Coordinates.cs" />
     <Compile Include="Entities\BusLine.cs" />
@@ -63,7 +64,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Abstract\" />
-    <Folder Include="Concrete\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
