@@ -1,5 +1,7 @@
-﻿using GlogowskiBus.DAL.Concrete;
+﻿using GlogowskiBus.BLL.Concrete;
+using GlogowskiBus.DAL.Concrete;
 using GlogowskiBus.DAL.Entities;
+using GlogowskiBus.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,16 +12,23 @@ namespace GlogowskiBus.UI.Controllers
 {
     public class HomeController : Controller
     {
-        // GET: Home
-        public string Index()
+        private readonly BusStopService busStopService;
+
+        public HomeController()
         {
-            using (GlogowskiBusContext ctx = new GlogowskiBusContext())
+            busStopService = new BusStopService(new UnitOfWork());
+        }
+
+        public ViewResult Index()
+        {
+            HomeIndexViewModel model = new HomeIndexViewModel();
+            model.BusStops = busStopService.GetAllBusStops().Select(x => new Models.BusStop()
             {
-                Coordinates coords = new Coordinates { Latitude = 1, Longitude = 2 };
-                ctx.Coordinates.Add(coords);
-                ctx.SaveChanges();
-            }
-            return "Hello World!";
+                Latitude = x.Latitude,
+                Longitude = x.Longitude,
+                BusNumbers = x.BusNumbers
+            });
+            return View(model);
         }
     }
 }

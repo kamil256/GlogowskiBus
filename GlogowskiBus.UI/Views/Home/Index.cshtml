@@ -1,0 +1,28 @@
+﻿@model HomeIndexViewModel
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlogowskiBus</title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div id="map"></div>
+
+    <script>
+        var busStops = [];
+        @foreach (var busStop in @Model.BusStops)
+        {
+            @: busStops.push({ lat: @busStop.Latitude.ToString().Replace(",", "."), lng: @busStop.Longitude.ToString().Replace(",", ".") });
+        }
+    </script>
+
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/Maps.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD44zRKQDHDs7dMdwhXP7a8XjJzwuuFNJA&callback=initMap" async defer></script>
+</body>
+</html>
+
+
