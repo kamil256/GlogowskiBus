@@ -15,8 +15,16 @@
         <button id="correctRoute">Correct route</button>
         <button id="calculatePoints">Calculate points</button>
 
-        <div id="busStopsList">
-        </div>
+
+
+        @using (Html.BeginForm())
+        {
+            @Html.TextBoxFor(x => x.BusNumber)
+            
+            <div id="busStopsList">
+            </div>
+            <input type="submit" value="Create new route" />
+        }
     </div>
 
     <script>
@@ -291,22 +299,33 @@
                     });
                 }
 
-                var busStopsListInnerHTML = '<ol>';
+                var busStopsListInnerHTML = '<ul>';
                 for (var i = 0; i < Route.points.length; i++)
                 {
                     if (Route.points[i].isBusStop)
                     {
-                        busStopsListInnerHTML += '<li><label>Time offset in seconds</label><input type="number" value="' + Route.points[i].timeOffset + '" onchange="changeTime(' + i.toString() + ', this.value)" /></li>';
+                        busStopsListInnerHTML += '<li>';
+
+                        busStopsListInnerHTML += '<label>Time offset in seconds</label>';
+                        busStopsListInnerHTML += '<input name="TimeOffsets" type="number" value="' + Route.points[i].timeOffset + '" onchange="changeTime(' + i.toString() + ', this.value)" />';
+                        busStopsListInnerHTML += '<input name="Latitudes" type="hidden" value="' + Route.points[i].lat + '" />';
+                        busStopsListInnerHTML += '<input name="Longitudes" type="hidden" value="' + Route.points[i].lng + '" />';
+                        busStopsListInnerHTML += '<input name="IsBusStops" type="hidden" value="True" />';
+                        busStopsListInnerHTML += '</li>';
                     }
                     else
                     {
-                        busStopsListInnerHTML += '<li><label>Time offset in seconds:</label> <span>' + Route.points[i].timeOffset + '</span></li>';
+                        busStopsListInnerHTML += '<input name="TimeOffsets" type="hidden" value="' + Route.points[i].timeOffset + '" />';
+                        busStopsListInnerHTML += '<input name="Latitudes" type="hidden" value="' + Route.points[i].lat + '" />';
+                        busStopsListInnerHTML += '<input name="Longitudes" type="hidden" value="' + Route.points[i].lng + '" />';
+                        busStopsListInnerHTML += '<input name="IsBusStops" type="hidden" value="False" />';
+
                     }
                 }
 
 
 
-                busStopsListInnerHTML += '</ol>';
+                busStopsListInnerHTML += '</ul>';
                 var busStopsList = document.getElementById('busStopsList');
                 busStopsList.innerHTML = busStopsListInnerHTML;
 

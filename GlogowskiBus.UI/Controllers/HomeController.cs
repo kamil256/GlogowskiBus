@@ -42,5 +42,11 @@ namespace GlogowskiBus.UI.Controllers
             });
             return View(model);
         }
+
+        [HttpPost]
+        public ViewResult CreateRoute(HomeIndexViewModel model)
+        {
+            return View();
+        }
     }
 }

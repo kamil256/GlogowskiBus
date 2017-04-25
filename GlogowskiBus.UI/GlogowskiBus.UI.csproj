@@ -142,6 +142,7 @@
     </Compile>
     <Compile Include="Models\BusStop.cs" />
     <Compile Include="Models\HomeIndexViewModel.cs" />
+    <Compile Include="Models\RoutePoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
