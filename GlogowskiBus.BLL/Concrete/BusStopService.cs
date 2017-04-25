@@ -26,13 +26,13 @@ namespace GlogowskiBus.BLL.Concrete
             {
                 if (point.IsBusStop) 
                 {
-                    BusStop busStop = busStops.SingleOrDefault(x => x.Latitude == point.Coordinates.Latitude && x.Longitude == point.Coordinates.Longitude);
+                    BusStop busStop = busStops.SingleOrDefault(x => x.Latitude == point.Latitude && x.Longitude == point.Longitude);
                     if (busStop == null)
                         busStops.Add(new BusStop()
                         {
                             BusNumbers = new List<string> { point.BusLine.BusNumber },
-                            Latitude = point.Coordinates.Latitude,
-                            Longitude = point.Coordinates.Longitude
+                            Latitude = point.Latitude,
+                            Longitude = point.Longitude
                         });
                     else
                         busStop.BusNumbers.Add(point.BusLine.BusNumber);

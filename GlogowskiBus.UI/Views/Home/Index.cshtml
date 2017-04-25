@@ -17,6 +17,11 @@
         {
             @: busStops.push({ lat: @busStop.Latitude.ToString().Replace(",", "."), lng: @busStop.Longitude.ToString().Replace(",", ".") });
         }
+
+        window.onload = function()
+        {
+            drawBusStops();
+        };
     </script>
 
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>

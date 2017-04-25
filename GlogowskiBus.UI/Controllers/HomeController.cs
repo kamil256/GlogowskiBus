@@ -30,5 +30,17 @@ namespace GlogowskiBus.UI.Controllers
             });
             return View(model);
         }
+
+        public ViewResult CreateRoute()
+        {
+            HomeIndexViewModel model = new HomeIndexViewModel();
+            model.BusStops = busStopService.GetAllBusStops().Select(x => new Models.BusStop()
+            {
+                Latitude = x.Latitude,
+                Longitude = x.Longitude,
+                BusNumbers = x.BusNumbers
+            });
+            return View(model);
+        }
     }
 }

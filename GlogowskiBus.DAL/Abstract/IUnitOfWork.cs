@@ -10,7 +10,6 @@ namespace GlogowskiBus.DAL.Abstract
     public interface IUnitOfWork
     {
         IRepository<BusLine, int> BusLineRepository { get; }
-        IRepository<Coordinates, int> CoordinatesRepository { get; }
         IRepository<Point, int> PointRepository { get; }
         IRepository<Schedule, int> ScheduleRepository { get; }
         void Save();

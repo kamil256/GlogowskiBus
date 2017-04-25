@@ -54,13 +54,16 @@
     <Compile Include="Concrete\GenericRepository.cs" />
     <Compile Include="Concrete\GlogowskiBusContext.cs" />
     <Compile Include="Concrete\UnitOfWork.cs" />
-    <Compile Include="Entities\Coordinates.cs" />
     <Compile Include="Entities\BusLine.cs" />
     <Compile Include="Entities\Point.cs" />
     <Compile Include="Entities\Schedule.cs" />
     <Compile Include="Migrations\201704102115537_InitialMigration.cs" />
     <Compile Include="Migrations\201704102115537_InitialMigration.Designer.cs">
       <DependentUpon>201704102115537_InitialMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201704251815512_Remove coordinates entity.cs" />
+    <Compile Include="Migrations\201704251815512_Remove coordinates entity.Designer.cs">
+      <DependentUpon>201704251815512_Remove coordinates entity.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,6 +75,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201704102115537_InitialMigration.resx">
       <DependentUpon>201704102115537_InitialMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704251815512_Remove coordinates entity.resx">
+      <DependentUpon>201704251815512_Remove coordinates entity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

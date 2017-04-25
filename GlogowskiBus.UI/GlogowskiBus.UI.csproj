@@ -112,6 +112,13 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\active_busstop.png" />
+    <Content Include="Content\Images\dot_li_phixr.png" />
+    <Content Include="Content\Images\gray_busstop.png" />
+    <Content Include="Content\Images\orange_busstop.png" />
+    <Content Include="Content\Images\orange_busstop2.png" />
+    <Content Include="Content\Images\orange_circle.png" />
+    <Content Include="Content\Images\orange_dot.png" />
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -145,6 +152,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+    <Content Include="Views\Home\CreateRoute.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

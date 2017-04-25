@@ -30,60 +30,41 @@ namespace GlogowskiBus.UnitTests
             }
         };
 
-        private static Coordinates[] coordinates = new Coordinates[]
-        {
-            new Coordinates
-            {
-                Latitude = 1.2,
-                Longitude = 2.3
-            },
-            new Coordinates
-            {
-                Latitude = 3.4,
-                Longitude = 4.5
-            },
-            new Coordinates
-            {
-                Latitude = 5.6,
-                Longitude = 6.7
-            },
-            new Coordinates
-            {
-                Latitude = 7.8,
-                Longitude = 8.9
-            }
-        };
-
         private static Point[] points = new Point[]
         {
             new Point
             {
                 BusLine = busLines[0],
-                Coordinates = coordinates[0],
+                Latitude = 1.2,
+                Longitude = 2.3,
                 IsBusStop = false
             },
             new Point
             {
                 BusLine = busLines[0],
-                Coordinates = coordinates[1],
+                Latitude = 3.4,
+                Longitude = 4.5,
                 IsBusStop = true
             },
             new Point
             {
                 BusLine = busLines[0],
-                Coordinates = coordinates[2],
+                Latitude = 5.6,
+                Longitude = 6.7,
                 IsBusStop = true
             },
             new Point
             {
                 BusLine = busLines[1],
-                Coordinates = coordinates[1],
+                Latitude = 3.4,
+                Longitude = 4.5,
                 IsBusStop = true
             },
             new Point
             {
                 BusLine = busLines[1],
-                Coordinates = coordinates[3],
+                Latitude = 7.8,
+                Longitude = 8.9,
                 IsBusStop = false
             }
         };
