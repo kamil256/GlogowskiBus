@@ -17,7 +17,9 @@ namespace GlogowskiBus.UI
             // Code that runs on application startup
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
-            RouteConfig.RegisterRoutes(RouteTable.Routes);            
+            RouteConfig.RegisterRoutes(RouteTable.Routes);     
+            
+            System.Web.Mvc.DependencyResolver.SetResolver((System.Web.Mvc.IDependencyResolver)GlobalConfiguration.Configuration.DependencyResolver);
         }
     }
 }

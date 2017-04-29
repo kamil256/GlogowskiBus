@@ -1,4 +1,5 @@
-﻿using GlogowskiBus.BLL.Concrete;
+﻿using GlogowskiBus.BLL.Abstract;
+using GlogowskiBus.BLL.Concrete;
 using GlogowskiBus.DAL.Concrete;
 using GlogowskiBus.DAL.Entities;
 using GlogowskiBus.UI.Models;
@@ -12,11 +13,11 @@ namespace GlogowskiBus.UI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly BusStopService busStopService;
+        private readonly IBusStopService busStopService;
 
-        public HomeController()
+        public HomeController(IBusStopService busStopService)
         {
-            busStopService = new BusStopService(new UnitOfWork());
+            this.busStopService = busStopService;
         }
 
         public ViewResult Index()
