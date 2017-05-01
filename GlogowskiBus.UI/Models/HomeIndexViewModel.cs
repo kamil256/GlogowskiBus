@@ -11,7 +11,7 @@ namespace GlogowskiBus.UI.Models
         public IEnumerable<BusStop> BusStops { get; set; }
         public IList<RoutePoint> RoutePoints { get; set; }
 
-        [Required]
+        [Required, StringLength(100)]
         public string BusNumber { get; set; }
         public string Description { get; set; }
 

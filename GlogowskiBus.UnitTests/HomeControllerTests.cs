@@ -105,29 +105,6 @@ namespace GlogowskiBus.UnitTests
         }
 
         [Test]
-        public void PostCreateRoute_WhenBusNumberNotProvided_ModelValidationFails()
-        {
-            // Arrange
-            IBusService busStopService = Substitute.For<IBusService>();
-            HomeIndexViewModel model = new HomeIndexViewModel
-            {
-                BusNumber = "",
-                Description = "Some description",
-                Latitudes = new[] { 1.2, 2.3, 3.4 },
-                Longitudes = new[] { 4.5, 5.6, 6.7 },
-                IsBusStops = new[] { true, false, true },
-                TimeOffsets = new[] { 0, 1000, 2000 }
-            };
-
-            // Act
-            HomeController homeController = new HomeController(busStopService);
-            homeController.CreateRoute(model);
-
-            // Assert
-            Assert.AreEqual(1, homeController.ModelState.Count);
-        }
-
-        [Test]
         public void PostCreateRoute_WhenRouteDoesNotStartWithBusStop_ModelValidationFails()
         {
             // Arrange
@@ -239,7 +216,7 @@ namespace GlogowskiBus.UnitTests
             homeController.CreateRoute(model);
 
             // Assert
-            Assert.AreEqual(1, homeController.ModelState.Count);
+            Assert.AreEqual(0, homeController.ModelState.Count);
         }
 
         [Test]
@@ -255,14 +232,68 @@ namespace GlogowskiBus.UnitTests
                 Latitudes = new[] { 1.2, 2.3, 3.4 },
                 Longitudes = new[] { 4.5, 5.6, 6.7 },
                 IsBusStops = new[] { true, false, true },
+                TimeOffsets = new[] { 0, 1000, 500 }
+            };
+
+            // Act
+            HomeController homeController = new HomeController(busStopService);
+            homeController.CreateRoute(model); 
+
+            // Assert
+            Assert.AreEqual(2, model.BusStops.Count());
+
+            Assert.AreEqual(2, model.BusStops.ElementAt(0).BusNumbers.Count());
+            Assert.AreEqual("1", model.BusStops.ElementAt(0).BusNumbers[0]);
+            Assert.AreEqual("2", model.BusStops.ElementAt(0).BusNumbers[1]);
+            Assert.AreEqual(3.4, model.BusStops.ElementAt(0).Latitude, 1);
+            Assert.AreEqual(4.5, model.BusStops.ElementAt(0).Longitude);
+
+            Assert.AreEqual(1, model.BusStops.ElementAt(1).BusNumbers.Count());
+            Assert.AreEqual("1", model.BusStops.ElementAt(1).BusNumbers[0]);
+            Assert.AreEqual(5.6, model.BusStops.ElementAt(1).Latitude);
+            Assert.AreEqual(6.7, model.BusStops.ElementAt(1).Longitude);
+
+            Assert.AreEqual("0", model.BusNumber);
+            Assert.AreEqual("Some description", model.Description);
+
+            Assert.AreEqual(3, model.RoutePoints.Count);
+
+            Assert.AreEqual(1.2, model.RoutePoints[0].Latitude);
+            Assert.AreEqual(4.5, model.RoutePoints[0].Longitude);
+            Assert.IsTrue(model.RoutePoints[0].IsBusStop);
+            Assert.AreEqual(0, model.RoutePoints[0].TimeOffset);
+
+            Assert.AreEqual(2.3, model.RoutePoints[1].Latitude);
+            Assert.AreEqual(5.6, model.RoutePoints[1].Longitude);
+            Assert.IsFalse(model.RoutePoints[1].IsBusStop);
+            Assert.AreEqual(1000, model.RoutePoints[1].TimeOffset);
+
+            Assert.AreEqual(3.4, model.RoutePoints[2].Latitude);
+            Assert.AreEqual(6.7, model.RoutePoints[2].Longitude);
+            Assert.IsTrue(model.RoutePoints[2].IsBusStop);
+            Assert.AreEqual(500, model.RoutePoints[2].TimeOffset);
+        }
+
+        [Test]
+        public void PostCreateRoute_WhenModelValidatesAndBusNumberIsAlreadyTaken_ReturnViewWithProperModel()
+        {
+            // Arrange
+            IBusService busStopService = Substitute.For<IBusService>();
+            busStopService.GetAllBusStops().Returns(busStops);
+            busStopService.When(x => x.CreateRoute()).Do(x => { throw new Exception(); });
+            HomeIndexViewModel model = new HomeIndexViewModel
+            {
+                BusNumber = "0",
+                Description = "Some description",
+                Latitudes = new[] { 1.2, 2.3, 3.4 },
+                Longitudes = new[] { 4.5, 5.6, 6.7 },
+                IsBusStops = new[] { true, false, true },
                 TimeOffsets = new[] { 0, 1000, 2000 }
             };
 
             // Act
             HomeController homeController = new HomeController(busStopService);
-            ViewResult viewResult = homeController.CreateRoute(model) as ViewResult;
-            homeController.ModelState.AddModelError("", "Error message");
-            HomeIndexViewModel responseModel = viewResult.Model as HomeIndexViewModel;
+            homeController.CreateRoute(model);
 
             // Assert
             Assert.AreEqual(1, homeController.ModelState.Count);
@@ -280,86 +311,25 @@ namespace GlogowskiBus.UnitTests
             Assert.AreEqual(5.6, model.BusStops.ElementAt(1).Latitude);
             Assert.AreEqual(6.7, model.BusStops.ElementAt(1).Longitude);
 
-            Assert.AreEqual("0", responseModel.BusNumber);
-            Assert.AreEqual("Some description", responseModel.Description);
+            Assert.AreEqual("0", model.BusNumber);
+            Assert.AreEqual("Some description", model.Description);
 
-            Assert.AreEqual(3, responseModel.RoutePoints.Count);
+            Assert.AreEqual(3, model.RoutePoints.Count);
 
-            Assert.AreEqual(1.2, responseModel.RoutePoints[0].Latitude);
-            Assert.AreEqual(4.5, responseModel.RoutePoints[0].Longitude);
-            Assert.IsTrue(responseModel.RoutePoints[0].IsBusStop);
-            Assert.AreEqual(0, responseModel.RoutePoints[0].TimeOffset);
+            Assert.AreEqual(1.2, model.RoutePoints[0].Latitude);
+            Assert.AreEqual(4.5, model.RoutePoints[0].Longitude);
+            Assert.IsTrue(model.RoutePoints[0].IsBusStop);
+            Assert.AreEqual(0, model.RoutePoints[0].TimeOffset);
 
-            Assert.AreEqual(2.3, responseModel.RoutePoints[1].Latitude);
-            Assert.AreEqual(5.6, responseModel.RoutePoints[1].Longitude);
-            Assert.IsFalse(responseModel.RoutePoints[1].IsBusStop);
-            Assert.AreEqual(1000, responseModel.RoutePoints[1].TimeOffset);
+            Assert.AreEqual(2.3, model.RoutePoints[1].Latitude);
+            Assert.AreEqual(5.6, model.RoutePoints[1].Longitude);
+            Assert.IsFalse(model.RoutePoints[1].IsBusStop);
+            Assert.AreEqual(1000, model.RoutePoints[1].TimeOffset);
 
-            Assert.AreEqual(3.4, responseModel.RoutePoints[2].Latitude);
-            Assert.AreEqual(6.7, responseModel.RoutePoints[2].Longitude);
-            Assert.IsTrue(responseModel.RoutePoints[2].IsBusStop);
-            Assert.AreEqual(2000, responseModel.RoutePoints[2].TimeOffset);
-        }
-
-        [Test]
-        public void PostCreateRoute_WhenModelValidatesAndBusNumberIsAlreadyTaken_ReturnViewWithProperModel()
-        {
-            // Arrange
-            IBusService busStopService = Substitute.For<IBusService>();
-            busStopService.When(x => x.CreateRoute()).Do(x => { throw new Exception(); });
-            HomeIndexViewModel model = new HomeIndexViewModel
-            {
-                BusNumber = "0",
-                Description = "Some description",
-                Latitudes = new[] { 1.2, 2.3, 3.4 },
-                Longitudes = new[] { 4.5, 5.6, 6.7 },
-                IsBusStops = new[] { true, false, true },
-                TimeOffsets = new[] { 0, 1000, 2000 }
-            };
-
-            // Act
-            HomeController homeController = new HomeController(busStopService);
-            ViewResult viewResult = null;
-            HomeIndexViewModel responseModel;
-
-            // Assert
-            Assert.Throws<Exception>(() => { viewResult = homeController.CreateRoute(model) as ViewResult; });
-            responseModel = viewResult.Model as HomeIndexViewModel;
-
-            Assert.AreEqual(0, homeController.ModelState.Count);
-
-            Assert.AreEqual(2, model.BusStops.Count());
-
-            Assert.AreEqual(2, model.BusStops.ElementAt(0).BusNumbers.Count());
-            Assert.AreEqual("1", model.BusStops.ElementAt(0).BusNumbers[0]);
-            Assert.AreEqual("2", model.BusStops.ElementAt(0).BusNumbers[1]);
-            Assert.AreEqual(3.4, model.BusStops.ElementAt(0).Latitude, 1);
-            Assert.AreEqual(4.5, model.BusStops.ElementAt(0).Longitude);
-
-            Assert.AreEqual(1, model.BusStops.ElementAt(1).BusNumbers.Count());
-            Assert.AreEqual("1", model.BusStops.ElementAt(1).BusNumbers[0]);
-            Assert.AreEqual(5.6, model.BusStops.ElementAt(1).Latitude);
-            Assert.AreEqual(6.7, model.BusStops.ElementAt(1).Longitude);
-
-            Assert.AreEqual("0", responseModel.BusNumber);
-            Assert.AreEqual("Some description", responseModel.Description);
-
-            Assert.AreEqual(3, responseModel.RoutePoints.Count);
-
-            Assert.AreEqual(1.2, responseModel.RoutePoints[0].Latitude);
-            Assert.AreEqual(4.5, responseModel.RoutePoints[0].Longitude);
-            Assert.IsTrue(responseModel.RoutePoints[0].IsBusStop);
-            Assert.AreEqual(0, responseModel.RoutePoints[0].TimeOffset);
-
-            Assert.AreEqual(2.3, responseModel.RoutePoints[1].Latitude);
-            Assert.AreEqual(5.6, responseModel.RoutePoints[1].Longitude);
-            Assert.IsFalse(responseModel.RoutePoints[1].IsBusStop);
-            Assert.AreEqual(1000, responseModel.RoutePoints[1].TimeOffset);
-
-            Assert.AreEqual(3.4, responseModel.RoutePoints[2].Latitude);
-            Assert.AreEqual(6.7, responseModel.RoutePoints[2].Longitude);
-            Assert.IsTrue(responseModel.RoutePoints[2].IsBusStop);
-            Assert.AreEqual(2000, responseModel.RoutePoints[2].TimeOffset);
+            Assert.AreEqual(3.4, model.RoutePoints[2].Latitude);
+            Assert.AreEqual(6.7, model.RoutePoints[2].Longitude);
+            Assert.IsTrue(model.RoutePoints[2].IsBusStop);
+            Assert.AreEqual(2000, model.RoutePoints[2].TimeOffset);
         }
 
         [Test]
@@ -384,7 +354,6 @@ namespace GlogowskiBus.UnitTests
             // Assert
             busStopService.ReceivedWithAnyArgs().CreateRoute();
             Assert.AreEqual("Index", redirectResult.RouteValues["action"]);
-            Assert.AreEqual("Home", redirectResult.RouteValues["controller"]);
         }
     }
 }
