@@ -10,6 +10,6 @@ namespace GlogowskiBus.BLL.Abstract
     public interface IBusService
     {
         BusStop[] GetAllBusStops();
-        void CreateRoute();
+        void CreateRoute(string busNumber, string description, List<RoutePoint> routePoints);
     }
 }

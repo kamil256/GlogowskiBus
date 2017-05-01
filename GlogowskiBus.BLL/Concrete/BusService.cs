@@ -42,7 +42,7 @@ namespace GlogowskiBus.BLL.Concrete
             return busStops.ToArray();
         }
 
-        public void CreateRoute()
+        public void CreateRoute(string busNumber, string description, List<RoutePoint> routePoints)
         {
             throw new NotImplementedException();
         }
