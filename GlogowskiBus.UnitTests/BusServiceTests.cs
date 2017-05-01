@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace GlogowskiBus.UnitTests
 {
     [TestFixture]
-    class BusStopServiceTests
+    class BusServiceTests
     {
         private static BusLine[] busLines = new BusLine[]
         {  
@@ -89,10 +89,10 @@ namespace GlogowskiBus.UnitTests
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.PointRepository.Returns(pointRepository);
 
-            BusService busStopService = new BusService(unitOfWork);
+            BusService busService = new BusService(unitOfWork);
 
             // Act
-            BLL.Concrete.BusStop[] result = busStopService.GetAllBusStops();
+            BLL.Concrete.BusStop[] result = busService.GetAllBusStops();
 
             // Assert
             Assert.AreEqual(2, result.Count());
