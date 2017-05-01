@@ -41,5 +41,10 @@ namespace GlogowskiBus.BLL.Concrete
 
             return busStops.ToArray();
         }
+
+        public void CreateRoute()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

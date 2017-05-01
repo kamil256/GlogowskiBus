@@ -45,8 +45,10 @@ namespace GlogowskiBus.UI.Controllers
         }
 
         [HttpPost]
-        public ViewResult CreateRoute(HomeIndexViewModel model)
+        public ActionResult CreateRoute(HomeIndexViewModel model)
         {
+            //ModelState.AddModelError()
+            //if (ModelState.IsValid())
             return View();
         }
     }
