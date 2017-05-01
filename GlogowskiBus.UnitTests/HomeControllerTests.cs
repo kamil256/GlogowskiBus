@@ -1,4 +1,5 @@
 ﻿using GlogowskiBus.BLL.Abstract;
+using GlogowskiBus.BLL.Concrete;
 using GlogowskiBus.UI.Controllers;
 using GlogowskiBus.UI.Models;
 using NSubstitute;
@@ -280,7 +281,7 @@ namespace GlogowskiBus.UnitTests
             // Arrange
             IBusService busService = Substitute.For<IBusService>();
             busService.GetAllBusStops().Returns(busStops);
-            busService.When(x => x.CreateRoute(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<List<BLL.Concrete.RoutePoint>>())).Do(x => { throw new Exception(); });
+            busService.When(x => x.CreateRoute(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<List<BLL.Concrete.RoutePoint>>())).Do(x => { throw new BusNumberTakenException(); });
             HomeIndexViewModel model = new HomeIndexViewModel
             {
                 BusNumber = "0",

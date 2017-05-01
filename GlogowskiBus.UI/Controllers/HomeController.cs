@@ -99,9 +99,9 @@ namespace GlogowskiBus.UI.Controllers
                     return RedirectToAction("Index");
                 }
             }
-            catch (Exception)
+            catch (BusNumberTakenException e)
             {
-                ModelState.AddModelError("", "Bus number is already taken");
+                ModelState.AddModelError("", e.Message);
             }
 
             model.BusStops = busService.GetAllBusStops().Select(x => new Models.BusStop()

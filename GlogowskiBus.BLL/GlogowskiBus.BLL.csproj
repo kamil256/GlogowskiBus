@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstract\IBusService.cs" />
+    <Compile Include="Concrete\BusNumberTakenException.cs" />
     <Compile Include="Concrete\BusStop.cs" />
     <Compile Include="Concrete\BusService.cs" />
     <Compile Include="Concrete\RoutePoint.cs" />
