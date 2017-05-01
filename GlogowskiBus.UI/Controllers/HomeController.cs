@@ -53,10 +53,10 @@ namespace GlogowskiBus.UI.Controllers
                 ModelState.AddModelError("", "Error in data consistency");
             else
             {
-                model.RoutePoints = new List<RoutePoint>();
+                model.RoutePoints = new List<Models.RoutePoint>();
                 for (int i = 0; i < model.Latitudes.Length; i++)
                 {
-                    model.RoutePoints.Add(new RoutePoint()
+                    model.RoutePoints.Add(new Models.RoutePoint()
                     {
                         Latitude = model.Latitudes[i],
                         Longitude = model.Longitudes[i],
@@ -89,7 +89,13 @@ namespace GlogowskiBus.UI.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    busService.CreateRoute();
+                    busService.CreateRoute(model.BusNumber, model.Description, model.RoutePoints.Select(x => new BLL.Concrete.RoutePoint()
+                    {
+                        Latitude = x.Latitude,
+                        Longitude = x.Longitude,
+                        IsBusStop = x.IsBusStop,
+                        TimeOffset = x.TimeOffset
+                    }).ToList());
                     return RedirectToAction("Index");
                 }
             }

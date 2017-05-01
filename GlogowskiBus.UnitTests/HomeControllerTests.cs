@@ -280,7 +280,7 @@ namespace GlogowskiBus.UnitTests
             // Arrange
             IBusService busStopService = Substitute.For<IBusService>();
             busStopService.GetAllBusStops().Returns(busStops);
-            busStopService.When(x => x.CreateRoute()).Do(x => { throw new Exception(); });
+            busStopService.When(x => x.CreateRoute(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<List<BLL.Concrete.RoutePoint>>())).Do(x => { throw new Exception(); });
             HomeIndexViewModel model = new HomeIndexViewModel
             {
                 BusNumber = "0",
@@ -352,7 +352,7 @@ namespace GlogowskiBus.UnitTests
             RedirectToRouteResult redirectResult = homeController.CreateRoute(model) as RedirectToRouteResult;
 
             // Assert
-            busStopService.ReceivedWithAnyArgs().CreateRoute();
+            busStopService.Received().CreateRoute("0", "Some description", Arg.Any<List<BLL.Concrete.RoutePoint>>());
             Assert.AreEqual("Index", redirectResult.RouteValues["action"]);
         }
     }
