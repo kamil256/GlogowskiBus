@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GlogowskiBus.BLL.Abstract
 {
-    public interface IBusStopService
+    public interface IBusService
     {
         BusStop[] GetAllBusStops();
         void CreateRoute();

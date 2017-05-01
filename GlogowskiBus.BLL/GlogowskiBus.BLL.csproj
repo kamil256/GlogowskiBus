@@ -40,9 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Abstract\IBusStopService.cs" />
+    <Compile Include="Abstract\IBusService.cs" />
     <Compile Include="Concrete\BusStop.cs" />
-    <Compile Include="Concrete\BusStopService.cs" />
+    <Compile Include="Concrete\BusService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

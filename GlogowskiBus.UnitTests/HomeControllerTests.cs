@@ -35,7 +35,7 @@ namespace GlogowskiBus.UnitTests
         public void GetCreateRoute_WhenCalled_ReturnsModelWithAllBusStops()
         {
             //Arrange
-            IBusStopService busStopService = Substitute.For<IBusStopService>();
+            IBusService busStopService = Substitute.For<IBusService>();
             busStopService.GetAllBusStops().Returns(busStops);
 
             // Act
@@ -62,7 +62,7 @@ namespace GlogowskiBus.UnitTests
         public void PostCreateRoute_WhenAttributesArraysNotTheSameLength_ModelValidationFails()
         {
             // Arrange
-            IBusStopService busStopService = Substitute.For<IBusStopService>();
+            IBusService busStopService = Substitute.For<IBusService>();
             HomeIndexViewModel model = new HomeIndexViewModel
             {
                 BusNumber = "0",
@@ -85,7 +85,7 @@ namespace GlogowskiBus.UnitTests
         public void PostCreateRoute_WhenAttributesArraysLengthLessThanTwo_ModelValidationFails()
         {
             // Arrange
-            IBusStopService busStopService = Substitute.For<IBusStopService>();
+            IBusService busStopService = Substitute.For<IBusService>();
             HomeIndexViewModel model = new HomeIndexViewModel
             {
                 BusNumber = "0",
@@ -108,7 +108,7 @@ namespace GlogowskiBus.UnitTests
         public void PostCreateRoute_WhenBusNumberNotProvided_ModelValidationFails()
         {
             // Arrange
-            IBusStopService busStopService = Substitute.For<IBusStopService>();
+            IBusService busStopService = Substitute.For<IBusService>();
             HomeIndexViewModel model = new HomeIndexViewModel
             {
                 BusNumber = "",
@@ -131,7 +131,7 @@ namespace GlogowskiBus.UnitTests
         public void PostCreateRoute_WhenRouteDoesNotStartWithBusStop_ModelValidationFails()
         {
             // Arrange
-            IBusStopService busStopService = Substitute.For<IBusStopService>();
+            IBusService busStopService = Substitute.For<IBusService>();
             HomeIndexViewModel model = new HomeIndexViewModel
             {
                 BusNumber = "0",
@@ -154,7 +154,7 @@ namespace GlogowskiBus.UnitTests
         public void PostCreateRoute_WhenRouteDoesNotEndWithBusStop_ModelValidationFails()
         {
             // Arrange
-            IBusStopService busStopService = Substitute.For<IBusStopService>();
+            IBusService busStopService = Substitute.For<IBusService>();
             HomeIndexViewModel model = new HomeIndexViewModel
             {
                 BusNumber = "0",
@@ -177,7 +177,7 @@ namespace GlogowskiBus.UnitTests
         public void PostCreateRoute_WhenTimeOffsetsDoesNotStartWithZero_ModelValidationFails()
         {
             // Arrange
-            IBusStopService busStopService = Substitute.For<IBusStopService>();
+            IBusService busStopService = Substitute.For<IBusService>();
             HomeIndexViewModel model = new HomeIndexViewModel
             {
                 BusNumber = "0",
@@ -200,7 +200,7 @@ namespace GlogowskiBus.UnitTests
         public void PostCreateRoute_WhenTimeOffsetsNotGrowing_ModelValidationFails()
         {
             // Arrange
-            IBusStopService busStopService = Substitute.For<IBusStopService>();
+            IBusService busStopService = Substitute.For<IBusService>();
             HomeIndexViewModel model = new HomeIndexViewModel
             {
                 BusNumber = "0",
@@ -223,7 +223,7 @@ namespace GlogowskiBus.UnitTests
         public void PostCreateRoute_WhenPassingCorrectModel_ModelValidates()
         {
             // Arrange
-            IBusStopService busStopService = Substitute.For<IBusStopService>();
+            IBusService busStopService = Substitute.For<IBusService>();
             HomeIndexViewModel model = new HomeIndexViewModel
             {
                 BusNumber = "0",
@@ -246,7 +246,7 @@ namespace GlogowskiBus.UnitTests
         public void PostCreateRoute_WhenModelDoesNotValidate_ReturnViewWithProperModel()
         {
             // Arrange
-            IBusStopService busStopService = Substitute.For<IBusStopService>();
+            IBusService busStopService = Substitute.For<IBusService>();
             busStopService.GetAllBusStops().Returns(busStops);
             HomeIndexViewModel model = new HomeIndexViewModel
             {
@@ -305,7 +305,7 @@ namespace GlogowskiBus.UnitTests
         public void PostCreateRoute_WhenModelValidatesAndBusNumberIsAlreadyTaken_ReturnViewWithProperModel()
         {
             // Arrange
-            IBusStopService busStopService = Substitute.For<IBusStopService>();
+            IBusService busStopService = Substitute.For<IBusService>();
             busStopService.When(x => x.CreateRoute()).Do(x => { throw new Exception(); });
             HomeIndexViewModel model = new HomeIndexViewModel
             {
@@ -366,7 +366,7 @@ namespace GlogowskiBus.UnitTests
         public void PostCreateRoute_WhenModelValidatesAndBusNumberIsAvailable_AddRouteToDatabaseAndRedirectToIndexAction()
         {
             // Arrange
-            IBusStopService busStopService = Substitute.For<IBusStopService>();
+            IBusService busStopService = Substitute.For<IBusService>();
             HomeIndexViewModel model = new HomeIndexViewModel
             {
                 BusNumber = "0",

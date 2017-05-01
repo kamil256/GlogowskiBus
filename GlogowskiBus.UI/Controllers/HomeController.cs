@@ -13,9 +13,9 @@ namespace GlogowskiBus.UI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IBusStopService busStopService;
+        private readonly IBusService busStopService;
 
-        public HomeController(IBusStopService busStopService)
+        public HomeController(IBusService busStopService)
         {
             this.busStopService = busStopService;
         }

@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace GlogowskiBus.BLL.Concrete
 {
-    public class BusStopService : IBusStopService
+    public class BusService : IBusService
     {
         private readonly IUnitOfWork unitOfWork;
 
-        public BusStopService(IUnitOfWork unitOfWork)
+        public BusService(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
         }

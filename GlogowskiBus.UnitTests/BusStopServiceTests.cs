@@ -89,7 +89,7 @@ namespace GlogowskiBus.UnitTests
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.PointRepository.Returns(pointRepository);
 
-            BusStopService busStopService = new BusStopService(unitOfWork);
+            BusService busStopService = new BusService(unitOfWork);
 
             // Act
             BLL.Concrete.BusStop[] result = busStopService.GetAllBusStops();
