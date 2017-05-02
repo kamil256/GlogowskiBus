@@ -57,7 +57,7 @@ namespace GlogowskiBus.BLL.Concrete
 
             for (int i = 0; i < routePoints.Count; i++)
             {
-                Point point = new Point()
+                Point newPoint = new Point()
                 {
                     BusLine = newBusLine,
                     Latitude = routePoints[i].Latitude,
@@ -66,7 +66,7 @@ namespace GlogowskiBus.BLL.Concrete
                     TimeOffset = routePoints[i].TimeOffset,
                     Order = i
                 };
-                unitOfWork.PointRepository.Insert(point);
+                unitOfWork.PointRepository.Insert(newPoint);
             }
 
             unitOfWork.Save();

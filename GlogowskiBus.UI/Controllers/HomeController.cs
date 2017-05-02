@@ -64,25 +64,6 @@ namespace GlogowskiBus.UI.Controllers
                         TimeOffset = model.TimeOffsets[i]
                     });
                 }
-
-                if (model.RoutePoints.Count <= 1)
-                    ModelState.AddModelError("", "Route must contain more than one point");
-
-                if (!model.RoutePoints.First().IsBusStop)
-                    ModelState.AddModelError("", "First point must be bus stop");
-
-                if (!model.RoutePoints.Last().IsBusStop)
-                    ModelState.AddModelError("", "Last point must be bus stop");
-
-                if (model.RoutePoints.First().TimeOffset != 0)
-                    ModelState.AddModelError("", "First point's time offset must be zero");
-
-                for (int i = 1; i < model.RoutePoints.Count; i++)
-                    if (model.RoutePoints[i - 1].TimeOffset >= model.RoutePoints[i].TimeOffset)
-                    {
-                        ModelState.AddModelError("", "Time offsets must be in growing order");
-                        break;
-                    }
             }
 
             try

@@ -162,15 +162,257 @@ namespace GlogowskiBus.UnitTests
             try
             {
                 // Act
-                busService.CreateRoute("1", "Some description", fakeRoutePoints);
+                busService.CreateRoute("1", "Some description", new List<RoutePoint>
+                {
+                    new RoutePoint()
+                    {
+                        Latitude = 1.2,
+                        Longitude = 4.5,
+                        IsBusStop = true,
+                        TimeOffset = 0
+                    },
+                    new RoutePoint()
+                    {
+                        Latitude = 2.3,
+                        Longitude = 5.6,
+                        IsBusStop = false,
+                        TimeOffset = 1000
+                    },
+                    new RoutePoint()
+                    {
+                        Latitude = 3.4,
+                        Longitude = 6.7,
+                        IsBusStop = true,
+                        TimeOffset = 2000
+                    }
+                });
             }
             catch (Exception e)
             {
                 // Assert
-                if (e.Message == "Bus number is already taken")
-                    Assert.Pass();
+                Assert.AreEqual("Bus number is already taken!", e.Message);
             }
-           
+        }
+
+        [Test]
+        public void CreateRoute_WhenRouteHasLessThanTwoPoints_ThrowsException()
+        {
+            // Arrange
+            IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
+            busLineRepository.Get(Arg.Any<List<Expression<Func<BusLine, bool>>>>()).Returns(x => getFakeBusLines((List<Expression<Func<BusLine, bool>>>)x[0]));
+
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusLineRepository.Returns(busLineRepository);
+
+            BusService busService = new BusService(unitOfWork);
+
+            try
+            {
+                // Act
+                busService.CreateRoute("3", "Some description", new List<RoutePoint>
+                {
+                    new RoutePoint()
+                    {
+                        Latitude = 1.2,
+                        Longitude = 4.5,
+                        IsBusStop = true,
+                        TimeOffset = 0
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                // Assert
+                Assert.AreEqual("Route cannot contain less than two points!", e.Message);
+            }
+        }
+
+        [Test]
+        public void CreateRoute_WhenFirstPointIsNotBusStop_ThrowsException()
+        {
+            // Arrange
+            IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
+            busLineRepository.Get(Arg.Any<List<Expression<Func<BusLine, bool>>>>()).Returns(x => getFakeBusLines((List<Expression<Func<BusLine, bool>>>)x[0]));
+
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusLineRepository.Returns(busLineRepository);
+
+            BusService busService = new BusService(unitOfWork);
+
+            try
+            {
+                // Act
+                busService.CreateRoute("3", "Some description", new List<RoutePoint>
+                {
+                    new RoutePoint()
+                    {
+                        Latitude = 1.2,
+                        Longitude = 4.5,
+                        IsBusStop = false,
+                        TimeOffset = 0
+                    },
+                    new RoutePoint()
+                    {
+                        Latitude = 2.3,
+                        Longitude = 5.6,
+                        IsBusStop = false,
+                        TimeOffset = 1000
+                    },
+                    new RoutePoint()
+                    {
+                        Latitude = 3.4,
+                        Longitude = 6.7,
+                        IsBusStop = true,
+                        TimeOffset = 2000
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                // Assert
+                Assert.AreEqual("First point must be the bus stop!", e.Message);
+            }
+        }
+
+        [Test]
+        public void CreateRoute_WhenLastPointIsNotBusStop_ThrowsException()
+        {
+            // Arrange
+            IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
+            busLineRepository.Get(Arg.Any<List<Expression<Func<BusLine, bool>>>>()).Returns(x => getFakeBusLines((List<Expression<Func<BusLine, bool>>>)x[0]));
+
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusLineRepository.Returns(busLineRepository);
+
+            BusService busService = new BusService(unitOfWork);
+
+            try
+            {
+                // Act
+                busService.CreateRoute("3", "Some description", new List<RoutePoint>
+                {
+                    new RoutePoint()
+                    {
+                        Latitude = 1.2,
+                        Longitude = 4.5,
+                        IsBusStop = true,
+                        TimeOffset = 0
+                    },
+                    new RoutePoint()
+                    {
+                        Latitude = 2.3,
+                        Longitude = 5.6,
+                        IsBusStop = false,
+                        TimeOffset = 1000
+                    },
+                    new RoutePoint()
+                    {
+                        Latitude = 3.4,
+                        Longitude = 6.7,
+                        IsBusStop = false,
+                        TimeOffset = 2000
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                // Assert
+                Assert.AreEqual("Last point must be the bus stop!", e.Message);
+            }
+        }
+
+        [Test]
+        public void CreateRoute_WhenFirstPointTimeOffsetIsNotZero_ThrowsException()
+        {
+            // Arrange
+            IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
+            busLineRepository.Get(Arg.Any<List<Expression<Func<BusLine, bool>>>>()).Returns(x => getFakeBusLines((List<Expression<Func<BusLine, bool>>>)x[0]));
+
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusLineRepository.Returns(busLineRepository);
+
+            BusService busService = new BusService(unitOfWork);
+
+            try
+            {
+                // Act
+                busService.CreateRoute("3", "Some description", new List<RoutePoint>
+                {
+                    new RoutePoint()
+                    {
+                        Latitude = 1.2,
+                        Longitude = 4.5,
+                        IsBusStop = true,
+                        TimeOffset = 500
+                    },
+                    new RoutePoint()
+                    {
+                        Latitude = 2.3,
+                        Longitude = 5.6,
+                        IsBusStop = false,
+                        TimeOffset = 1000
+                    },
+                    new RoutePoint()
+                    {
+                        Latitude = 3.4,
+                        Longitude = 6.7,
+                        IsBusStop = false,
+                        TimeOffset = 2000
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                // Assert
+                Assert.AreEqual("First point's time offset must be zero!", e.Message);
+            }
+        }
+
+        [Test]
+        public void CreateRoute_WhenTimeOffsetsAreNotInGrowingOrder_ThrowsException()
+        {
+            // Arrange
+            IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
+            busLineRepository.Get(Arg.Any<List<Expression<Func<BusLine, bool>>>>()).Returns(x => getFakeBusLines((List<Expression<Func<BusLine, bool>>>)x[0]));
+
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusLineRepository.Returns(busLineRepository);
+
+            BusService busService = new BusService(unitOfWork);
+
+            try
+            {
+                // Act
+                busService.CreateRoute("3", "Some description", new List<RoutePoint>
+                {
+                    new RoutePoint()
+                    {
+                        Latitude = 1.2,
+                        Longitude = 4.5,
+                        IsBusStop = true,
+                        TimeOffset = 0
+                    },
+                    new RoutePoint()
+                    {
+                        Latitude = 2.3,
+                        Longitude = 5.6,
+                        IsBusStop = false,
+                        TimeOffset = 2000
+                    },
+                    new RoutePoint()
+                    {
+                        Latitude = 3.4,
+                        Longitude = 6.7,
+                        IsBusStop = false,
+                        TimeOffset = 2000
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                // Assert
+                Assert.AreEqual("Time offsets must be in growing order!", e.Message);
+            }
         }
 
         [Test]
@@ -189,7 +431,30 @@ namespace GlogowskiBus.UnitTests
             BusService busService = new BusService(unitOfWork);
 
             // Act
-            busService.CreateRoute("3", "Some description", fakeRoutePoints);
+            busService.CreateRoute("3", "Some description", new List<RoutePoint>
+            {
+                new RoutePoint()
+                {
+                    Latitude = 1.2,
+                    Longitude = 4.5,
+                    IsBusStop = true,
+                    TimeOffset = 0
+                },
+                new RoutePoint()
+                {
+                    Latitude = 2.3,
+                    Longitude = 5.6,
+                    IsBusStop = false,
+                    TimeOffset = 1000
+                },
+                new RoutePoint()
+                {
+                    Latitude = 3.4,
+                    Longitude = 6.7,
+                    IsBusStop = true,
+                    TimeOffset = 2000
+                }
+            });
 
             // Arrange
             busLineRepository.Received().Insert(Arg.Is<BusLine>(x => x.BusNumber == "3" && x.Description == "Some description"));
