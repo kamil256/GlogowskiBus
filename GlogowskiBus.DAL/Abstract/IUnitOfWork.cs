@@ -11,7 +11,7 @@ namespace GlogowskiBus.DAL.Abstract
     {
         IRepository<BusLine, int> BusLineRepository { get; }
         IRepository<Point, int> PointRepository { get; }
-        IRepository<Schedule, int> ScheduleRepository { get; }
+        IRepository<DepartureTime, int> ScheduleRepository { get; }
         void Save();
     }
 }

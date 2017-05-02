@@ -12,6 +12,6 @@ namespace GlogowskiBus.DAL.Concrete
     {
         public DbSet<BusLine> BusLines { get; set; }
         public DbSet<Point> Points { get; set; }
-        public DbSet<Schedule> Schedules { get; set; }
+        public DbSet<DepartureTime> Schedule { get; set; }
     }
 }
