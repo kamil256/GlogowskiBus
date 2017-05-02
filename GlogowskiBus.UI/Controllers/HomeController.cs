@@ -50,7 +50,9 @@ namespace GlogowskiBus.UI.Controllers
             if (model.Longitudes.Length != model.Latitudes.Length ||
                 model.IsBusStops.Length != model.Latitudes.Length ||
                 model.TimeOffsets.Length != model.Latitudes.Length)
+            {
                 ModelState.AddModelError("", "Error in data consistency");
+            }
             else
             {
                 model.RoutePoints = new List<Models.RoutePoint>();
@@ -77,7 +79,7 @@ namespace GlogowskiBus.UI.Controllers
                         IsBusStop = x.IsBusStop,
                         TimeOffset = x.TimeOffset
                     }).ToList());
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", "Home");
                 }
             }
             catch (Exception e)
@@ -92,7 +94,7 @@ namespace GlogowskiBus.UI.Controllers
                 BusNumbers = x.BusNumbers
             });
 
-            return View(model);
+            return View("CreateRoute", model);
         }
     }
 }

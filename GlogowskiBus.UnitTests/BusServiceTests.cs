@@ -69,62 +69,12 @@ namespace GlogowskiBus.UnitTests
             }
         };
 
-        private static List<RoutePoint> fakeRoutePoints = new List<RoutePoint>()
-        {
-            new RoutePoint()
-            {
-                Latitude = 1.2,
-                Longitude = 4.5,
-                IsBusStop = true,
-                TimeOffset = 0
-            },
-            new RoutePoint()
-            {
-                Latitude = 2.3,
-                Longitude = 5.6,
-                IsBusStop = false,
-                TimeOffset = 1000
-            },
-            new RoutePoint()
-            {
-                Latitude = 3.4,
-                Longitude = 6.7,
-                IsBusStop = true,
-                TimeOffset = 2000
-            }
-        };
-
-        private IEnumerable<Point> getFakePoints(IEnumerable<Expression<Func<Point, bool>>> filters = null)
-        {
-            IQueryable<Point> query = fakePoints.AsQueryable();
-            if (filters != null)
-                foreach (var filter in filters)
-                    if (filter != null)
-                        query = query.Where(filter);
-            return query;
-        }
-
-        private IEnumerable<BusLine> getFakeBusLines(IEnumerable<Expression<Func<BusLine, bool>>> filters = null)
-        {
-            IQueryable<BusLine> query = fakeBusLines.AsQueryable();
-            if (filters != null)
-                foreach (var filter in filters)
-                    if (filter != null)
-                        query = query.Where(filter);
-            return query;
-        }
-
-        private void insertFakeBusLine(BusLine busLine)
-        {
-
-        }
-
         [Test]
         public void GetAllBusStops_WhenCalled_ReturnsAllBusStops()
         {
             // Arrange
             IRepository<Point, int> pointRepository = Substitute.For<IRepository<Point, int>>();
-            pointRepository.Get(Arg.Any<List<Expression<Func<Point, bool>>>>()).Returns(x => getFakePoints((List<Expression<Func<Point, bool>>>)x[0]));
+            pointRepository.Get().Returns(fakePoints);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.PointRepository.Returns(pointRepository);
@@ -152,7 +102,7 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
-            busLineRepository.Get(Arg.Any<List<Expression<Func<BusLine, bool>>>>()).Returns(x => getFakeBusLines((List<Expression<Func<BusLine, bool>>>)x[0]));
+            busLineRepository.Get().Returns(fakeBusLines);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusLineRepository.Returns(busLineRepository);
@@ -191,7 +141,10 @@ namespace GlogowskiBus.UnitTests
             {
                 // Assert
                 Assert.AreEqual("Bus number is already taken!", e.Message);
+                unitOfWork.DidNotReceive().Save();
+                Assert.Pass();
             }
+            Assert.Fail("Exception should be thrown!");
         }
 
         [Test]
@@ -199,7 +152,7 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
-            busLineRepository.Get(Arg.Any<List<Expression<Func<BusLine, bool>>>>()).Returns(x => getFakeBusLines((List<Expression<Func<BusLine, bool>>>)x[0]));
+            busLineRepository.Get().Returns(fakeBusLines);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusLineRepository.Returns(busLineRepository);
@@ -224,7 +177,10 @@ namespace GlogowskiBus.UnitTests
             {
                 // Assert
                 Assert.AreEqual("Route cannot contain less than two points!", e.Message);
+                unitOfWork.DidNotReceive().Save();
+                Assert.Pass();
             }
+            Assert.Fail("Exception should be thrown!");
         }
 
         [Test]
@@ -232,7 +188,7 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
-            busLineRepository.Get(Arg.Any<List<Expression<Func<BusLine, bool>>>>()).Returns(x => getFakeBusLines((List<Expression<Func<BusLine, bool>>>)x[0]));
+            busLineRepository.Get().Returns(fakeBusLines);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusLineRepository.Returns(busLineRepository);
@@ -271,7 +227,10 @@ namespace GlogowskiBus.UnitTests
             {
                 // Assert
                 Assert.AreEqual("First point must be the bus stop!", e.Message);
+                unitOfWork.DidNotReceive().Save();
+                Assert.Pass();
             }
+            Assert.Fail("Exception should be thrown!");
         }
 
         [Test]
@@ -279,7 +238,7 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
-            busLineRepository.Get(Arg.Any<List<Expression<Func<BusLine, bool>>>>()).Returns(x => getFakeBusLines((List<Expression<Func<BusLine, bool>>>)x[0]));
+            busLineRepository.Get().Returns(fakeBusLines);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusLineRepository.Returns(busLineRepository);
@@ -318,7 +277,10 @@ namespace GlogowskiBus.UnitTests
             {
                 // Assert
                 Assert.AreEqual("Last point must be the bus stop!", e.Message);
+                unitOfWork.DidNotReceive().Save();
+                Assert.Pass();
             }
+            Assert.Fail("Exception should be thrown!");
         }
 
         [Test]
@@ -326,7 +288,7 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
-            busLineRepository.Get(Arg.Any<List<Expression<Func<BusLine, bool>>>>()).Returns(x => getFakeBusLines((List<Expression<Func<BusLine, bool>>>)x[0]));
+            busLineRepository.Get().Returns(fakeBusLines);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusLineRepository.Returns(busLineRepository);
@@ -356,7 +318,7 @@ namespace GlogowskiBus.UnitTests
                     {
                         Latitude = 3.4,
                         Longitude = 6.7,
-                        IsBusStop = false,
+                        IsBusStop = true,
                         TimeOffset = 2000
                     }
                 });
@@ -365,7 +327,10 @@ namespace GlogowskiBus.UnitTests
             {
                 // Assert
                 Assert.AreEqual("First point's time offset must be zero!", e.Message);
+                unitOfWork.DidNotReceive().Save();
+                Assert.Pass();
             }
+            Assert.Fail("Exception should be thrown!");
         }
 
         [Test]
@@ -373,7 +338,7 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
-            busLineRepository.Get(Arg.Any<List<Expression<Func<BusLine, bool>>>>()).Returns(x => getFakeBusLines((List<Expression<Func<BusLine, bool>>>)x[0]));
+            busLineRepository.Get().Returns(fakeBusLines);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusLineRepository.Returns(busLineRepository);
@@ -403,7 +368,7 @@ namespace GlogowskiBus.UnitTests
                     {
                         Latitude = 3.4,
                         Longitude = 6.7,
-                        IsBusStop = false,
+                        IsBusStop = true,
                         TimeOffset = 2000
                     }
                 });
@@ -412,15 +377,18 @@ namespace GlogowskiBus.UnitTests
             {
                 // Assert
                 Assert.AreEqual("Time offsets must be in growing order!", e.Message);
+                unitOfWork.DidNotReceive().Save();
+                Assert.Pass();
             }
+            Assert.Fail("Exception should be thrown!");
         }
 
         [Test]
-        public void CreateRoute_WhenCalledWithProperAgruments_AddsNewRouteToRepository()
+        public void CreateRoute_WhenCalledWithProperArguments_AddsNewRouteToRepository()
         {
             // Arrange
             IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
-            busLineRepository.Get(Arg.Any<List<Expression<Func<BusLine, bool>>>>()).Returns(x => getFakeBusLines((List<Expression<Func<BusLine, bool>>>)x[0]));
+            busLineRepository.Get().Returns(fakeBusLines);
 
             IRepository<Point, int> pointRepository = Substitute.For<IRepository<Point, int>>();
 

@@ -45,8 +45,24 @@ namespace GlogowskiBus.BLL.Concrete
 
         public void CreateRoute(string busNumber, string description, List<RoutePoint> routePoints)
         {
-            if (unitOfWork.BusLineRepository.Get(new Expression<Func<BusLine, bool>>[] { x => x.BusNumber == busNumber }).Count() != 0)
-                throw new Exception("Bus number is already taken");
+            if (unitOfWork.BusLineRepository.Get().Count(x => x.BusNumber == busNumber) != 0)
+                throw new Exception("Bus number is already taken!");
+
+            if (routePoints.Count < 2)
+                throw new Exception("Route cannot contain less than two points!");
+            
+            if (!routePoints.First().IsBusStop)
+                throw new Exception("First point must be the bus stop!");
+
+            if (!routePoints.Last().IsBusStop)
+                throw new Exception("Last point must be the bus stop!");
+
+            if (routePoints.First().TimeOffset != 0)
+                throw new Exception("First point's time offset must be zero!");
+
+            for (int i = 1; i < routePoints.Count; i++)
+                if (routePoints[i - 1].TimeOffset >= routePoints[i].TimeOffset)
+                    throw new Exception("Time offsets must be in growing order!");
 
             BusLine newBusLine = new BusLine()
             {
