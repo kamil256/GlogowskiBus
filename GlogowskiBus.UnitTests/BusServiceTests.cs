@@ -69,7 +69,7 @@ namespace GlogowskiBus.UnitTests
             }
         };
 
-        private static List<RoutePoint> newBusLinePoints = new List<RoutePoint>()
+        private static List<RoutePoint> fakeRoutePoints = new List<RoutePoint>()
         {
             new RoutePoint()
             {
