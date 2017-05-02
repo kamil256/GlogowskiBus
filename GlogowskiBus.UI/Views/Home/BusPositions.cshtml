@@ -1,0 +1,75 @@
+﻿@model long
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlogowskiBus</title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div id="map"></div>
+    <div id="aside">
+        @*<p>Wyznacz na mapie trasę tworzonej linii kolejno od punktu początkowego do docelowego. W kolejnym kroku będziesz mógł skorygować trasę oraz wyznaczyć jej przystanki. Kliknięcie utworzonego punktu spowoduje jego usunięcie. Po zakończeniu </p>
+        <button id="correctRoute">Correct route</button>
+        <button id="calculatePoints">Calculate points</button>*@
+
+
+
+        @*@using (Html.BeginForm())
+        {
+            @Html.TextBoxFor(x => x.BusNumber)
+
+            <div id="busStopsList">
+            </div>
+            <input type="submit" value="Create new route" />
+        }*@
+    </div>
+
+
+
+    <script>
+        function ServerTime()
+        {
+            var self = this;
+
+            var totalMilliseconds = Number(@Model);
+
+            this.getHours = function()
+            {
+                return new Date(totalMilliseconds).getHours();
+            }
+            
+            this.getMinutes = function()
+            {
+                return new Date(totalMilliseconds).getMinutes();
+            }
+
+            this.getSeconds = function()
+            {
+                return new Date(totalMilliseconds).getSeconds();
+            }
+
+            var tick = function()
+            {
+                setTimeout(tick, 1000);
+                totalMilliseconds += 1000;
+            }
+
+            tick();
+        }
+
+        var serverTime = new ServerTime();
+
+        window.onload = function()
+        {
+
+        }
+    </script>
+
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/Maps.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD44zRKQDHDs7dMdwhXP7a8XjJzwuuFNJA&callback=initMap" async defer></script>
+</body>
+</html>
