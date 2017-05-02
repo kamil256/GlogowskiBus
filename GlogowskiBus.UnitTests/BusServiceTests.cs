@@ -16,14 +16,14 @@ namespace GlogowskiBus.UnitTests
     [TestFixture]
     class BusServiceTests
     {
-        private static BusLine[] fakeBusLines = new BusLine[]
+        private static DAL.Entities.BusLine[] fakeBusLines = new DAL.Entities.BusLine[]
         {
-            new BusLine
+            new DAL.Entities.BusLine
             {
                  BusLineId = 1,
                  BusNumber = "1"
             },
-            new BusLine
+            new DAL.Entities.BusLine
             {
                  BusLineId = 2,
                  BusNumber = "2"
@@ -101,7 +101,7 @@ namespace GlogowskiBus.UnitTests
         public void CreateRoute_WhenBusNumberAlreadyTaken_ThrowsException()
         {
             // Arrange
-            IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
+            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
             busLineRepository.Get().Returns(fakeBusLines);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
@@ -151,7 +151,7 @@ namespace GlogowskiBus.UnitTests
         public void CreateRoute_WhenRouteHasLessThanTwoPoints_ThrowsException()
         {
             // Arrange
-            IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
+            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
             busLineRepository.Get().Returns(fakeBusLines);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
@@ -187,7 +187,7 @@ namespace GlogowskiBus.UnitTests
         public void CreateRoute_WhenFirstPointIsNotBusStop_ThrowsException()
         {
             // Arrange
-            IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
+            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
             busLineRepository.Get().Returns(fakeBusLines);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
@@ -237,7 +237,7 @@ namespace GlogowskiBus.UnitTests
         public void CreateRoute_WhenLastPointIsNotBusStop_ThrowsException()
         {
             // Arrange
-            IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
+            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
             busLineRepository.Get().Returns(fakeBusLines);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
@@ -287,7 +287,7 @@ namespace GlogowskiBus.UnitTests
         public void CreateRoute_WhenFirstPointTimeOffsetIsNotZero_ThrowsException()
         {
             // Arrange
-            IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
+            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
             busLineRepository.Get().Returns(fakeBusLines);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
@@ -337,7 +337,7 @@ namespace GlogowskiBus.UnitTests
         public void CreateRoute_WhenTimeOffsetsAreNotInGrowingOrder_ThrowsException()
         {
             // Arrange
-            IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
+            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
             busLineRepository.Get().Returns(fakeBusLines);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
@@ -387,7 +387,7 @@ namespace GlogowskiBus.UnitTests
         public void CreateRoute_WhenCalledWithProperArguments_AddsNewRouteToRepository()
         {
             // Arrange
-            IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
+            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
             busLineRepository.Get().Returns(fakeBusLines);
 
             IRepository<Point, int> pointRepository = Substitute.For<IRepository<Point, int>>();
@@ -425,7 +425,7 @@ namespace GlogowskiBus.UnitTests
             });
 
             // Arrange
-            busLineRepository.Received().Insert(Arg.Is<BusLine>(x => x.BusNumber == "3" && x.Description == "Some description"));
+            busLineRepository.Received().Insert(Arg.Is<DAL.Entities.BusLine>(x => x.BusNumber == "3" && x.Description == "Some description"));
             pointRepository.Received().Insert(Arg.Is<Point>(x => x.Latitude == 1.2 &&
                                                                  x.Longitude == 4.5 &&
                                                                  x.IsBusStop &&

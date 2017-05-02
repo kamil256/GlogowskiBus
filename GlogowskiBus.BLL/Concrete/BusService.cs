@@ -64,7 +64,7 @@ namespace GlogowskiBus.BLL.Concrete
                 if (routePoints[i - 1].TimeOffset >= routePoints[i].TimeOffset)
                     throw new Exception("Time offsets must be in growing order!");
 
-            BusLine newBusLine = new BusLine()
+            DAL.Entities.BusLine newBusLine = new DAL.Entities.BusLine()
             {
                 BusNumber = busNumber,
                 Description = description
@@ -86,6 +86,11 @@ namespace GlogowskiBus.BLL.Concrete
             }
 
             unitOfWork.Save();
+        }
+
+        public List<BusLine> GetAllBusLines()
+        {
+            throw new NotImplementedException();
         }
     }
 }

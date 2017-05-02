@@ -11,5 +11,6 @@ namespace GlogowskiBus.BLL.Abstract
     {
         BusStop[] GetAllBusStops();
         void CreateRoute(string busNumber, string description, List<RoutePoint> routePoints);
+        List<BusLine> GetAllBusLines();
     }
 }

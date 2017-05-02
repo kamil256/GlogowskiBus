@@ -1,4 +1,4 @@
-﻿@model long
+﻿@model GlogowskiBus.UI.Models.HomeBusPositionsViewModel
 
 <!DOCTYPE html>
 <html>
@@ -34,7 +34,7 @@
         {
             var self = this;
 
-            var totalMilliseconds = Number(@Model);
+            var totalMilliseconds = Number(@Model.ServerTimeMilliseconds);
 
             this.getHours = function()
             {

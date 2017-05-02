@@ -34,9 +34,10 @@ namespace GlogowskiBus.UI.Controllers
 
         public ViewResult BusPositions()
         {
-            DateTime now = DateTime.Now;
-            long ticks = (long)(DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
-            return View(ticks);
+            HomeBusPositionsViewModel model = new HomeBusPositionsViewModel();
+            model.ServerTimeMilliseconds = (long)(DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+            //model.BusLines = 
+            return View(model);
         }
 
         public ViewResult CreateRoute()
