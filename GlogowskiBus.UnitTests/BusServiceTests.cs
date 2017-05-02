@@ -189,6 +189,7 @@ namespace GlogowskiBus.UnitTests
             // Arrange
             busLineRepository.Received(1).Insert(Arg.Any<BusLine>());
             pointRepository.Received(3).Insert(Arg.Any<Point>());
+            unitOfWork.Received().Save();
         }
     }
 }

@@ -4,6 +4,7 @@ using GlogowskiBus.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -44,7 +45,31 @@ namespace GlogowskiBus.BLL.Concrete
 
         public void CreateRoute(string busNumber, string description, List<RoutePoint> routePoints)
         {
-            throw new NotImplementedException();
+            if (unitOfWork.BusLineRepository.Get(new Expression<Func<BusLine, bool>>[] { x => x.BusNumber == busNumber }).Count() != 0)
+                throw new BusNumberTakenException("Bus number is already taken");
+
+            BusLine newBusLine = new BusLine()
+            {
+                BusNumber = busNumber,
+                Description = description
+            };
+            unitOfWork.BusLineRepository.Insert(newBusLine);
+
+            for (int i = 0; i < routePoints.Count; i++)
+            {
+                Point point = new Point()
+                {
+                    BusLine = newBusLine,
+                    Latitude = routePoints[i].Latitude,
+                    Longitude = routePoints[i].Longitude,
+                    IsBusStop = routePoints[i].IsBusStop,
+                    TimeOffset = routePoints[i].TimeOffset,
+                    Order = i
+                };
+                unitOfWork.PointRepository.Insert(point);
+            }
+
+            unitOfWork.Save();
         }
     }
 }

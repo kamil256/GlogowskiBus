@@ -8,5 +8,8 @@ namespace GlogowskiBus.BLL.Concrete
 {
     public class BusNumberTakenException : Exception
     {
+        public BusNumberTakenException(string message) : base(message)
+        {
+        }
     }
 }
