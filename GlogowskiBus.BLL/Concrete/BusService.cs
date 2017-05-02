@@ -90,7 +90,26 @@ namespace GlogowskiBus.BLL.Concrete
 
         public List<BusLine> GetAllBusLines()
         {
-            throw new NotImplementedException();
+            return unitOfWork.BusLineRepository.Get().Select(x => new BusLine()
+            {
+                BusNumber = x.BusNumber,
+                Description = x.Description,
+                RoutePoints = x.Points.OrderBy(y => y.TimeOffset).Select(y => new RoutePoint()
+                {
+                    Latitude = y.Latitude,
+                    Longitude = y.Longitude,
+                    IsBusStop = y.IsBusStop,
+                    TimeOffset = y.TimeOffset
+                }).ToList(),
+                TimeTable = x.Schedules.Select(y => new DepartureTime()
+                {
+                    Hours = y.Hour,
+                    Minutes = y.Minute,
+                    WorkingDay = y.WorkingDay,
+                    Saturday = y.Saturday,
+                    Sunday = y.Sunday
+                }).ToList()
+            }).ToList();
         }
     }
 }
