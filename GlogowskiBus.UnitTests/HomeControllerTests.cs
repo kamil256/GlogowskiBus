@@ -281,7 +281,7 @@ namespace GlogowskiBus.UnitTests
             // Arrange
             IBusService busService = Substitute.For<IBusService>();
             busService.GetAllBusStops().Returns(busStops);
-            busService.When(x => x.CreateRoute(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<List<BLL.Concrete.RoutePoint>>())).Do(x => { throw new BusNumberTakenException("Bus number is already taken"); });
+            busService.When(x => x.CreateRoute(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<List<BLL.Concrete.RoutePoint>>())).Do(x => { throw new Exception("Bus number is already taken"); });
             HomeIndexViewModel model = new HomeIndexViewModel
             {
                 BusNumber = "0",

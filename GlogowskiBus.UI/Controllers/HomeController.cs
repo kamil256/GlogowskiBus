@@ -99,7 +99,7 @@ namespace GlogowskiBus.UI.Controllers
                     return RedirectToAction("Index");
                 }
             }
-            catch (BusNumberTakenException e)
+            catch (Exception e)
             {
                 ModelState.AddModelError("", e.Message);
             }

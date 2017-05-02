@@ -46,7 +46,7 @@ namespace GlogowskiBus.BLL.Concrete
         public void CreateRoute(string busNumber, string description, List<RoutePoint> routePoints)
         {
             if (unitOfWork.BusLineRepository.Get(new Expression<Func<BusLine, bool>>[] { x => x.BusNumber == busNumber }).Count() != 0)
-                throw new BusNumberTakenException("Bus number is already taken");
+                throw new Exception("Bus number is already taken");
 
             BusLine newBusLine = new BusLine()
             {

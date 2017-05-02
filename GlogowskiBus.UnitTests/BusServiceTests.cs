@@ -92,7 +92,7 @@ namespace GlogowskiBus.UnitTests
                 IsBusStop = true,
                 TimeOffset = 2000
             }
-    };
+        };
 
         private IEnumerable<Point> getFakePoints(IEnumerable<Expression<Func<Point, bool>>> filters = null)
         {
@@ -112,6 +112,11 @@ namespace GlogowskiBus.UnitTests
                     if (filter != null)
                         query = query.Where(filter);
             return query;
+        }
+
+        private void insertFakeBusLine(BusLine busLine)
+        {
+
         }
 
         [Test]
@@ -157,9 +162,9 @@ namespace GlogowskiBus.UnitTests
             try
             {
                 // Act
-                busService.CreateRoute("1", "Some description", newBusLinePoints);
+                busService.CreateRoute("1", "Some description", fakeRoutePoints);
             }
-            catch (BusNumberTakenException e)
+            catch (Exception e)
             {
                 // Assert
                 if (e.Message == "Bus number is already taken")
@@ -184,11 +189,25 @@ namespace GlogowskiBus.UnitTests
             BusService busService = new BusService(unitOfWork);
 
             // Act
-            busService.CreateRoute("0", "Some description", newBusLinePoints);
+            busService.CreateRoute("3", "Some description", fakeRoutePoints);
 
             // Arrange
-            busLineRepository.Received(1).Insert(Arg.Any<BusLine>());
-            pointRepository.Received(3).Insert(Arg.Any<Point>());
+            busLineRepository.Received().Insert(Arg.Is<BusLine>(x => x.BusNumber == "3" && x.Description == "Some description"));
+            pointRepository.Received().Insert(Arg.Is<Point>(x => x.Latitude == 1.2 &&
+                                                                 x.Longitude == 4.5 &&
+                                                                 x.IsBusStop &&
+                                                                 x.TimeOffset == 0 &&
+                                                                 x.Order == 0));
+            pointRepository.Received().Insert(Arg.Is<Point>(x => x.Latitude == 2.3 &&
+                                                                 x.Longitude == 5.6 &&
+                                                                 !x.IsBusStop &&
+                                                                 x.TimeOffset == 1000 &&
+                                                                 x.Order == 1));
+            pointRepository.Received().Insert(Arg.Is<Point>(x => x.Latitude == 3.4 &&
+                                                                 x.Longitude == 6.7 &&
+                                                                 x.IsBusStop &&
+                                                                 x.TimeOffset == 2000 &&
+                                                                 x.Order == 2));
             unitOfWork.Received().Save();
         }
     }
