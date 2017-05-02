@@ -65,6 +65,10 @@
     <Compile Include="Migrations\201704251815512_Remove coordinates entity.Designer.cs">
       <DependentUpon>201704251815512_Remove coordinates entity.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705011801160_Add TimeOffset property to Point entity.cs" />
+    <Compile Include="Migrations\201705011801160_Add TimeOffset property to Point entity.Designer.cs">
+      <DependentUpon>201705011801160_Add TimeOffset property to Point entity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -78,6 +82,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201704251815512_Remove coordinates entity.resx">
       <DependentUpon>201704251815512_Remove coordinates entity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705011801160_Add TimeOffset property to Point entity.resx">
+      <DependentUpon>201705011801160_Add TimeOffset property to Point entity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

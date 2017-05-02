@@ -17,7 +17,7 @@ namespace GlogowskiBus.UnitTests
     class BusServiceTests
     {
         private static BusLine[] busLines = new BusLine[]
-        {  
+        {
             new BusLine
             {
                  BusLineId = 1,
@@ -69,9 +69,44 @@ namespace GlogowskiBus.UnitTests
             }
         };
 
+        private static List<RoutePoint> newBusLinePoints = new List<RoutePoint>()
+        {
+            new RoutePoint()
+            {
+                Latitude = 1.2,
+                Longitude = 4.5,
+                IsBusStop = true,
+                TimeOffset = 0
+            },
+            new RoutePoint()
+            {
+                Latitude = 2.3,
+                Longitude = 5.6,
+                IsBusStop = false,
+                TimeOffset = 1000
+            },
+            new RoutePoint()
+            {
+                Latitude = 3.4,
+                Longitude = 6.7,
+                IsBusStop = true,
+                TimeOffset = 2000
+            }
+    };
+
         private IEnumerable<Point> getPoints(IEnumerable<Expression<Func<Point, bool>>> filters = null)
         {
             IQueryable<Point> query = points.AsQueryable();
+            if (filters != null)
+                foreach (var filter in filters)
+                    if (filter != null)
+                        query = query.Where(filter);
+            return query;
+        }
+
+        private IEnumerable<BusLine> getBusLines(IEnumerable<Expression<Func<BusLine, bool>>> filters = null)
+        {
+            IQueryable<BusLine> query = busLines.AsQueryable();
             if (filters != null)
                 foreach (var filter in filters)
                     if (filter != null)
@@ -105,6 +140,55 @@ namespace GlogowskiBus.UnitTests
             Assert.AreEqual("1", result[1].BusNumbers[0]);
             Assert.AreEqual(5.6, result[1].Latitude);
             Assert.AreEqual(6.7, result[1].Longitude);
+        }
+
+        [Test]
+        public void CreateRoute_WhenBusNumberAlreadyTaken_ThrowsException()
+        {
+            // Arrange
+            IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
+            busLineRepository.Get(Arg.Any<List<Expression<Func<BusLine, bool>>>>()).Returns(x => getBusLines((List<Expression<Func<BusLine, bool>>>)x[0]));
+
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusLineRepository.Returns(busLineRepository);
+
+            BusService busService = new BusService(unitOfWork);
+            
+            try
+            {
+                // Act
+                busService.CreateRoute("1", "Some description", newBusLinePoints);
+            }
+            catch (BusNumberTakenException e)
+            {
+                // Assert
+                if (e.Message == "Bus number is already taken")
+                    Assert.Pass();
+            }
+           
+        }
+
+        [Test]
+        public void CreateRoute_WhenCalledWithProperAgruments_AddsNewRouteToRepository()
+        {
+            // Arrange
+            IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
+            busLineRepository.Get(Arg.Any<List<Expression<Func<BusLine, bool>>>>()).Returns(x => getBusLines((List<Expression<Func<BusLine, bool>>>)x[0]));
+
+            IRepository<Point, int> pointRepository = Substitute.For<IRepository<Point, int>>();
+
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusLineRepository.Returns(busLineRepository);
+            unitOfWork.PointRepository.Returns(pointRepository);
+
+            BusService busService = new BusService(unitOfWork);
+
+            // Act
+            busService.CreateRoute("0", "Some description", newBusLinePoints);
+
+            // Arrange
+            busLineRepository.Received(1).Insert(Arg.Any<BusLine>());
+            pointRepository.Received(3).Insert(Arg.Any<Point>());
         }
     }
 }
