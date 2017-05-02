@@ -16,7 +16,7 @@ namespace GlogowskiBus.UnitTests
     [TestFixture]
     class HomeControllerTests
     {
-        private static BLL.Concrete.BusStop[] busStops = new BLL.Concrete.BusStop[]
+        private static BLL.Concrete.BusStop[] fakeBusStops = new BLL.Concrete.BusStop[]
         {
             new BLL.Concrete.BusStop()
             {
@@ -32,12 +32,89 @@ namespace GlogowskiBus.UnitTests
             }
         };
 
+        private static List<BLL.Concrete.BusLine> fakeBusLines = new List<BLL.Concrete.BusLine>()
+        {
+            new BLL.Concrete.BusLine
+            {
+                BusNumber = "1",
+                Description = "Description 1",
+                RoutePoints = new List<BLL.Concrete.RoutePoint>()
+                {
+                    new BLL.Concrete.RoutePoint()
+                    {
+                        Latitude = 3.4,
+                        Longitude = 4.5,
+                        IsBusStop = true,
+                        TimeOffset = 0
+                    },
+                    new BLL.Concrete.RoutePoint()
+                    {
+                        Latitude = 1.2,
+                        Longitude = 3.4,
+                        IsBusStop = false,
+                        TimeOffset = 1000
+                    },
+                    new BLL.Concrete.RoutePoint()
+                    {
+                        Latitude = 5.6,
+                        Longitude = 6.7,
+                        IsBusStop = true,
+                        TimeOffset = 2000
+                    }
+                },
+                TimeTable = new List<BLL.Concrete.DepartureTime>()
+                {
+                    new BLL.Concrete.DepartureTime()
+                    {
+                        Hours = 0,
+                        Minutes = 30,
+                        WorkingDay = true,
+                        Saturday = false,
+                        Sunday = false
+                    }
+                }
+            },
+            new BLL.Concrete.BusLine()
+            {
+                BusNumber = "2",
+                Description = "Description 2",
+                RoutePoints = new List<BLL.Concrete.RoutePoint>()
+                {
+                    new BLL.Concrete.RoutePoint()
+                    {
+                        Latitude = 3.4,
+                        Longitude = 4.5,
+                        IsBusStop = true,
+                        TimeOffset = 0
+                    },
+                    new BLL.Concrete.RoutePoint()
+                    {
+                        Latitude = 7.8,
+                        Longitude = 8.9,
+                        IsBusStop = false,
+                        TimeOffset = 500
+                    }
+                },
+                TimeTable = new List<BLL.Concrete.DepartureTime>()
+                {
+                    new BLL.Concrete.DepartureTime()
+                    {
+                        Hours = 4,
+                        Minutes = 0,
+                        WorkingDay = false,
+                        Saturday = false,
+                        Sunday = true
+                    }
+                }
+            }
+        };
+
         [Test]
         public void GetCreateRoute_WhenCalled_ReturnsModelWithAllBusStops()
         {
             //Arrange
             IBusService busService = Substitute.For<IBusService>();
-            busService.GetAllBusStops().Returns(busStops);
+            busService.GetAllBusStops().Returns(fakeBusStops);
 
             // Act
             HomeController homeController = new HomeController(busService);
@@ -64,7 +141,7 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IBusService busService = Substitute.For<IBusService>();
-            busService.GetAllBusStops().Returns(busStops);
+            busService.GetAllBusStops().Returns(fakeBusStops);
             HomeIndexViewModel model = new HomeIndexViewModel
             {
                 BusNumber = "3",
@@ -109,7 +186,7 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IBusService busService = Substitute.For<IBusService>();
-            busService.GetAllBusStops().Returns(busStops);
+            busService.GetAllBusStops().Returns(fakeBusStops);
             busService.When(x => x.CreateRoute(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<List<BLL.Concrete.RoutePoint>>())).Do(x => { throw new Exception("Exception message"); });
             HomeIndexViewModel model = new HomeIndexViewModel
             {
@@ -170,7 +247,7 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IBusService busService = Substitute.For<IBusService>();
-            busService.GetAllBusStops().Returns(busStops);
+            busService.GetAllBusStops().Returns(fakeBusStops);
             HomeIndexViewModel model = new HomeIndexViewModel
             {
                 BusNumber = "3",
@@ -202,6 +279,77 @@ namespace GlogowskiBus.UnitTests
                                                                                                                   x.Count == 3));
             Assert.AreEqual("Index", redirectResult.RouteValues["action"]);
             Assert.AreEqual("Home", redirectResult.RouteValues["controller"]);
+        }
+
+        [Test]
+        public void BusPositions()
+        {
+            // Arrange
+            IBusService busService = Substitute.For<IBusService>();
+            busService.GetAllBusLines().Returns(fakeBusLines);
+
+            // Act
+            HomeController homeController = new HomeController(busService);
+            ViewResult viewResult = homeController.BusPositions();
+            HomeBusPositionsViewModel model = viewResult.Model as HomeBusPositionsViewModel;
+
+            // Assert
+            busService.Received().GetAllBusLines();
+
+            Assert.AreEqual(2, model.BusLines.Count);
+
+            Assert.AreEqual("1", model.BusLines[0].BusNumber);
+            Assert.AreEqual("Description 1", model.BusLines[0].Description);
+
+            Assert.AreEqual(3, model.BusLines[0].RoutePoints.Count);
+
+            Assert.AreEqual(3.4, model.BusLines[0].RoutePoints[0].Latitude);
+            Assert.AreEqual(4.5, model.BusLines[0].RoutePoints[0].Longitude);
+            Assert.AreEqual(true, model.BusLines[0].RoutePoints[0].IsBusStop);
+            Assert.AreEqual(0, model.BusLines[0].RoutePoints[0].TimeOffset);
+
+            Assert.AreEqual(1.2, model.BusLines[0].RoutePoints[1].Latitude);
+            Assert.AreEqual(3.4, model.BusLines[0].RoutePoints[1].Longitude);
+            Assert.AreEqual(false, model.BusLines[0].RoutePoints[1].IsBusStop);
+            Assert.AreEqual(1000, model.BusLines[0].RoutePoints[1].TimeOffset);
+
+            Assert.AreEqual(5.6, model.BusLines[0].RoutePoints[2].Latitude);
+            Assert.AreEqual(6.7, model.BusLines[0].RoutePoints[2].Longitude);
+            Assert.AreEqual(true, model.BusLines[0].RoutePoints[2].IsBusStop);
+            Assert.AreEqual(2000, model.BusLines[0].RoutePoints[2].TimeOffset);
+
+            Assert.AreEqual(1, model.BusLines[0].TimeTable.Count);
+
+            Assert.AreEqual(0, model.BusLines[0].TimeTable[0].Hours);
+            Assert.AreEqual(30, model.BusLines[0].TimeTable[0].Minutes);
+            Assert.AreEqual(true, model.BusLines[0].TimeTable[0].WorkingDay);
+            Assert.AreEqual(false, model.BusLines[0].TimeTable[0].Saturday);
+            Assert.AreEqual(false, model.BusLines[0].TimeTable[0].Sunday);
+
+            Assert.AreEqual("2", model.BusLines[1].BusNumber);
+            Assert.AreEqual("Description 2", model.BusLines[1].Description);
+
+            Assert.AreEqual(2, model.BusLines[1].RoutePoints.Count);
+
+            Assert.AreEqual(3.4, model.BusLines[1].RoutePoints[0].Latitude);
+            Assert.AreEqual(4.5, model.BusLines[1].RoutePoints[0].Longitude);
+            Assert.AreEqual(true, model.BusLines[1].RoutePoints[0].IsBusStop);
+            Assert.AreEqual(0, model.BusLines[1].RoutePoints[0].TimeOffset);
+
+            Assert.AreEqual(7.8, model.BusLines[1].RoutePoints[1].Latitude);
+            Assert.AreEqual(8.9, model.BusLines[1].RoutePoints[1].Longitude);
+            Assert.AreEqual(false, model.BusLines[1].RoutePoints[1].IsBusStop);
+            Assert.AreEqual(500, model.BusLines[1].RoutePoints[1].TimeOffset);
+
+            Assert.AreEqual(1, model.BusLines[1].TimeTable.Count);
+
+            Assert.AreEqual(4, model.BusLines[1].TimeTable[0].Hours);
+            Assert.AreEqual(0, model.BusLines[1].TimeTable[0].Minutes);
+            Assert.AreEqual(false, model.BusLines[1].TimeTable[0].WorkingDay);
+            Assert.AreEqual(false, model.BusLines[1].TimeTable[0].Saturday);
+            Assert.AreEqual(true, model.BusLines[1].TimeTable[0].Sunday);
+
+            Assert.AreEqual("BusPositions", viewResult.ViewName);
         }
     }
 }
