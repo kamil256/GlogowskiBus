@@ -16,7 +16,7 @@ namespace GlogowskiBus.UnitTests
     [TestFixture]
     class BusServiceTests
     {
-        private static BusLine[] busLines = new BusLine[]
+        private static BusLine[] fakeBusLines = new BusLine[]
         {
             new BusLine
             {
@@ -30,39 +30,39 @@ namespace GlogowskiBus.UnitTests
             }
         };
 
-        private static Point[] points = new Point[]
+        private static Point[] fakePoints = new Point[]
         {
             new Point
             {
-                BusLine = busLines[0],
+                BusLine = fakeBusLines[0],
                 Latitude = 1.2,
                 Longitude = 2.3,
                 IsBusStop = false
             },
             new Point
             {
-                BusLine = busLines[0],
+                BusLine = fakeBusLines[0],
                 Latitude = 3.4,
                 Longitude = 4.5,
                 IsBusStop = true
             },
             new Point
             {
-                BusLine = busLines[0],
+                BusLine = fakeBusLines[0],
                 Latitude = 5.6,
                 Longitude = 6.7,
                 IsBusStop = true
             },
             new Point
             {
-                BusLine = busLines[1],
+                BusLine = fakeBusLines[1],
                 Latitude = 3.4,
                 Longitude = 4.5,
                 IsBusStop = true
             },
             new Point
             {
-                BusLine = busLines[1],
+                BusLine = fakeBusLines[1],
                 Latitude = 7.8,
                 Longitude = 8.9,
                 IsBusStop = false
@@ -94,9 +94,9 @@ namespace GlogowskiBus.UnitTests
             }
     };
 
-        private IEnumerable<Point> getPoints(IEnumerable<Expression<Func<Point, bool>>> filters = null)
+        private IEnumerable<Point> getFakePoints(IEnumerable<Expression<Func<Point, bool>>> filters = null)
         {
-            IQueryable<Point> query = points.AsQueryable();
+            IQueryable<Point> query = fakePoints.AsQueryable();
             if (filters != null)
                 foreach (var filter in filters)
                     if (filter != null)
@@ -104,9 +104,9 @@ namespace GlogowskiBus.UnitTests
             return query;
         }
 
-        private IEnumerable<BusLine> getBusLines(IEnumerable<Expression<Func<BusLine, bool>>> filters = null)
+        private IEnumerable<BusLine> getFakeBusLines(IEnumerable<Expression<Func<BusLine, bool>>> filters = null)
         {
-            IQueryable<BusLine> query = busLines.AsQueryable();
+            IQueryable<BusLine> query = fakeBusLines.AsQueryable();
             if (filters != null)
                 foreach (var filter in filters)
                     if (filter != null)
@@ -119,7 +119,7 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IRepository<Point, int> pointRepository = Substitute.For<IRepository<Point, int>>();
-            pointRepository.Get(Arg.Any<List<Expression<Func<Point, bool>>>>()).Returns(x => getPoints((List<Expression<Func<Point, bool>>>)x[0]));
+            pointRepository.Get(Arg.Any<List<Expression<Func<Point, bool>>>>()).Returns(x => getFakePoints((List<Expression<Func<Point, bool>>>)x[0]));
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.PointRepository.Returns(pointRepository);
@@ -147,7 +147,7 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
-            busLineRepository.Get(Arg.Any<List<Expression<Func<BusLine, bool>>>>()).Returns(x => getBusLines((List<Expression<Func<BusLine, bool>>>)x[0]));
+            busLineRepository.Get(Arg.Any<List<Expression<Func<BusLine, bool>>>>()).Returns(x => getFakeBusLines((List<Expression<Func<BusLine, bool>>>)x[0]));
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusLineRepository.Returns(busLineRepository);
@@ -173,7 +173,7 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IRepository<BusLine, int> busLineRepository = Substitute.For<IRepository<BusLine, int>>();
-            busLineRepository.Get(Arg.Any<List<Expression<Func<BusLine, bool>>>>()).Returns(x => getBusLines((List<Expression<Func<BusLine, bool>>>)x[0]));
+            busLineRepository.Get(Arg.Any<List<Expression<Func<BusLine, bool>>>>()).Returns(x => getFakeBusLines((List<Expression<Func<BusLine, bool>>>)x[0]));
 
             IRepository<Point, int> pointRepository = Substitute.For<IRepository<Point, int>>();
 
