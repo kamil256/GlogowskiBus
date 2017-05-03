@@ -7,13 +7,13 @@ namespace GlogowskiBus.DAL.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class AddTimeOffsetpropertytoPointentity : IMigrationMetadata
+    public sealed partial class Initialmigration : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(AddTimeOffsetpropertytoPointentity));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Initialmigration));
         
         string IMigrationMetadata.Id
         {
-            get { return "201705011801160_Add TimeOffset property to Point entity"; }
+            get { return "201705031522061_Initial migration."; }
         }
         
         string IMigrationMetadata.Source

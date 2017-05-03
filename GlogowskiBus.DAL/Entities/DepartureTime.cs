@@ -9,13 +9,13 @@ namespace GlogowskiBus.DAL.Entities
     public class DepartureTime
     {
         public int DepartureTimeId { get; set; }
-        public int BusLineId { get; set; }
-        public int Hour { get; set; }
-        public int Minute { get; set; }
+        public int RouteId { get; set; }
+        public int Hours { get; set; }
+        public int Minutes { get; set; }
         public bool WorkingDay { get; set; }
         public bool Saturday { get; set; }
         public bool Sunday { get; set; }
 
-        public virtual BusLine BusLine { get; set; }
+        public virtual Route Route { get; set; }
     }
 }

@@ -10,9 +10,7 @@ namespace GlogowskiBus.DAL.Entities
     {
         public int BusLineId { get; set; }
         public string BusNumber { get; set; }
-        public string Description { get; set; }
 
-        public virtual ICollection<DepartureTime> Schedules { get; set; }
-        public virtual ICollection<Point> Points { get; set; }
+        public virtual ICollection<Route> Routes { get; set; }
     }
 }
