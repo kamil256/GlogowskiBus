@@ -158,7 +158,8 @@
     <Compile Include="Models\DepartureTime.cs" />
     <Compile Include="Models\HomeBusPositionsViewModel.cs" />
     <Compile Include="Models\HomeIndexViewModel.cs" />
-    <Compile Include="Models\RoutePoint.cs" />
+    <Compile Include="Models\Route.cs" />
+    <Compile Include="Models\Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

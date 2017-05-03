@@ -9,11 +9,11 @@ namespace GlogowskiBus.UI.Models
     public class HomeIndexViewModel
     {
         public IEnumerable<BusStop> BusStops { get; set; }
-        public IList<RoutePoint> RoutePoints { get; set; }
+        public IList<Point> Points { get; set; }
 
         [Required, StringLength(100)]
         public string BusNumber { get; set; }
-        public string Description { get; set; }
+        public string RouteDetails { get; set; }
 
         [Required]
         public double[] Latitudes { get; set; }

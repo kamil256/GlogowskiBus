@@ -626,22 +626,22 @@ namespace GlogowskiBus.UnitTests
             Assert.AreEqual(1, busLines[0].Routes.Count);
             Assert.AreEqual("Route details", busLines[0].Routes[0].Details);
 
-            Assert.AreEqual(3, busLines[0].Routes[0].RoutePoints.Count);
+            Assert.AreEqual(3, busLines[0].Routes[0].Points.Count);
 
-            Assert.AreEqual(1.2, busLines[0].Routes[0].RoutePoints[0].Latitude);
-            Assert.AreEqual(2.3, busLines[0].Routes[0].RoutePoints[0].Longitude);
-            Assert.AreEqual(true, busLines[0].Routes[0].RoutePoints[0].IsBusStop);
-            Assert.AreEqual(0, busLines[0].Routes[0].RoutePoints[0].TimeOffset);
+            Assert.AreEqual(1.2, busLines[0].Routes[0].Points[0].Latitude);
+            Assert.AreEqual(2.3, busLines[0].Routes[0].Points[0].Longitude);
+            Assert.AreEqual(true, busLines[0].Routes[0].Points[0].IsBusStop);
+            Assert.AreEqual(0, busLines[0].Routes[0].Points[0].TimeOffset);
 
-            Assert.AreEqual(3.4, busLines[0].Routes[0].RoutePoints[1].Latitude);
-            Assert.AreEqual(4.5, busLines[0].Routes[0].RoutePoints[1].Longitude);
-            Assert.AreEqual(false, busLines[0].Routes[0].RoutePoints[1].IsBusStop);
-            Assert.AreEqual(1000, busLines[0].Routes[0].RoutePoints[1].TimeOffset);
+            Assert.AreEqual(3.4, busLines[0].Routes[0].Points[1].Latitude);
+            Assert.AreEqual(4.5, busLines[0].Routes[0].Points[1].Longitude);
+            Assert.AreEqual(false, busLines[0].Routes[0].Points[1].IsBusStop);
+            Assert.AreEqual(1000, busLines[0].Routes[0].Points[1].TimeOffset);
 
-            Assert.AreEqual(5.6, busLines[0].Routes[0].RoutePoints[2].Latitude);
-            Assert.AreEqual(6.7, busLines[0].Routes[0].RoutePoints[2].Longitude);
-            Assert.AreEqual(true, busLines[0].Routes[0].RoutePoints[2].IsBusStop);
-            Assert.AreEqual(2000, busLines[0].Routes[0].RoutePoints[2].TimeOffset);
+            Assert.AreEqual(5.6, busLines[0].Routes[0].Points[2].Latitude);
+            Assert.AreEqual(6.7, busLines[0].Routes[0].Points[2].Longitude);
+            Assert.AreEqual(true, busLines[0].Routes[0].Points[2].IsBusStop);
+            Assert.AreEqual(2000, busLines[0].Routes[0].Points[2].TimeOffset);
 
             Assert.AreEqual(1, busLines[0].Routes[0].DepartureTimes.Count);
 

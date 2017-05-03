@@ -5,7 +5,7 @@ using System.Web;
 
 namespace GlogowskiBus.UI.Models
 {
-    public class RoutePoint
+    public class Point
     {
         public bool IsBusStop { get; set; }
         public double Latitude { get; set; }

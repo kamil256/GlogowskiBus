@@ -102,7 +102,7 @@ namespace GlogowskiBus.BLL.Concrete
                 Routes = x.Routes.Select(y => new Route()
                 {
                     Details = y.Details,
-                    RoutePoints = y.Points.OrderBy(z => z.TimeOffset).Select(z => new Point()
+                    Points = y.Points.OrderBy(z => z.TimeOffset).Select(z => new Point()
                     {
                         Latitude = z.Latitude,
                         Longitude = z.Longitude,
