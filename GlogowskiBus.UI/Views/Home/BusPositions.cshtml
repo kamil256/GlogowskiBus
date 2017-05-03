@@ -100,26 +100,29 @@
         {
             for (var i = 0; i < busLines.length; i++)
             {
-                for (var j = 0; j < busLines[i].TimeTable.length; j++)
+                for (var r = 0; r < busLines[i].Routes.length; r++)
                 {
-                    var departureHours = busLines[i].TimeTable[j].Hours;
-                    var departureMinutes = busLines[i].TimeTable[j].Minutes;
-                    var departureTotalMilliseconds =  new Date(2017, 5 - 1, 3, departureHours, departureMinutes, 0).getTime();
-                    var arrivalTotalMilliseconds =  departureTotalMilliseconds + busLines[i].RoutePoints[busLines[i].RoutePoints.length - 1].TimeOffset;
-                    if (serverTime.getTotalMilliseconds() >= departureTotalMilliseconds && serverTime.getTotalMilliseconds() < arrivalTotalMilliseconds) 
+                    for (var j = 0; j < busLines[i].Routes[r].DepartureTimes.length; j++)
                     {
-                        var busAdded = false;
-                        for (var k = 0; k < buses.length; k++)
+                        var departureHours = busLines[i].Routes[r].DepartureTimes[j].Hours;
+                        var departureMinutes = busLines[i].Routes[r].DepartureTimes[j].Minutes;
+                        var departureTotalMilliseconds =  new Date(2017, 5 - 1, 3, departureHours, departureMinutes, 0).getTime();
+                        var arrivalTotalMilliseconds =  departureTotalMilliseconds + busLines[i].Routes[r].Points[busLines[i].Routes[r].Points.length - 1].TimeOffset;
+                        if (serverTime.getTotalMilliseconds() >= departureTotalMilliseconds && serverTime.getTotalMilliseconds() < arrivalTotalMilliseconds) 
                         {
-                            if (buses[k].busNumber === busLines[i].BusNumber && buses[k].departureHours === departureHours && buses[k].departureMinutes === departureMinutes)
+                            var busAdded = false;
+                            for (var k = 0; k < buses.length; k++)
                             {
-                                busAdded = true;
-                                break;
+                                if (buses[k].busNumber === busLines[i].BusNumber && buses[k].departureHours === departureHours && buses[k].departureMinutes === departureMinutes)
+                                {
+                                    busAdded = true;
+                                    break;
+                                }
                             }
-                        }
-                        if (!busAdded)
-                        {
-                            buses.push(new Bus(busLines[i].BusNumber, busLines[i].RoutePoints, serverTime.getTotalMilliseconds() - departureTotalMilliseconds, departureHours, departureMinutes));
+                            if (!busAdded)
+                            {
+                                buses.push(new Bus(busLines[i].BusNumber, busLines[i].Routes[r].Points, serverTime.getTotalMilliseconds() - departureTotalMilliseconds, departureHours, departureMinutes));
+                            }
                         }
                     }
                 }

@@ -170,59 +170,6 @@ namespace GlogowskiBus.UnitTests
         }
 
         [Test]
-        public void CreateRoute_WhenBusStopDoesNotExist_ThrowsException()
-        {
-            // Arrange
-            IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
-            busStopRepository.Get().Returns(fakeBusStops);
-
-            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
-            busLineRepository.Get().Returns(fakeBusLines);
-
-            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
-            unitOfWork.BusLineRepository.Returns(busLineRepository);
-
-            BusService busService = new BusService(unitOfWork);
-
-            try
-            {
-                // Act
-                busService.CreateRoute("2", "Some details", new List<BLL.Concrete.Point>
-                {
-                    new BLL.Concrete.Point()
-                    {
-                        Latitude = 1.2,
-                        Longitude = 4.5,
-                        IsBusStop = true,
-                        TimeOffset = 0
-                    },
-                    new BLL.Concrete.Point()
-                    {
-                        Latitude = 2.3,
-                        Longitude = 5.6,
-                        IsBusStop = false,
-                        TimeOffset = 1000
-                    },
-                    new BLL.Concrete.Point()
-                    {
-                        Latitude = 5.6,
-                        Longitude = 6.7,
-                        IsBusStop = true,
-                        TimeOffset = 2000
-                    }
-                });
-            }
-            catch (Exception e)
-            {
-                // Assert
-                Assert.AreEqual("Bus stop doesn't exist!", e.Message);
-                unitOfWork.DidNotReceive().Save();
-                Assert.Pass();
-            }
-            Assert.Fail("Exception should be thrown!");
-        }
-
-        [Test]
         public void CreateRoute_WhenRouteHasLessThanTwoPoints_ThrowsException()
         {
             // Arrange
@@ -459,6 +406,78 @@ namespace GlogowskiBus.UnitTests
         }
 
         [Test]
+        public void CreateRoute_WhenBusStopDoesNotExist_CreatesBusStopAndAddsNewRouteToRepository()
+        {
+            // Arrange
+            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
+            busLineRepository.Get().Returns(fakeBusLines);
+
+            IRepository<DAL.Entities.Route, int> routeRepository = Substitute.For<IRepository<DAL.Entities.Route, int>>();
+
+            IRepository<DAL.Entities.Point, int> pointRepository = Substitute.For<IRepository<DAL.Entities.Point, int>>();
+
+            IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
+            busStopRepository.Get().Returns(fakeBusStops);
+
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusLineRepository.Returns(busLineRepository);
+            unitOfWork.RouteRepository.Returns(routeRepository);
+            unitOfWork.PointRepository.Returns(pointRepository);
+            unitOfWork.BusStopRepository.Returns(busStopRepository);
+
+            BusService busService = new BusService(unitOfWork);
+
+            // Act
+            busService.CreateRoute("2", "Some details", new List<BLL.Concrete.Point>
+            {
+                new BLL.Concrete.Point()
+                {
+                    Latitude = 1.2,
+                    Longitude = 2.3,
+                    IsBusStop = true,
+                    TimeOffset = 0
+                },
+                new BLL.Concrete.Point()
+                {
+                    Latitude = 2.3,
+                    Longitude = 5.6,
+                    IsBusStop = true,
+                    TimeOffset = 1000
+                },
+                new BLL.Concrete.Point()
+                {
+                    Latitude = 5.6,
+                    Longitude = 6.7,
+                    IsBusStop = true,
+                    TimeOffset = 2000
+                }
+            });
+
+            // Assert
+            busLineRepository.Received().Insert(Arg.Is<DAL.Entities.BusLine>(x => x.BusNumber == "2"));
+
+            routeRepository.Received().Insert(Arg.Is<DAL.Entities.Route>(x => x.Details == "Some details" &&
+                                                                              x.BusLine != null));
+
+            busStopRepository.Received().Insert(Arg.Is<DAL.Entities.BusStop>(x => x.Name == "New bus stop"));
+
+            pointRepository.Received().Insert(Arg.Is<DAL.Entities.Point>(x => x.Latitude == 1.2 &&
+                                                                              x.Longitude == 2.3 &&
+                                                                              x.TimeOffset == 0 &&
+                                                                              x.BusStop != null));
+            pointRepository.Received().Insert(Arg.Is<DAL.Entities.Point>(x => x.Latitude == 2.3 &&
+                                                                              x.Longitude == 5.6 &&
+                                                                              x.TimeOffset == 1000 &&
+                                                                              x.BusStop != null));
+            pointRepository.Received().Insert(Arg.Is<DAL.Entities.Point>(x => x.Latitude == 5.6 &&
+                                                                              x.Longitude == 6.7 &&
+                                                                              x.TimeOffset == 2000 &&
+                                                                              x.BusStop != null));
+
+            unitOfWork.Received().Save();
+        }
+
+        [Test]
         public void CreateRoute_WhenBusNumberExists_AddsNewRouteToRepository()
         {
             // Arrange
@@ -506,7 +525,7 @@ namespace GlogowskiBus.UnitTests
                 }
             });
 
-            // Arrange
+            // Assert
             busLineRepository.DidNotReceive().Insert(Arg.Any<DAL.Entities.BusLine>());
 
             routeRepository.Received().Insert(Arg.Is<DAL.Entities.Route>(x => x.Details == "Some details" &&
@@ -578,7 +597,7 @@ namespace GlogowskiBus.UnitTests
                 }
             });
 
-            // Arrange
+            // Assert
             busLineRepository.Received().Insert(Arg.Is<DAL.Entities.BusLine>(x => x.BusNumber == "2"));
 
             routeRepository.Received().Insert(Arg.Is<DAL.Entities.Route>(x => x.Details == "Some details" &&

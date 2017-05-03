@@ -78,7 +78,13 @@ namespace GlogowskiBus.BLL.Concrete
                     busStop = unitOfWork.BusStopRepository.Get().FirstOrDefault(x => x.Points.ElementAt(0).Latitude == routePoints[i].Latitude &&
                                                                                      x.Points.ElementAt(0).Longitude == routePoints[i].Longitude);
                     if (busStop == null)
-                        throw new Exception("Bus stop doesn't exist!");
+                    {
+                        busStop = new DAL.Entities.BusStop()
+                        {
+                            Name = "New bus stop"
+                        };
+                        unitOfWork.BusStopRepository.Insert(busStop);
+                    }
                 }
                 DAL.Entities.Point newPoint = new DAL.Entities.Point()
                 {
