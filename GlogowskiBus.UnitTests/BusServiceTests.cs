@@ -16,542 +16,640 @@ namespace GlogowskiBus.UnitTests
     [TestFixture]
     class BusServiceTests
     {
-        //private static DAL.Entities.BusLine[] fakeBusLines = new DAL.Entities.BusLine[]
-        //{
-        //    new DAL.Entities.BusLine
-        //    {
-        //        BusLineId = 1,
-        //        BusNumber = "1",
-        //        Description = "Description 1"                
-        //    },
-        //    new DAL.Entities.BusLine
-        //    {
-        //        BusLineId = 2,
-        //        BusNumber = "2",
-        //        Description = "Description 2"
-        //    }
-        //};
+        private static List<DAL.Entities.BusLine> fakeBusLines = new List<DAL.Entities.BusLine>()
+        {
+            new DAL.Entities.BusLine
+            {
+                BusLineId = 1,
+                BusNumber = "1",
+            }
+        };
 
-        //private static Point[] fakePoints = new Point[]
-        //{
-        //    new Point
-        //    {
-        //        BusLine = fakeBusLines[0],
-        //        Latitude = 1.2,
-        //        Longitude = 2.3,
-        //        IsBusStop = false,
-        //        TimeOffset = 1000
-        //    },
-        //    new Point
-        //    {
-        //        BusLine = fakeBusLines[0],
-        //        Latitude = 3.4,
-        //        Longitude = 4.5,
-        //        IsBusStop = true,
-        //        TimeOffset = 0
-        //    },
-        //    new Point
-        //    {
-        //        BusLine = fakeBusLines[0],
-        //        Latitude = 5.6,
-        //        Longitude = 6.7,
-        //        IsBusStop = true,
-        //        TimeOffset = 2000
-        //    },
-        //    new Point
-        //    {
-        //        BusLine = fakeBusLines[1],
-        //        Latitude = 3.4,
-        //        Longitude = 4.5,
-        //        IsBusStop = true,
-        //        TimeOffset = 0
-        //    },
-        //    new Point
-        //    {
-        //        BusLine = fakeBusLines[1],
-        //        Latitude = 7.8,
-        //        Longitude = 8.9,
-        //        IsBusStop = false,
-        //        TimeOffset = 500
-        //    }
-        //};
+        private static List<DAL.Entities.Route> fakeRoutes = new List<DAL.Entities.Route>()
+        {
+            new DAL.Entities.Route()
+            {
+                Details = "Route details",
+                BusLine = fakeBusLines[0]
+            }
+        };
 
-        //private static DAL.Entities.DepartureTime[] fakeDepartureTimes = new DAL.Entities.DepartureTime[]
-        //{
-        //    new DAL.Entities.DepartureTime()
-        //    {
-        //        BusLine = fakeBusLines[0],
-        //        Hour = 0,
-        //        Minute = 30,
-        //        WorkingDay = true,
-        //        Saturday = false,
-        //        Sunday = false
-        //    },
-        //    new DAL.Entities.DepartureTime()
-        //    {
-        //        BusLine = fakeBusLines[1],
-        //        Hour = 4,
-        //        Minute = 0,
-        //        WorkingDay = false,
-        //        Saturday = false,
-        //        Sunday = true
-        //    }
-        //};
+        private static List<DAL.Entities.BusStop> fakeBusStops = new List<DAL.Entities.BusStop>()
+        {
+            new DAL.Entities.BusStop()
+            {
+                Name = "Bus stop 1"
+            },
+            new DAL.Entities.BusStop()
+            {
+                Name = "Bus stop 2"
+            }
+        };
 
-        //public BusServiceTests()
-        //{
-        //    fakeBusLines[0].Points = new List<Point> { fakePoints[0], fakePoints[1], fakePoints[2] };
-        //    fakeBusLines[0].Schedules = new List<DAL.Entities.DepartureTime> { fakeDepartureTimes[0] };
+        private static List<DAL.Entities.Point> fakePoints = new List<DAL.Entities.Point>()
+        {
+            new DAL.Entities.Point
+            {
+                Latitude = 1.2,
+                Longitude = 2.3,
+                TimeOffset = 0,
+                Route = fakeRoutes[0],
+                BusStop = fakeBusStops[0]
+            },
+            new DAL.Entities.Point
+            {
+                Latitude = 3.4,
+                Longitude = 4.5,
+                TimeOffset = 1000,
+                Route = fakeRoutes[0],
+                BusStop = null
+            },
+            new DAL.Entities.Point
+            {
+                Latitude = 5.6,
+                Longitude = 6.7,
+                TimeOffset = 2000,
+                Route = fakeRoutes[0],
+                BusStop = fakeBusStops[1]
+            }
+        };
 
-        //    fakeBusLines[1].Points = new List<Point> { fakePoints[3], fakePoints[4] };
-        //    fakeBusLines[1].Schedules = new List<DAL.Entities.DepartureTime> { fakeDepartureTimes[1] };
-        //}
+        private static List<DAL.Entities.DepartureTime> fakeDepartureTimes = new List<DAL.Entities.DepartureTime>()
+        {
+            new DAL.Entities.DepartureTime()
+            {
+                Hours = 12,
+                Minutes = 30,
+                WorkingDay = true,
+                Saturday = false,
+                Sunday = false,
+                Route = fakeRoutes[0]
+            }
+        };
 
-        //[Test]
-        //public void GetAllBusStops_WhenCalled_ReturnsAllBusStops()
-        //{
-        //    // Arrange
-        //    IRepository<Point, int> pointRepository = Substitute.For<IRepository<Point, int>>();
-        //    pointRepository.Get().Returns(fakePoints);
+        public BusServiceTests()
+        {
+            fakeBusLines[0].Routes = new List<DAL.Entities.Route>() { fakeRoutes[0] };
 
-        //    IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
-        //    unitOfWork.PointRepository.Returns(pointRepository);
+            fakeRoutes[0].Points = new List<DAL.Entities.Point>() { fakePoints[0], fakePoints[1], fakePoints[2] };
+            fakeRoutes[0].DepartureTimes = new List<DAL.Entities.DepartureTime>() { fakeDepartureTimes[0] };
 
-        //    BusService busService = new BusService(unitOfWork);
+            fakeBusStops[0].Points = new List<DAL.Entities.Point> { fakePoints[0] };
+            fakeBusStops[1].Points = new List<DAL.Entities.Point> { fakePoints[2] };
+        }
 
-        //    // Act
-        //    BLL.Concrete.BusStop[] busStops = busService.GetAllBusStops();
+        [Test]
+        public void GetAllBusStops_WhenCalled_ReturnsAllBusStops()
+        {
+            // Arrange
+            IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
+            busStopRepository.Get().Returns(fakeBusStops);
 
-        //    // Assert
-        //    Assert.AreEqual(2, busStops.Count());
-        //    Assert.AreEqual(2, busStops[0].BusNumbers.Count);
-        //    Assert.AreEqual("1", busStops[0].BusNumbers[0]);
-        //    Assert.AreEqual("2", busStops[0].BusNumbers[1]);
-        //    Assert.AreEqual(3.4, busStops[0].Latitude);
-        //    Assert.AreEqual(4.5, busStops[0].Longitude);
-        //    Assert.AreEqual(1, busStops[1].BusNumbers.Count);
-        //    Assert.AreEqual("1", busStops[1].BusNumbers[0]);
-        //    Assert.AreEqual(5.6, busStops[1].Latitude);
-        //    Assert.AreEqual(6.7, busStops[1].Longitude);
-        //}
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusStopRepository.Returns(busStopRepository);
 
-        //[Test]
-        //public void CreateRoute_WhenBusNumberAlreadyTaken_ThrowsException()
-        //{
-        //    // Arrange
-        //    IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
-        //    busLineRepository.Get().Returns(fakeBusLines);
+            BusService busService = new BusService(unitOfWork);
 
-        //    IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
-        //    unitOfWork.BusLineRepository.Returns(busLineRepository);
+            // Act
+            List<BLL.Concrete.BusStop> busStops = busService.GetAllBusStops();
 
-        //    BusService busService = new BusService(unitOfWork);
-            
-        //    try
-        //    {
-        //        // Act
-        //        busService.CreateRoute("1", "Some description", new List<RoutePoint>
-        //        {
-        //            new RoutePoint()
-        //            {
-        //                Latitude = 1.2,
-        //                Longitude = 4.5,
-        //                IsBusStop = true,
-        //                TimeOffset = 0
-        //            },
-        //            new RoutePoint()
-        //            {
-        //                Latitude = 2.3,
-        //                Longitude = 5.6,
-        //                IsBusStop = false,
-        //                TimeOffset = 1000
-        //            },
-        //            new RoutePoint()
-        //            {
-        //                Latitude = 3.4,
-        //                Longitude = 6.7,
-        //                IsBusStop = true,
-        //                TimeOffset = 2000
-        //            }
-        //        });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        // Assert
-        //        Assert.AreEqual("Bus number is already taken!", e.Message);
-        //        unitOfWork.DidNotReceive().Save();
-        //        Assert.Pass();
-        //    }
-        //    Assert.Fail("Exception should be thrown!");
-        //}
+            // Assert
+            Assert.AreEqual(2, busStops.Count());
+            Assert.AreEqual(1, busStops[0].BusNumbers.Count);
+            Assert.AreEqual("1", busStops[0].BusNumbers[0]);
+            Assert.AreEqual("Bus stop 1", busStops[0].Name);
+            Assert.AreEqual(1.2, busStops[0].Latitude);
+            Assert.AreEqual(2.3, busStops[0].Longitude);
+            Assert.AreEqual(1, busStops[1].BusNumbers.Count);
+            Assert.AreEqual("1", busStops[1].BusNumbers[0]);
+            Assert.AreEqual("Bus stop 2", busStops[1].Name);
+            Assert.AreEqual(5.6, busStops[1].Latitude);
+            Assert.AreEqual(6.7, busStops[1].Longitude);
+        }
 
-        //[Test]
-        //public void CreateRoute_WhenRouteHasLessThanTwoPoints_ThrowsException()
-        //{
-        //    // Arrange
-        //    IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
-        //    busLineRepository.Get().Returns(fakeBusLines);
+        [Test]
+        public void GetBusStop_WhenBusStopDoesNotExist_ReturnsNull()
+        {
+            // Arrange
+            IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
+            busStopRepository.Get().Returns(fakeBusStops);
 
-        //    IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
-        //    unitOfWork.BusLineRepository.Returns(busLineRepository);
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusStopRepository.Returns(busStopRepository);
 
-        //    BusService busService = new BusService(unitOfWork);
+            BusService busService = new BusService(unitOfWork);
 
-        //    try
-        //    {
-        //        // Act
-        //        busService.CreateRoute("3", "Some description", new List<RoutePoint>
-        //        {
-        //            new RoutePoint()
-        //            {
-        //                Latitude = 1.2,
-        //                Longitude = 4.5,
-        //                IsBusStop = true,
-        //                TimeOffset = 0
-        //            }
-        //        });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        // Assert
-        //        Assert.AreEqual("Route cannot contain less than two points!", e.Message);
-        //        unitOfWork.DidNotReceive().Save();
-        //        Assert.Pass();
-        //    }
-        //    Assert.Fail("Exception should be thrown!");
-        //}
+            // Act
+            BLL.Concrete.BusStop busStop = busService.GetBusStop(1.5, 2.33);
 
-        //[Test]
-        //public void CreateRoute_WhenFirstPointIsNotBusStop_ThrowsException()
-        //{
-        //    // Arrange
-        //    IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
-        //    busLineRepository.Get().Returns(fakeBusLines);
+            // Assert
+            Assert.IsNull(busStop);
+        }
 
-        //    IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
-        //    unitOfWork.BusLineRepository.Returns(busLineRepository);
+        [Test]
+        public void GetBusStop_WhenBusStopExists_ReturnsBusStop()
+        {
+            // Arrange
+            IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
+            busStopRepository.Get().Returns(fakeBusStops);
 
-        //    BusService busService = new BusService(unitOfWork);
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusStopRepository.Returns(busStopRepository);
 
-        //    try
-        //    {
-        //        // Act
-        //        busService.CreateRoute("3", "Some description", new List<RoutePoint>
-        //        {
-        //            new RoutePoint()
-        //            {
-        //                Latitude = 1.2,
-        //                Longitude = 4.5,
-        //                IsBusStop = false,
-        //                TimeOffset = 0
-        //            },
-        //            new RoutePoint()
-        //            {
-        //                Latitude = 2.3,
-        //                Longitude = 5.6,
-        //                IsBusStop = false,
-        //                TimeOffset = 1000
-        //            },
-        //            new RoutePoint()
-        //            {
-        //                Latitude = 3.4,
-        //                Longitude = 6.7,
-        //                IsBusStop = true,
-        //                TimeOffset = 2000
-        //            }
-        //        });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        // Assert
-        //        Assert.AreEqual("First point must be the bus stop!", e.Message);
-        //        unitOfWork.DidNotReceive().Save();
-        //        Assert.Pass();
-        //    }
-        //    Assert.Fail("Exception should be thrown!");
-        //}
+            BusService busService = new BusService(unitOfWork);
 
-        //[Test]
-        //public void CreateRoute_WhenLastPointIsNotBusStop_ThrowsException()
-        //{
-        //    // Arrange
-        //    IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
-        //    busLineRepository.Get().Returns(fakeBusLines);
+            // Act
+            BLL.Concrete.BusStop busStop = busService.GetBusStop(1.2, 2.3);
 
-        //    IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
-        //    unitOfWork.BusLineRepository.Returns(busLineRepository);
+            // Assert
+            Assert.AreEqual(1, busStop.BusNumbers.Count());
+            Assert.AreEqual("1", busStop.BusNumbers[0]);
+            Assert.AreEqual("Bus stop 1", busStop.Name);
+            Assert.AreEqual(1.2, busStop.Latitude);
+            Assert.AreEqual(2.3, busStop.Longitude);
+        }
 
-        //    BusService busService = new BusService(unitOfWork);
+        [Test]
+        public void CreateRoute_WhenBusStopDoesNotExist_ThrowsException()
+        {
+            // Arrange
+            IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
+            busStopRepository.Get().Returns(fakeBusStops);
 
-        //    try
-        //    {
-        //        // Act
-        //        busService.CreateRoute("3", "Some description", new List<RoutePoint>
-        //        {
-        //            new RoutePoint()
-        //            {
-        //                Latitude = 1.2,
-        //                Longitude = 4.5,
-        //                IsBusStop = true,
-        //                TimeOffset = 0
-        //            },
-        //            new RoutePoint()
-        //            {
-        //                Latitude = 2.3,
-        //                Longitude = 5.6,
-        //                IsBusStop = false,
-        //                TimeOffset = 1000
-        //            },
-        //            new RoutePoint()
-        //            {
-        //                Latitude = 3.4,
-        //                Longitude = 6.7,
-        //                IsBusStop = false,
-        //                TimeOffset = 2000
-        //            }
-        //        });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        // Assert
-        //        Assert.AreEqual("Last point must be the bus stop!", e.Message);
-        //        unitOfWork.DidNotReceive().Save();
-        //        Assert.Pass();
-        //    }
-        //    Assert.Fail("Exception should be thrown!");
-        //}
+            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
+            busLineRepository.Get().Returns(fakeBusLines);
 
-        //[Test]
-        //public void CreateRoute_WhenFirstPointTimeOffsetIsNotZero_ThrowsException()
-        //{
-        //    // Arrange
-        //    IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
-        //    busLineRepository.Get().Returns(fakeBusLines);
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusLineRepository.Returns(busLineRepository);
 
-        //    IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
-        //    unitOfWork.BusLineRepository.Returns(busLineRepository);
+            BusService busService = new BusService(unitOfWork);
 
-        //    BusService busService = new BusService(unitOfWork);
+            try
+            {
+                // Act
+                busService.CreateRoute("2", "Some details", new List<BLL.Concrete.Point>
+                {
+                    new BLL.Concrete.Point()
+                    {
+                        Latitude = 1.2,
+                        Longitude = 4.5,
+                        IsBusStop = true,
+                        TimeOffset = 0
+                    },
+                    new BLL.Concrete.Point()
+                    {
+                        Latitude = 2.3,
+                        Longitude = 5.6,
+                        IsBusStop = false,
+                        TimeOffset = 1000
+                    },
+                    new BLL.Concrete.Point()
+                    {
+                        Latitude = 5.6,
+                        Longitude = 6.7,
+                        IsBusStop = true,
+                        TimeOffset = 2000
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                // Assert
+                Assert.AreEqual("Bus stop doesn't exist!", e.Message);
+                unitOfWork.DidNotReceive().Save();
+                Assert.Pass();
+            }
+            Assert.Fail("Exception should be thrown!");
+        }
 
-        //    try
-        //    {
-        //        // Act
-        //        busService.CreateRoute("3", "Some description", new List<RoutePoint>
-        //        {
-        //            new RoutePoint()
-        //            {
-        //                Latitude = 1.2,
-        //                Longitude = 4.5,
-        //                IsBusStop = true,
-        //                TimeOffset = 500
-        //            },
-        //            new RoutePoint()
-        //            {
-        //                Latitude = 2.3,
-        //                Longitude = 5.6,
-        //                IsBusStop = false,
-        //                TimeOffset = 1000
-        //            },
-        //            new RoutePoint()
-        //            {
-        //                Latitude = 3.4,
-        //                Longitude = 6.7,
-        //                IsBusStop = true,
-        //                TimeOffset = 2000
-        //            }
-        //        });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        // Assert
-        //        Assert.AreEqual("First point's time offset must be zero!", e.Message);
-        //        unitOfWork.DidNotReceive().Save();
-        //        Assert.Pass();
-        //    }
-        //    Assert.Fail("Exception should be thrown!");
-        //}
+        [Test]
+        public void CreateRoute_WhenRouteHasLessThanTwoPoints_ThrowsException()
+        {
+            // Arrange
+            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
+            busLineRepository.Get().Returns(fakeBusLines);
 
-        //[Test]
-        //public void CreateRoute_WhenTimeOffsetsAreNotInGrowingOrder_ThrowsException()
-        //{
-        //    // Arrange
-        //    IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
-        //    busLineRepository.Get().Returns(fakeBusLines);
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusLineRepository.Returns(busLineRepository);
 
-        //    IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
-        //    unitOfWork.BusLineRepository.Returns(busLineRepository);
+            BusService busService = new BusService(unitOfWork);
 
-        //    BusService busService = new BusService(unitOfWork);
+            try
+            {
+                // Act
+                busService.CreateRoute("2", "Some details", new List<BLL.Concrete.Point>
+                {
+                    new BLL.Concrete.Point()
+                    {
+                        Latitude = 1.2,
+                        Longitude = 2.3,
+                        IsBusStop = true,
+                        TimeOffset = 0
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                // Assert
+                Assert.AreEqual("Route cannot contain less than two points!", e.Message);
+                unitOfWork.DidNotReceive().Save();
+                Assert.Pass();
+            }
+            Assert.Fail("Exception should be thrown!");
+        }
 
-        //    try
-        //    {
-        //        // Act
-        //        busService.CreateRoute("3", "Some description", new List<RoutePoint>
-        //        {
-        //            new RoutePoint()
-        //            {
-        //                Latitude = 1.2,
-        //                Longitude = 4.5,
-        //                IsBusStop = true,
-        //                TimeOffset = 0
-        //            },
-        //            new RoutePoint()
-        //            {
-        //                Latitude = 2.3,
-        //                Longitude = 5.6,
-        //                IsBusStop = false,
-        //                TimeOffset = 2000
-        //            },
-        //            new RoutePoint()
-        //            {
-        //                Latitude = 3.4,
-        //                Longitude = 6.7,
-        //                IsBusStop = true,
-        //                TimeOffset = 2000
-        //            }
-        //        });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        // Assert
-        //        Assert.AreEqual("Time offsets must be in growing order!", e.Message);
-        //        unitOfWork.DidNotReceive().Save();
-        //        Assert.Pass();
-        //    }
-        //    Assert.Fail("Exception should be thrown!");
-        //}
+        [Test]
+        public void CreateRoute_WhenFirstPointIsNotBusStop_ThrowsException()
+        {
+            // Arrange
+            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
+            busLineRepository.Get().Returns(fakeBusLines);
 
-        //[Test]
-        //public void CreateRoute_WhenCalledWithProperArguments_AddsNewRouteToRepository()
-        //{
-        //    // Arrange
-        //    IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
-        //    busLineRepository.Get().Returns(fakeBusLines);
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusLineRepository.Returns(busLineRepository);
 
-        //    IRepository<Point, int> pointRepository = Substitute.For<IRepository<Point, int>>();
+            BusService busService = new BusService(unitOfWork);
 
-        //    IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
-        //    unitOfWork.BusLineRepository.Returns(busLineRepository);
-        //    unitOfWork.PointRepository.Returns(pointRepository);
+            try
+            {
+                // Act
+                busService.CreateRoute("2", "Some details", new List<BLL.Concrete.Point>
+                {
+                    new BLL.Concrete.Point()
+                    {
+                        Latitude = 1.2,
+                        Longitude = 4.5,
+                        IsBusStop = false,
+                        TimeOffset = 0
+                    },
+                    new BLL.Concrete.Point()
+                    {
+                        Latitude = 2.3,
+                        Longitude = 5.6,
+                        IsBusStop = false,
+                        TimeOffset = 1000
+                    },
+                    new BLL.Concrete.Point()
+                    {
+                        Latitude = 5.6,
+                        Longitude = 6.7,
+                        IsBusStop = true,
+                        TimeOffset = 2000
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                // Assert
+                Assert.AreEqual("First point must be the bus stop!", e.Message);
+                unitOfWork.DidNotReceive().Save();
+                Assert.Pass();
+            }
+            Assert.Fail("Exception should be thrown!");
+        }
 
-        //    BusService busService = new BusService(unitOfWork);
+        [Test]
+        public void CreateRoute_WhenLastPointIsNotBusStop_ThrowsException()
+        {
+            // Arrange
+            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
+            busLineRepository.Get().Returns(fakeBusLines);
 
-        //    // Act
-        //    busService.CreateRoute("3", "Some description", new List<RoutePoint>
-        //    {
-        //        new RoutePoint()
-        //        {
-        //            Latitude = 1.2,
-        //            Longitude = 4.5,
-        //            IsBusStop = true,
-        //            TimeOffset = 0
-        //        },
-        //        new RoutePoint()
-        //        {
-        //            Latitude = 2.3,
-        //            Longitude = 5.6,
-        //            IsBusStop = false,
-        //            TimeOffset = 1000
-        //        },
-        //        new RoutePoint()
-        //        {
-        //            Latitude = 3.4,
-        //            Longitude = 6.7,
-        //            IsBusStop = true,
-        //            TimeOffset = 2000
-        //        }
-        //    });
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusLineRepository.Returns(busLineRepository);
 
-        //    // Arrange
-        //    busLineRepository.Received().Insert(Arg.Is<DAL.Entities.BusLine>(x => x.BusNumber == "3" && x.Description == "Some description"));
-        //    pointRepository.Received().Insert(Arg.Is<Point>(x => x.Latitude == 1.2 &&
-        //                                                         x.Longitude == 4.5 &&
-        //                                                         x.IsBusStop &&
-        //                                                         x.TimeOffset == 0 &&
-        //                                                         x.Order == 0));
-        //    pointRepository.Received().Insert(Arg.Is<Point>(x => x.Latitude == 2.3 &&
-        //                                                         x.Longitude == 5.6 &&
-        //                                                         !x.IsBusStop &&
-        //                                                         x.TimeOffset == 1000 &&
-        //                                                         x.Order == 1));
-        //    pointRepository.Received().Insert(Arg.Is<Point>(x => x.Latitude == 3.4 &&
-        //                                                         x.Longitude == 6.7 &&
-        //                                                         x.IsBusStop &&
-        //                                                         x.TimeOffset == 2000 &&
-        //                                                         x.Order == 2));
-        //    unitOfWork.Received().Save();
-        //}
+            BusService busService = new BusService(unitOfWork);
 
-        //[Test]
-        //public void GetAllBusLines_WhenCalled_ReturnsAllBusLines()
-        //{
-        //    // Arrange
-        //    IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
-        //    busLineRepository.Get().Returns(fakeBusLines);
+            try
+            {
+                // Act
+                busService.CreateRoute("2", "Some details", new List<BLL.Concrete.Point>
+                {
+                    new BLL.Concrete.Point()
+                    {
+                        Latitude = 1.2,
+                        Longitude = 2.3,
+                        IsBusStop = true,
+                        TimeOffset = 0
+                    },
+                    new BLL.Concrete.Point()
+                    {
+                        Latitude = 2.3,
+                        Longitude = 5.6,
+                        IsBusStop = false,
+                        TimeOffset = 1000
+                    },
+                    new BLL.Concrete.Point()
+                    {
+                        Latitude = 3.4,
+                        Longitude = 6.7,
+                        IsBusStop = false,
+                        TimeOffset = 2000
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                // Assert
+                Assert.AreEqual("Last point must be the bus stop!", e.Message);
+                unitOfWork.DidNotReceive().Save();
+                Assert.Pass();
+            }
+            Assert.Fail("Exception should be thrown!");
+        }
 
-        //    IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
-        //    unitOfWork.BusLineRepository.Returns(busLineRepository);
+        [Test]
+        public void CreateRoute_WhenFirstPointTimeOffsetIsNotZero_ThrowsException()
+        {
+            // Arrange
+            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
+            busLineRepository.Get().Returns(fakeBusLines);
 
-        //    BusService busService =  new BusService(unitOfWork);
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusLineRepository.Returns(busLineRepository);
 
-        //    // Act
-        //    List<BLL.Concrete.BusLine> busLines = busService.GetAllBusLines();
+            BusService busService = new BusService(unitOfWork);
 
-        //    // Assert
-        //    busLineRepository.Received().Get();
+            try
+            {
+                // Act
+                busService.CreateRoute("2", "Some details", new List<BLL.Concrete.Point>
+                {
+                    new BLL.Concrete.Point()
+                    {
+                        Latitude = 1.2,
+                        Longitude = 2.3,
+                        IsBusStop = true,
+                        TimeOffset = 500
+                    },
+                    new BLL.Concrete.Point()
+                    {
+                        Latitude = 2.3,
+                        Longitude = 5.6,
+                        IsBusStop = false,
+                        TimeOffset = 1000
+                    },
+                    new BLL.Concrete.Point()
+                    {
+                        Latitude = 5.6,
+                        Longitude = 6.7,
+                        IsBusStop = true,
+                        TimeOffset = 2000
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                // Assert
+                Assert.AreEqual("First point's time offset must be zero!", e.Message);
+                unitOfWork.DidNotReceive().Save();
+                Assert.Pass();
+            }
+            Assert.Fail("Exception should be thrown!");
+        }
 
-        //    Assert.AreEqual(2, busLines.Count);
+        [Test]
+        public void CreateRoute_WhenTimeOffsetsAreNotInGrowingOrder_ThrowsException()
+        {
+            // Arrange
+            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
+            busLineRepository.Get().Returns(fakeBusLines);
 
-        //    Assert.AreEqual("1", busLines[0].BusNumber);
-        //    Assert.AreEqual("Description 1", busLines[0].Description);
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusLineRepository.Returns(busLineRepository);
 
-        //    Assert.AreEqual(3, busLines[0].RoutePoints.Count);
+            BusService busService = new BusService(unitOfWork);
 
-        //    Assert.AreEqual(3.4, busLines[0].RoutePoints[0].Latitude);
-        //    Assert.AreEqual(4.5, busLines[0].RoutePoints[0].Longitude);
-        //    Assert.IsTrue(busLines[0].RoutePoints[0].IsBusStop);
-        //    Assert.AreEqual(0, busLines[0].RoutePoints[0].TimeOffset);
+            try
+            {
+                // Act
+                busService.CreateRoute("2", "Some details", new List<BLL.Concrete.Point>
+                {
+                    new BLL.Concrete.Point()
+                    {
+                        Latitude = 1.2,
+                        Longitude = 2.3,
+                        IsBusStop = true,
+                        TimeOffset = 0
+                    },
+                    new BLL.Concrete.Point()
+                    {
+                        Latitude = 2.3,
+                        Longitude = 5.6,
+                        IsBusStop = false,
+                        TimeOffset = 2000
+                    },
+                    new BLL.Concrete.Point()
+                    {
+                        Latitude = 5.6,
+                        Longitude = 6.7,
+                        IsBusStop = true,
+                        TimeOffset = 2000
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                // Assert
+                Assert.AreEqual("Time offsets must be in growing order!", e.Message);
+                unitOfWork.DidNotReceive().Save();
+                Assert.Pass();
+            }
+            Assert.Fail("Exception should be thrown!");
+        }
 
-        //    Assert.AreEqual(1.2, busLines[0].RoutePoints[1].Latitude);
-        //    Assert.AreEqual(2.3, busLines[0].RoutePoints[1].Longitude);
-        //    Assert.IsFalse(busLines[0].RoutePoints[1].IsBusStop);
-        //    Assert.AreEqual(1000, busLines[0].RoutePoints[1].TimeOffset);
+        [Test]
+        public void CreateRoute_WhenBusNumberExists_AddsNewRouteToRepository()
+        {
+            // Arrange
+            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
+            busLineRepository.Get().Returns(fakeBusLines);
 
-        //    Assert.AreEqual(5.6, busLines[0].RoutePoints[2].Latitude);
-        //    Assert.AreEqual(6.7, busLines[0].RoutePoints[2].Longitude);
-        //    Assert.IsTrue(busLines[0].RoutePoints[2].IsBusStop);
-        //    Assert.AreEqual(2000, busLines[0].RoutePoints[2].TimeOffset);
+            IRepository<DAL.Entities.Route, int> routeRepository = Substitute.For<IRepository<DAL.Entities.Route, int>>();
 
-        //    Assert.AreEqual(1, busLines[0].TimeTable.Count);
+            IRepository<DAL.Entities.Point, int> pointRepository = Substitute.For<IRepository<DAL.Entities.Point, int>>();
 
-        //    Assert.AreEqual(0, busLines[0].TimeTable[0].Hours);
-        //    Assert.AreEqual(30, busLines[0].TimeTable[0].Minutes);
-        //    Assert.IsTrue(busLines[0].TimeTable[0].WorkingDay);
-        //    Assert.IsFalse(busLines[0].TimeTable[0].Saturday);
-        //    Assert.IsFalse(busLines[0].TimeTable[0].Sunday);
+            IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
+            busStopRepository.Get().Returns(fakeBusStops);
 
-        //    Assert.AreEqual("2", busLines[1].BusNumber);
-        //    Assert.AreEqual("Description 2", busLines[1].Description);
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusLineRepository.Returns(busLineRepository);
+            unitOfWork.RouteRepository.Returns(routeRepository);
+            unitOfWork.PointRepository.Returns(pointRepository);
+            unitOfWork.BusStopRepository.Returns(busStopRepository);
 
-        //    Assert.AreEqual(2, busLines[1].RoutePoints.Count);
+            BusService busService = new BusService(unitOfWork);
 
-        //    Assert.AreEqual(3.4, busLines[1].RoutePoints[0].Latitude);
-        //    Assert.AreEqual(4.5, busLines[1].RoutePoints[0].Longitude);
-        //    Assert.IsTrue(busLines[1].RoutePoints[0].IsBusStop);
-        //    Assert.AreEqual(0, busLines[1].RoutePoints[0].TimeOffset);
+            // Act
+            busService.CreateRoute("1", "Some details", new List<BLL.Concrete.Point>
+            {
+                new BLL.Concrete.Point()
+                {
+                    Latitude = 1.2,
+                    Longitude = 2.3,
+                    IsBusStop = true,
+                    TimeOffset = 0
+                },
+                new BLL.Concrete.Point()
+                {
+                    Latitude = 2.3,
+                    Longitude = 5.6,
+                    IsBusStop = false,
+                    TimeOffset = 1000
+                },
+                new BLL.Concrete.Point()
+                {
+                    Latitude = 5.6,
+                    Longitude = 6.7,
+                    IsBusStop = true,
+                    TimeOffset = 2000
+                }
+            });
 
-        //    Assert.AreEqual(7.8, busLines[1].RoutePoints[1].Latitude);
-        //    Assert.AreEqual(8.9, busLines[1].RoutePoints[1].Longitude);
-        //    Assert.IsFalse(busLines[1].RoutePoints[1].IsBusStop);
-        //    Assert.AreEqual(500, busLines[1].RoutePoints[1].TimeOffset);
+            // Arrange
+            busLineRepository.DidNotReceive().Insert(Arg.Any<DAL.Entities.BusLine>());
 
-        //    Assert.AreEqual(1, busLines[1].TimeTable.Count);
+            routeRepository.Received().Insert(Arg.Is<DAL.Entities.Route>(x => x.Details == "Some details" &&
+                                                                              x.BusLine != null));
 
-        //    Assert.AreEqual(4, busLines[1].TimeTable[0].Hours);
-        //    Assert.AreEqual(0, busLines[1].TimeTable[0].Minutes);
-        //    Assert.IsFalse(busLines[1].TimeTable[0].WorkingDay);
-        //    Assert.IsFalse(busLines[1].TimeTable[0].Saturday);
-        //    Assert.IsTrue(busLines[1].TimeTable[0].Sunday);
-        //}
+            busStopRepository.DidNotReceive().Insert(Arg.Any<DAL.Entities.BusStop>());
+
+            pointRepository.Received().Insert(Arg.Is<DAL.Entities.Point>(x => x.Latitude == 1.2 &&
+                                                                 x.Longitude == 2.3 &&
+                                                                 x.TimeOffset == 0 &&
+                                                                 x.BusStop != null));
+            pointRepository.Received().Insert(Arg.Is<DAL.Entities.Point>(x => x.Latitude == 2.3 &&
+                                                                 x.Longitude == 5.6 &&
+                                                                 x.TimeOffset == 1000 &&
+                                                                 x.BusStop == null));
+            pointRepository.Received().Insert(Arg.Is<DAL.Entities.Point>(x => x.Latitude == 5.6 &&
+                                                                 x.Longitude == 6.7 &&
+                                                                 x.TimeOffset == 2000 &&
+                                                                 x.BusStop != null));
+
+            unitOfWork.Received().Save();
+        }
+
+        [Test]
+        public void CreateRoute_WhenBusNumberDoesNotExist_AddsNewRouteToRepository()
+        {
+            // Arrange
+            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
+            busLineRepository.Get().Returns(fakeBusLines);
+
+            IRepository<DAL.Entities.Route, int> routeRepository = Substitute.For<IRepository<DAL.Entities.Route, int>>();
+
+            IRepository<DAL.Entities.Point, int> pointRepository = Substitute.For<IRepository<DAL.Entities.Point, int>>();
+
+            IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
+            busStopRepository.Get().Returns(fakeBusStops);
+
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusLineRepository.Returns(busLineRepository);
+            unitOfWork.RouteRepository.Returns(routeRepository);
+            unitOfWork.PointRepository.Returns(pointRepository);
+            unitOfWork.BusStopRepository.Returns(busStopRepository);
+
+            BusService busService = new BusService(unitOfWork);
+
+            // Act
+            busService.CreateRoute("2", "Some details", new List<BLL.Concrete.Point>
+            {
+                new BLL.Concrete.Point()
+                {
+                    Latitude = 1.2,
+                    Longitude = 2.3,
+                    IsBusStop = true,
+                    TimeOffset = 0
+                },
+                new BLL.Concrete.Point()
+                {
+                    Latitude = 2.3,
+                    Longitude = 5.6,
+                    IsBusStop = false,
+                    TimeOffset = 1000
+                },
+                new BLL.Concrete.Point()
+                {
+                    Latitude = 5.6,
+                    Longitude = 6.7,
+                    IsBusStop = true,
+                    TimeOffset = 2000
+                }
+            });
+
+            // Arrange
+            busLineRepository.Received().Insert(Arg.Is<DAL.Entities.BusLine>(x => x.BusNumber == "2"));
+
+            routeRepository.Received().Insert(Arg.Is<DAL.Entities.Route>(x => x.Details == "Some details" &&
+                                                                              x.BusLine != null));
+
+            busStopRepository.DidNotReceive().Insert(Arg.Any<DAL.Entities.BusStop>());
+
+            pointRepository.Received().Insert(Arg.Is<DAL.Entities.Point>(x => x.Latitude == 1.2 &&
+                                                                 x.Longitude == 2.3 &&
+                                                                 x.TimeOffset == 0 &&
+                                                                 x.BusStop != null));
+            pointRepository.Received().Insert(Arg.Is<DAL.Entities.Point>(x => x.Latitude == 2.3 &&
+                                                                 x.Longitude == 5.6 &&
+                                                                 x.TimeOffset == 1000 &&
+                                                                 x.BusStop == null));
+            pointRepository.Received().Insert(Arg.Is<DAL.Entities.Point>(x => x.Latitude == 5.6 &&
+                                                                 x.Longitude == 6.7 &&
+                                                                 x.TimeOffset == 2000 &&
+                                                                 x.BusStop != null));
+
+            unitOfWork.Received().Save();
+        }
+
+        [Test]
+        public void GetAllBusLines_WhenCalled_ReturnsAllBusLines()
+        {
+            // Arrange
+            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
+            busLineRepository.Get().Returns(fakeBusLines);
+
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusLineRepository.Returns(busLineRepository);
+
+            BusService busService = new BusService(unitOfWork);
+
+            // Act
+            List<BLL.Concrete.BusLine> busLines = busService.GetAllBusLines();
+
+            // Assert
+            busLineRepository.Received().Get();
+
+            Assert.AreEqual(1, busLines.Count);
+            Assert.AreEqual("1", busLines[0].BusNumber);
+
+            Assert.AreEqual(1, busLines[0].Routes.Count);
+            Assert.AreEqual("Route details", busLines[0].Routes[0].Details);
+
+            Assert.AreEqual(3, busLines[0].Routes[0].RoutePoints.Count);
+
+            Assert.AreEqual(1.2, busLines[0].Routes[0].RoutePoints[0].Latitude);
+            Assert.AreEqual(2.3, busLines[0].Routes[0].RoutePoints[0].Longitude);
+            Assert.AreEqual(true, busLines[0].Routes[0].RoutePoints[0].IsBusStop);
+            Assert.AreEqual(0, busLines[0].Routes[0].RoutePoints[0].TimeOffset);
+
+            Assert.AreEqual(3.4, busLines[0].Routes[0].RoutePoints[1].Latitude);
+            Assert.AreEqual(4.5, busLines[0].Routes[0].RoutePoints[1].Longitude);
+            Assert.AreEqual(false, busLines[0].Routes[0].RoutePoints[1].IsBusStop);
+            Assert.AreEqual(1000, busLines[0].Routes[0].RoutePoints[1].TimeOffset);
+
+            Assert.AreEqual(5.6, busLines[0].Routes[0].RoutePoints[2].Latitude);
+            Assert.AreEqual(6.7, busLines[0].Routes[0].RoutePoints[2].Longitude);
+            Assert.AreEqual(true, busLines[0].Routes[0].RoutePoints[2].IsBusStop);
+            Assert.AreEqual(2000, busLines[0].Routes[0].RoutePoints[2].TimeOffset);
+
+            Assert.AreEqual(1, busLines[0].Routes[0].DepartureTimes.Count);
+
+            Assert.AreEqual(12, busLines[0].Routes[0].DepartureTimes[0].Hours);
+            Assert.AreEqual(30, busLines[0].Routes[0].DepartureTimes[0].Minutes);
+            Assert.AreEqual(true, busLines[0].Routes[0].DepartureTimes[0].WorkingDay);
+            Assert.AreEqual(false, busLines[0].Routes[0].DepartureTimes[0].Saturday);
+            Assert.AreEqual(false, busLines[0].Routes[0].DepartureTimes[0].Sunday);
+        }
     }
 }

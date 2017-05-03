@@ -9,8 +9,9 @@ namespace GlogowskiBus.BLL.Abstract
 {
     public interface IBusService
     {
-        BusStop[] GetAllBusStops();
-        void CreateRoute(string busNumber, string description, List<RoutePoint> routePoints);
+        List<BusStop> GetAllBusStops();
+        BusStop GetBusStop(double latitude, double longitude);
+        void CreateRoute(string busNumber, string description, List<Point> routePoints);
         List<BusLine> GetAllBusLines();
     }
 }

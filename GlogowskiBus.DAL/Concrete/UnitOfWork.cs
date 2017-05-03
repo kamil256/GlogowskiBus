@@ -13,7 +13,9 @@ namespace GlogowskiBus.DAL.Concrete
         private readonly GlogowskiBusContext context = new GlogowskiBusContext();
 
         private IRepository<BusLine, int> busLineRepository;
+        private IRepository<Route, int> routeRepository;
         private IRepository<Point, int> pointRepository;
+        private IRepository<BusStop, int> busStopRepository;
         private IRepository<DepartureTime, int> scheduleRepository;
 
         public IRepository<BusLine, int> BusLineRepository
@@ -26,6 +28,16 @@ namespace GlogowskiBus.DAL.Concrete
             }
         }
 
+        public IRepository<Route, int> RouteRepository
+        {
+            get
+            {
+                if (routeRepository == null)
+                    routeRepository = new GenericRepository<Route, int>(context);
+                return routeRepository;
+            }
+        }
+
         public IRepository<Point, int> PointRepository
         {
             get
@@ -33,6 +45,16 @@ namespace GlogowskiBus.DAL.Concrete
                 if (pointRepository == null)
                     pointRepository = new GenericRepository<Point, int>(context);
                 return pointRepository;
+            }
+        }
+
+        public IRepository<BusStop, int> BusStopRepository
+        {
+            get
+            {
+                if (busStopRepository == null)
+                    busStopRepository = new GenericRepository<BusStop, int>(context);
+                return busStopRepository;
             }
         }
 

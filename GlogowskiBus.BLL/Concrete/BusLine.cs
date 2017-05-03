@@ -8,8 +8,6 @@ namespace GlogowskiBus.BLL.Concrete
     public class BusLine
     {
         public string BusNumber { get; set; }
-        public string Description { get; set; }
-        public List<RoutePoint> RoutePoints { get; set; }
-        public List<DepartureTime> TimeTable { get; set; }
+        public List<Route> Routes { get; set; }
     }
 }

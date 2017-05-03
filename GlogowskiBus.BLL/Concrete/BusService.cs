@@ -19,97 +19,106 @@ namespace GlogowskiBus.BLL.Concrete
             this.unitOfWork = unitOfWork;
         }
 
-        public BusStop[] GetAllBusStops()
+        public List<BusStop> GetAllBusStops()
         {
-            List<BusStop> busStops = new List<BusStop>();
-
-            //foreach (Point point in unitOfWork.PointRepository.Get())
-            //{
-            //    if (point.IsBusStop) 
-            //    {
-            //        BusStop busStop = busStops.SingleOrDefault(x => x.Latitude == point.Latitude && x.Longitude == point.Longitude);
-            //        if (busStop == null)
-            //            busStops.Add(new BusStop()
-            //            {
-            //                BusNumbers = new List<string> { point.BusLine.BusNumber },
-            //                Latitude = point.Latitude,
-            //                Longitude = point.Longitude
-            //            });
-            //        else
-            //            busStop.BusNumbers.Add(point.BusLine.BusNumber);
-            //    }
-            //} 
-
-            return busStops.ToArray();
+            return unitOfWork.BusStopRepository.Get().Select(x => new BusStop()
+            {
+                Name = x.Name,
+                Latitude = x.Points.ElementAt(0).Latitude,
+                Longitude = x.Points.ElementAt(0).Longitude,
+                BusNumbers = x.Points.Select(y => y.Route.BusLine.BusNumber).Distinct().ToList()
+            }).ToList();
         }
 
-        public void CreateRoute(string busNumber, string description, List<RoutePoint> routePoints)
+        public BusStop GetBusStop(double latitude, double longitude)
         {
-            //if (unitOfWork.BusLineRepository.Get().Count(x => x.BusNumber == busNumber) != 0)
-            //    throw new Exception("Bus number is already taken!");
+            return GetAllBusStops().FirstOrDefault(x => x.Latitude == latitude && x.Longitude == longitude);
+        }
 
-            //if (routePoints.Count < 2)
-            //    throw new Exception("Route cannot contain less than two points!");
+        public void CreateRoute(string busNumber, string details, List<Point> routePoints)
+        {
+            if (routePoints.Count < 2)
+                throw new Exception("Route cannot contain less than two points!");
             
-            //if (!routePoints.First().IsBusStop)
-            //    throw new Exception("First point must be the bus stop!");
+            if (!routePoints.First().IsBusStop)
+                throw new Exception("First point must be the bus stop!");
 
-            //if (!routePoints.Last().IsBusStop)
-            //    throw new Exception("Last point must be the bus stop!");
+            if (!routePoints.Last().IsBusStop)
+                throw new Exception("Last point must be the bus stop!");
 
-            //if (routePoints.First().TimeOffset != 0)
-            //    throw new Exception("First point's time offset must be zero!");
+            if (routePoints.First().TimeOffset != 0)
+                throw new Exception("First point's time offset must be zero!");
 
-            //for (int i = 1; i < routePoints.Count; i++)
-            //    if (routePoints[i - 1].TimeOffset >= routePoints[i].TimeOffset)
-            //        throw new Exception("Time offsets must be in growing order!");
+            for (int i = 1; i < routePoints.Count; i++)
+                if (routePoints[i - 1].TimeOffset >= routePoints[i].TimeOffset)
+                    throw new Exception("Time offsets must be in growing order!");
 
-            //DAL.Entities.BusLine newBusLine = new DAL.Entities.BusLine()
-            //{
-            //    BusNumber = busNumber,
-            //    Description = description
-            //};
-            //unitOfWork.BusLineRepository.Insert(newBusLine);
+            DAL.Entities.BusLine busLine = unitOfWork.BusLineRepository.Get().SingleOrDefault(x => x.BusNumber == busNumber);
+            if (busLine == null)
+            {
+                busLine = new DAL.Entities.BusLine()
+                {
+                    BusNumber = busNumber
+                };
+                unitOfWork.BusLineRepository.Insert(busLine);
+            }
 
-            //for (int i = 0; i < routePoints.Count; i++)
-            //{
-            //    Point newPoint = new Point()
-            //    {
-            //        BusLine = newBusLine,
-            //        Latitude = routePoints[i].Latitude,
-            //        Longitude = routePoints[i].Longitude,
-            //        IsBusStop = routePoints[i].IsBusStop,
-            //        TimeOffset = routePoints[i].TimeOffset,
-            //        Order = i
-            //    };
-            //    unitOfWork.PointRepository.Insert(newPoint);
-            //}
+            DAL.Entities.Route newRoute = new DAL.Entities.Route()
+            {
+                BusLine = busLine,
+                Details = details
+            };
+            unitOfWork.RouteRepository.Insert(newRoute);
 
-            //unitOfWork.Save();
+            for (int i = 0; i < routePoints.Count; i++)
+            {
+                DAL.Entities.BusStop busStop = null;
+                if (routePoints[i].IsBusStop)
+                {
+                    busStop = unitOfWork.BusStopRepository.Get().FirstOrDefault(x => x.Points.ElementAt(0).Latitude == routePoints[i].Latitude &&
+                                                                                     x.Points.ElementAt(0).Longitude == routePoints[i].Longitude);
+                    if (busStop == null)
+                        throw new Exception("Bus stop doesn't exist!");
+                }
+                DAL.Entities.Point newPoint = new DAL.Entities.Point()
+                {
+                    Route = newRoute,
+                    Latitude = routePoints[i].Latitude,
+                    Longitude = routePoints[i].Longitude,
+                    BusStop = busStop,
+                    TimeOffset = routePoints[i].TimeOffset
+                };
+                unitOfWork.PointRepository.Insert(newPoint);
+            }
+
+            unitOfWork.Save();
         }
 
         public List<BusLine> GetAllBusLines()
         {
             return unitOfWork.BusLineRepository.Get().Select(x => new BusLine()
             {
-                //BusNumber = x.BusNumber,
-                //Description = x.Description,
-                //RoutePoints = x.Points.OrderBy(y => y.TimeOffset).Select(y => new RoutePoint()
-                //{
-                //    Latitude = y.Latitude,
-                //    Longitude = y.Longitude,
-                //    IsBusStop = y.IsBusStop,
-                //    TimeOffset = y.TimeOffset
-                //}).ToList(),
-                //TimeTable = x.Schedules.Select(y => new DepartureTime()
-                //{
-                //    Hours = y.Hour,
-                //    Minutes = y.Minute,
-                //    WorkingDay = y.WorkingDay,
-                //    Saturday = y.Saturday,
-                //    Sunday = y.Sunday
-                //}).ToList()
+                BusNumber = x.BusNumber,
+                Routes = x.Routes.Select(y => new Route()
+                {
+                    Details = y.Details,
+                    RoutePoints = y.Points.OrderBy(z => z.TimeOffset).Select(z => new Point()
+                    {
+                        Latitude = z.Latitude,
+                        Longitude = z.Longitude,
+                        IsBusStop = z.BusStop != null,
+                        TimeOffset = z.TimeOffset
+                    }).ToList(),
+                    DepartureTimes = y.DepartureTimes.Select(z => new DepartureTime()
+                    {
+                        Hours = z.Hours,
+                        Minutes = z.Minutes,
+                        WorkingDay = z.WorkingDay,
+                        Saturday = z.Saturday,
+                        Sunday = z.Sunday
+                    }).ToList()
+                }).ToList()
             }).ToList();
-        }
+        }        
     }
 }

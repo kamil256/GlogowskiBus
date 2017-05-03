@@ -34,29 +34,30 @@ namespace GlogowskiBus.UI.Controllers
 
         public ViewResult BusPositions()
         {
-            HomeBusPositionsViewModel model = new HomeBusPositionsViewModel();
-            model.ServerTimeMilliseconds = (long)(DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
-            model.BusLines = busService.GetAllBusLines().Select(x => new Models.BusLine()
-            {
-                BusNumber = x.BusNumber,
-                Description = x.Description,
-                RoutePoints = x.RoutePoints.Select(y => new Models.RoutePoint()
-                {
-                    Latitude = y.Latitude,
-                    Longitude = y.Longitude,
-                    IsBusStop = y.IsBusStop,
-                    TimeOffset = y.TimeOffset
-                }).ToList(),
-                TimeTable = x.TimeTable.Select(y => new Models.DepartureTime()
-                {
-                    Hours = y.Hours,
-                    Minutes = y.Minutes,
-                    WorkingDay = y.WorkingDay,
-                    Saturday = y.Saturday,
-                    Sunday = y.Sunday
-                }).ToList()
-            }).ToList();
-            return View("BusPositions", model);
+            //HomeBusPositionsViewModel model = new HomeBusPositionsViewModel();
+            //model.ServerTimeMilliseconds = (long)(DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+            //model.BusLines = busService.GetAllBusLines().Select(x => new Models.BusLine()
+            //{
+            //    BusNumber = x.BusNumber,
+            //    Description = x.Description,
+            //    RoutePoints = x.RoutePoints.Select(y => new Models.RoutePoint()
+            //    {
+            //        Latitude = y.Latitude,
+            //        Longitude = y.Longitude,
+            //        IsBusStop = y.IsBusStop,
+            //        TimeOffset = y.TimeOffset
+            //    }).ToList(),
+            //    TimeTable = x.TimeTable.Select(y => new Models.DepartureTime()
+            //    {
+            //        Hours = y.Hours,
+            //        Minutes = y.Minutes,
+            //        WorkingDay = y.WorkingDay,
+            //        Saturday = y.Saturday,
+            //        Sunday = y.Sunday
+            //    }).ToList()
+            //}).ToList();
+            //return View("BusPositions", model);
+            return View();
         }
 
         public ViewResult CreateRoute()
@@ -99,7 +100,7 @@ namespace GlogowskiBus.UI.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    busService.CreateRoute(model.BusNumber, model.Description, model.RoutePoints.Select(x => new BLL.Concrete.RoutePoint()
+                    busService.CreateRoute(model.BusNumber, model.Description, model.RoutePoints.Select(x => new BLL.Concrete.Point()
                     {
                         Latitude = x.Latitude,
                         Longitude = x.Longitude,

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GlogowskiBus.BLL.Concrete
 {
-    public class RoutePoint
+    public class Point
     {
         public bool IsBusStop { get; set; }
         public double Latitude { get; set; }

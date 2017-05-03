@@ -10,7 +10,7 @@ namespace GlogowskiBus.DAL.Entities
     {
         public int PointId { get; set; }
         public int RouteId { get; set; }
-        public int BusStopId { get; set; }
+        public int? BusStopId { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public int TimeOffset { get; set; }

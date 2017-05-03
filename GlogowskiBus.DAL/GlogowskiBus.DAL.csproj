@@ -63,6 +63,10 @@
     <Compile Include="Migrations\201705031522061_Initial migration..Designer.cs">
       <DependentUpon>201705031522061_Initial migration..cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705031540074_Make BusStopId nullable in Point entity..cs" />
+    <Compile Include="Migrations\201705031540074_Make BusStopId nullable in Point entity..Designer.cs">
+      <DependentUpon>201705031540074_Make BusStopId nullable in Point entity..cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -73,6 +77,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201705031522061_Initial migration..resx">
       <DependentUpon>201705031522061_Initial migration..cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705031540074_Make BusStopId nullable in Point entity..resx">
+      <DependentUpon>201705031540074_Make BusStopId nullable in Point entity..cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

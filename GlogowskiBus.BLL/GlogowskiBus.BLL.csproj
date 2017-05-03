@@ -45,7 +45,8 @@
     <Compile Include="Concrete\BusStop.cs" />
     <Compile Include="Concrete\BusService.cs" />
     <Compile Include="Concrete\DepartureTime.cs" />
-    <Compile Include="Concrete\RoutePoint.cs" />
+    <Compile Include="Concrete\Route.cs" />
+    <Compile Include="Concrete\Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
