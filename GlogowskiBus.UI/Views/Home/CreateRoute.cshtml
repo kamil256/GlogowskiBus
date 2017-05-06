@@ -1,418 +1,405 @@
 ﻿@model HomeIndexViewModel
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlogowskiBus</title>
-    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-    <div id="map"></div>
-    <div id="aside">
-        <p>Wyznacz na mapie trasę tworzonej linii kolejno od punktu początkowego do docelowego. W kolejnym kroku będziesz mógł skorygować trasę oraz wyznaczyć jej przystanki. Kliknięcie utworzonego punktu spowoduje jego usunięcie. Po zakończeniu </p>
-        <button id="correctRoute">Correct route</button>
-        <button id="calculatePoints">Calculate points</button>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Dodaj nową trasę";
+}
+    
+<div>
+    <p>Wyznacz na mapie trasę tworzonej linii kolejno od punktu początkowego do docelowego. W kolejnym kroku będziesz mógł skorygować trasę oraz wyznaczyć jej przystanki. Kliknięcie utworzonego punktu spowoduje jego usunięcie. Po zakończeniu </p>
+    <button id="correctRoute">Correct route</button>
+    <button id="calculatePoints">Calculate points</button>
 
 
 
-        @using (Html.BeginForm())
-        {
-            @Html.TextBoxFor(x => x.BusNumber)
+    @using (Html.BeginForm())
+    {
+        @Html.TextBoxFor(x => x.BusNumber)
             
-            <div id="busStopsList">
-            </div>
-            <input type="submit" value="Create new route" />
-        }
-    </div>
+        <div id="busStopsList">
+        </div>
+        <input type="submit" value="Create new route" />
+    }
+</div>
 
-    <script>
-        var ExistingBusStops =
+<script>
+    var ExistingBusStops =
+    {
+        markers: [],
+        initialize: function()
         {
-            markers: [],
-            initialize: function()
+            var busStops = @Html.Raw(Json.Encode(@Model.BusStops));
+            for (var i = 0; i < busStops.length; i++)
             {
-                var busStops = @Html.Raw(Json.Encode(@Model.BusStops));
-                for (var i = 0; i < busStops.length; i++)
+                ExistingBusStops.markers.push(new google.maps.Marker(
                 {
-                    ExistingBusStops.markers.push(new google.maps.Marker(
-                    {
-                        icon: GrayBusStopMarkerImage,
-                        map: map,
-                        optimized: false,
-                        position:
-                        {
-                            lat: busStops[i].Latitude,
-                            lng: busStops[i].Longitude
-                        },
-                        zIndex: 0
-                    }));
-
-                    ExistingBusStops.markers[i].addListener('click', function(e)
-                    {
-                        if (!Directions.completed)
-                        {
-                            Directions.addNewPoint(e.latLng);
-                        }
-                    });
-                }
-            }
-        };
-
-        var Directions =
-        {
-            service: null,
-            display: null,
-            origin: null,
-            waypoints: [],
-            destination: null,
-            originMarker: null,
-            completed: false,
-            initialize: function()
-            {
-                Directions.service = new google.maps.DirectionsService();
-                Directions.display = new google.maps.DirectionsRenderer(
-                {
-                    draggable: true,
+                    icon: GrayBusStopMarkerImage,
                     map: map,
-                    preserveViewport: true
-                });
-                Directions.display.addListener('directions_changed', function()
-                {
-                    Directions.origin = Directions.display.getDirections().request.origin;
-                    Directions.waypoints = Directions.display.getDirections().request.waypoints;
-                    for (var i = 0; i < Directions.waypoints.length; i++)
-                        Directions.waypoints[i].stopover = true;
-                    Directions.destination = Directions.display.getDirections().request.destination;
-                    Directions.update();
-                });
-                map.addListener('click', function(e)
+                    optimized: false,
+                    position:
+                    {
+                        lat: busStops[i].Latitude,
+                        lng: busStops[i].Longitude
+                    },
+                    zIndex: 0
+                }));
+
+                ExistingBusStops.markers[i].addListener('click', function(e)
                 {
                     if (!Directions.completed)
+                    {
                         Directions.addNewPoint(e.latLng);
+                    }
                 });
-            },
-            addNewPoint: function(point)
-            {
-                if (!Directions.origin)
-                    Directions.origin = point;
-                else
-                {
-                    if (Directions.destination)
-                    {
-                        Directions.waypoints.push(
-                        {
-                            location: Directions.destination,
-                            stopover: true
-                        });
-                    }
-                    Directions.destination = point;
-                }
-                Directions.update();
-            },
-            update: function()
-            {
-                if (Directions.origin)
-                {
-                    if (!Directions.destination)
-                    {
-                        originMarker = new google.maps.Marker(
-                        {
-                            draggable: true,
-                            label: 'A',
-                            map: map,
-                            position: Directions.origin
-                        });
-                        originMarker.addListener('dragend', function(e)
-                        {
-                            Directions.origin = e.latLng;
-                        });
-                    }
-                    else
-                    {
-                        originMarker.setMap(null);
-                        this.service.route(
-                        {
-                            origin: Directions.origin,
-                            waypoints: Directions.waypoints,
-                            destination: Directions.destination,
-                            travelMode: 'DRIVING'
-                        }, function(response, status)
-                        {
-                            if (status === 'OK')
-                            {
-                                Directions.display.setDirections(response);
-                                Route.points = [];
-                                for (var i = 0; i < response.routes[0].overview_path.length; i++)
-                                {
-                                    Route.points.push(
-                                    {
-                                        lat: response.routes[0].overview_path[i].lat(),
-                                        lng: response.routes[0].overview_path[i].lng(),
-                                        isBusStop: false,
-                                        timeOffset: 0
-                                    });
-                                }
-                            }
-                        });
-                    }
-                }
             }
-        };
+        }
+    };
 
-        var Route =
+    var Directions =
+    {
+        service: null,
+        display: null,
+        origin: null,
+        waypoints: [],
+        destination: null,
+        originMarker: null,
+        completed: false,
+        initialize: function()
         {
-            points: [],
-            markers: [],
-            lines: [],
-            calculateTimes: function()
+            Directions.service = new google.maps.DirectionsService();
+            Directions.display = new google.maps.DirectionsRenderer(
             {
-                if (Route.points[0].isBusStop && Route.points[Route.points.length - 1].isBusStop)
+                draggable: true,
+                map: map,
+                preserveViewport: true
+            });
+            Directions.display.addListener('directions_changed', function()
+            {
+                Directions.origin = Directions.display.getDirections().request.origin;
+                Directions.waypoints = Directions.display.getDirections().request.waypoints;
+                for (var i = 0; i < Directions.waypoints.length; i++)
+                    Directions.waypoints[i].stopover = true;
+                Directions.destination = Directions.display.getDirections().request.destination;
+                Directions.update();
+            });
+            map.addListener('click', function(e)
+            {
+                if (!Directions.completed)
+                    Directions.addNewPoint(e.latLng);
+            });
+        },
+        addNewPoint: function(point)
+        {
+            if (!Directions.origin)
+                Directions.origin = point;
+            else
+            {
+                if (Directions.destination)
                 {
-                    var start = 0;
-                    var end = 0;
-                    while (end < Route.points.length - 1)
+                    Directions.waypoints.push(
                     {
-                        var totalDistance = 0;
-                        var distances = [];
-
-                        do
-                        {
-                            end++;
-                            var diff_X = Route.points[end].lat - Route.points[end - 1].lat;
-                            var diff_Y = Route.points[end].lng - Route.points[end - 1].lng;
-                            var distance = Math.sqrt(diff_X * diff_X + diff_Y * diff_Y);
-                            totalDistance += distance;
-                            distances.push(distance);
-                        }
-                        while (!Route.points[end].isBusStop);
-
-                        var totalTime = Route.points[end].timeOffset - Route.points[start].timeOffset;
-
-                        while (++start != end)
-                        {
-                            Route.points[start].timeOffset = Route.points[start - 1].timeOffset + Math.round(totalTime * distances.shift() / totalDistance);
-                        }
-                    }
+                        location: Directions.destination,
+                        stopover: true
+                    });
                 }
-            },
-            update: function()
+                Directions.destination = point;
+            }
+            Directions.update();
+        },
+        update: function()
+        {
+            if (Directions.origin)
             {
-                Route.calculateTimes();
-                for (var i = 0; i < Route.markers.length; i++)
-                    Route.markers[i].setMap(null);
-                Route.markers = [];
-
-                for (var i = 0; i < Route.lines.length; i++)
-                    Route.lines[i].setMap(null);
-                Route.lines = [];
-
-                for (var i = 0; i < Route.points.length; i++)
+                if (!Directions.destination)
                 {
-                    Route.markers.push(new google.maps.Marker(
+                    originMarker = new google.maps.Marker(
                     {
                         draggable: true,
-                        icon: Route.points[i].isBusStop ? OrangeBusStopMarkerImage : OrangeCircleMarkerImage,
+                        label: 'A',
                         map: map,
-                        optimized: false,
-                        position: Route.points[i],
-                        zIndex: 1
-                    }));
-
-                    Route.markers[i].addListener('click', function(e)
-                    {
-                        for (var i = 0; i < Route.markers.length; i++)
-                            if (this == Route.markers[i])
-                            {
-                                Route.points.splice(i, 1);
-                                Route.update();
-                                break;
-                            }
+                        position: Directions.origin
                     });
-
-                    Route.markers[i].addListener('rightclick', function(e)
+                    originMarker.addListener('dragend', function(e)
                     {
-                        for (var i = 0; i < Route.markers.length; i++)
-                            if (this == Route.markers[i])
-                            {
-                                Route.points[i].isBusStop = !Route.points[i].isBusStop;
-                                Route.update();
-                                break;
-                            }
-                    });
-
-                    Route.markers[i].addListener('dragend', function(e)
-                    {
-                        for (var i = 0; i < Route.markers.length; i++)
-                            if (this == Route.markers[i])
-                            {
-                                Route.points[i].lat = Route.markers[i].position.lat();
-                                Route.points[i].lng = Route.markers[i].position.lng();
-
-                                var mousePositionPixels = overlay.getProjection().fromLatLngToContainerPixel(e.latLng);
-                                for (var j = 0; j < ExistingBusStops.markers.length; j++)
-                                {
-                                    var busStopPositionPixels = overlay.getProjection().fromLatLngToContainerPixel(ExistingBusStops.markers[j].getPosition());
-                                    if (Math.abs(mousePositionPixels.x - busStopPositionPixels.x) <= 12 &&
-                                        Math.abs(mousePositionPixels.y - busStopPositionPixels.y) <= 12)
-                                    {
-                                        Route.points[i].lat = ExistingBusStops.markers[j].position.lat();
-                                        Route.points[i].lng = ExistingBusStops.markers[j].position.lng();
-                                        Route.points[i].isBusStop = true;
-                                    }
-                                }
-
-                                Route.update();
-                                break;
-                            }
+                        Directions.origin = e.latLng;
                     });
                 }
-
-                for (var i = 0; i < Route.points.length - 1; i++)
+                else
                 {
-                    Route.lines.push(new google.maps.Polyline(
+                    originMarker.setMap(null);
+                    this.service.route(
                     {
-                        map: map,
-                        path: [Route.points[i], Route.points[i + 1]],
-                        geodesic: true,
-                        strokeColor: '#FF6A00',
-                        strokeOpacity: 0.5,
-                        strokeWeight: 5,
-                    }));
-
-                    Route.lines[i].addListener('click', function(e)
+                        origin: Directions.origin,
+                        waypoints: Directions.waypoints,
+                        destination: Directions.destination,
+                        travelMode: 'DRIVING'
+                    }, function(response, status)
                     {
-                        for (var j = 0; j < Route.lines.length; j++)
-                            if (this == Route.lines[j])
+                        if (status === 'OK')
+                        {
+                            Directions.display.setDirections(response);
+                            Route.points = [];
+                            for (var i = 0; i < response.routes[0].overview_path.length; i++)
                             {
-                                Route.points.splice(j + 1, 0,
+                                Route.points.push(
                                 {
+                                    lat: response.routes[0].overview_path[i].lat(),
+                                    lng: response.routes[0].overview_path[i].lng(),
                                     isBusStop: false,
-                                    lat: e.latLng.lat(),
-                                    lng: e.latLng.lng(),
                                     timeOffset: 0
                                 });
-                                Route.update();
-                                break;
                             }
+                        }
                     });
                 }
+            }
+        }
+    };
 
-                var busStopsListInnerHTML = '<ul>';
-                for (var i = 0; i < Route.points.length; i++)
+    var Route =
+    {
+        points: [],
+        markers: [],
+        lines: [],
+        calculateTimes: function()
+        {
+            if (Route.points[0].isBusStop && Route.points[Route.points.length - 1].isBusStop)
+            {
+                var start = 0;
+                var end = 0;
+                while (end < Route.points.length - 1)
                 {
-                    if (Route.points[i].isBusStop)
-                    {
-                        busStopsListInnerHTML += '<li>';
+                    var totalDistance = 0;
+                    var distances = [];
 
-                        busStopsListInnerHTML += '<label>Time offset in seconds</label>';
-                        busStopsListInnerHTML += '<input name="TimeOffsets" type="number" value="' + Route.points[i].timeOffset + '" onchange="changeTime(' + i.toString() + ', this.value)" />';
-                        busStopsListInnerHTML += '<input name="Latitudes" type="hidden" value="' + Route.points[i].lat + '" />';
-                        busStopsListInnerHTML += '<input name="Longitudes" type="hidden" value="' + Route.points[i].lng + '" />';
-                        busStopsListInnerHTML += '<input name="IsBusStops" type="hidden" value="True" />';
-                        busStopsListInnerHTML += '</li>';
+                    do
+                    {
+                        end++;
+                        var diff_X = Route.points[end].lat - Route.points[end - 1].lat;
+                        var diff_Y = Route.points[end].lng - Route.points[end - 1].lng;
+                        var distance = Math.sqrt(diff_X * diff_X + diff_Y * diff_Y);
+                        totalDistance += distance;
+                        distances.push(distance);
                     }
-                    else
-                    {
-                        busStopsListInnerHTML += '<input name="TimeOffsets" type="hidden" value="' + Route.points[i].timeOffset + '" />';
-                        busStopsListInnerHTML += '<input name="Latitudes" type="hidden" value="' + Route.points[i].lat + '" />';
-                        busStopsListInnerHTML += '<input name="Longitudes" type="hidden" value="' + Route.points[i].lng + '" />';
-                        busStopsListInnerHTML += '<input name="IsBusStops" type="hidden" value="False" />';
+                    while (!Route.points[end].isBusStop);
 
+                    var totalTime = Route.points[end].timeOffset - Route.points[start].timeOffset;
+
+                    while (++start != end)
+                    {
+                        Route.points[start].timeOffset = Route.points[start - 1].timeOffset + Math.round(totalTime * distances.shift() / totalDistance);
                     }
                 }
+            }
+        },
+        update: function()
+        {
+            Route.calculateTimes();
+            for (var i = 0; i < Route.markers.length; i++)
+                Route.markers[i].setMap(null);
+            Route.markers = [];
+
+            for (var i = 0; i < Route.lines.length; i++)
+                Route.lines[i].setMap(null);
+            Route.lines = [];
+
+            for (var i = 0; i < Route.points.length; i++)
+            {
+                Route.markers.push(new google.maps.Marker(
+                {
+                    draggable: true,
+                    icon: Route.points[i].isBusStop ? OrangeBusStopMarkerImage : OrangeCircleMarkerImage,
+                    map: map,
+                    optimized: false,
+                    position: Route.points[i],
+                    zIndex: 1
+                }));
+
+                Route.markers[i].addListener('click', function(e)
+                {
+                    for (var i = 0; i < Route.markers.length; i++)
+                        if (this == Route.markers[i])
+                        {
+                            Route.points.splice(i, 1);
+                            Route.update();
+                            break;
+                        }
+                });
+
+                Route.markers[i].addListener('rightclick', function(e)
+                {
+                    for (var i = 0; i < Route.markers.length; i++)
+                        if (this == Route.markers[i])
+                        {
+                            Route.points[i].isBusStop = !Route.points[i].isBusStop;
+                            Route.update();
+                            break;
+                        }
+                });
+
+                Route.markers[i].addListener('dragend', function(e)
+                {
+                    for (var i = 0; i < Route.markers.length; i++)
+                        if (this == Route.markers[i])
+                        {
+                            Route.points[i].lat = Route.markers[i].position.lat();
+                            Route.points[i].lng = Route.markers[i].position.lng();
+
+                            var mousePositionPixels = overlay.getProjection().fromLatLngToContainerPixel(e.latLng);
+                            for (var j = 0; j < ExistingBusStops.markers.length; j++)
+                            {
+                                var busStopPositionPixels = overlay.getProjection().fromLatLngToContainerPixel(ExistingBusStops.markers[j].getPosition());
+                                if (Math.abs(mousePositionPixels.x - busStopPositionPixels.x) <= 12 &&
+                                    Math.abs(mousePositionPixels.y - busStopPositionPixels.y) <= 12)
+                                {
+                                    Route.points[i].lat = ExistingBusStops.markers[j].position.lat();
+                                    Route.points[i].lng = ExistingBusStops.markers[j].position.lng();
+                                    Route.points[i].isBusStop = true;
+                                }
+                            }
+
+                            Route.update();
+                            break;
+                        }
+                });
+            }
+
+            for (var i = 0; i < Route.points.length - 1; i++)
+            {
+                Route.lines.push(new google.maps.Polyline(
+                {
+                    map: map,
+                    path: [Route.points[i], Route.points[i + 1]],
+                    geodesic: true,
+                    strokeColor: '#FF6A00',
+                    strokeOpacity: 0.5,
+                    strokeWeight: 5,
+                }));
+
+                Route.lines[i].addListener('click', function(e)
+                {
+                    for (var j = 0; j < Route.lines.length; j++)
+                        if (this == Route.lines[j])
+                        {
+                            Route.points.splice(j + 1, 0,
+                            {
+                                isBusStop: false,
+                                lat: e.latLng.lat(),
+                                lng: e.latLng.lng(),
+                                timeOffset: 0
+                            });
+                            Route.update();
+                            break;
+                        }
+                });
+            }
+
+            var busStopsListInnerHTML = '<ul>';
+            for (var i = 0; i < Route.points.length; i++)
+            {
+                if (Route.points[i].isBusStop)
+                {
+                    busStopsListInnerHTML += '<li>';
+
+                    busStopsListInnerHTML += '<label>Time offset in seconds</label>';
+                    busStopsListInnerHTML += '<input name="TimeOffsets" type="number" value="' + Route.points[i].timeOffset + '" onchange="changeTime(' + i.toString() + ', this.value)" />';
+                    busStopsListInnerHTML += '<input name="Latitudes" type="hidden" value="' + Route.points[i].lat + '" />';
+                    busStopsListInnerHTML += '<input name="Longitudes" type="hidden" value="' + Route.points[i].lng + '" />';
+                    busStopsListInnerHTML += '<input name="IsBusStops" type="hidden" value="True" />';
+                    busStopsListInnerHTML += '</li>';
+                }
+                else
+                {
+                    busStopsListInnerHTML += '<input name="TimeOffsets" type="hidden" value="' + Route.points[i].timeOffset + '" />';
+                    busStopsListInnerHTML += '<input name="Latitudes" type="hidden" value="' + Route.points[i].lat + '" />';
+                    busStopsListInnerHTML += '<input name="Longitudes" type="hidden" value="' + Route.points[i].lng + '" />';
+                    busStopsListInnerHTML += '<input name="IsBusStops" type="hidden" value="False" />';
+
+                }
+            }
 
 
 
-                busStopsListInnerHTML += '</ul>';
-                var busStopsList = document.getElementById('busStopsList');
-                busStopsList.innerHTML = busStopsListInnerHTML;
+            busStopsListInnerHTML += '</ul>';
+            var busStopsList = document.getElementById('busStopsList');
+            busStopsList.innerHTML = busStopsListInnerHTML;
 
                 
-            }
-        };
+        }
+    };
 
-        function changeTime(i, time)
+    function changeTime(i, time)
+    {
+        Route.points[i].timeOffset = Number(time);
+        Route.update();
+    }
+
+    function getPointsBetweenTwoPoints(x1, y1, x2, y2)
+    {
+        var diff_X = x1 - x2;
+        var diff_Y = y1 - y2;
+        var dist = Math.sqrt(diff_X * diff_X + diff_Y * diff_Y);
+        var pointNum = (dist / 0.000100);
+
+        var interval_X = diff_X / (pointNum);
+        var interval_Y = diff_Y / (pointNum);
+
+        for (var i = 0; i <= pointNum; i++)
         {
-            Route.points[i].timeOffset = Number(time);
+            new google.maps.Marker({ position: { lat: x1 - interval_X * i, lng: y1 - interval_Y * i } }).setMap(map);
+        }
+    }
+
+    window.onload = function()
+    {
+
+        overlay = new google.maps.OverlayView();
+        overlay.draw = function() {};
+        overlay.setMap(map);
+
+        GrayBusStopMarkerImage = new google.maps.MarkerImage
+        (
+            '/Content/Images/gray_busstop.png',
+            new google.maps.Size(24, 24),
+            new google.maps.Point(0, 0),
+            new google.maps.Point(12, 12)
+        );
+
+        OrangeBusStopMarkerImage = new google.maps.MarkerImage
+        (
+            '/Content/Images/orange_busstop2.png',
+            new google.maps.Size(24, 24),
+            new google.maps.Point(0, 0),
+            new google.maps.Point(12, 12)
+        );
+
+        OrangeCircleMarkerImage = new google.maps.MarkerImage
+        (
+            '/Content/Images/orange_circle.png',
+            new google.maps.Size(12, 12),
+            new google.maps.Point(0, 0),
+            new google.maps.Point(6, 6)
+        );
+
+        ExistingBusStops.initialize();
+        Directions.initialize();
+
+
+
+
+
+        document.getElementById('correctRoute').onclick = function(e)
+        {
+            Directions.completed = true;
+            e.target.disabled = true;
+            Directions.display.setMap(null);
             Route.update();
-        }
-
-        function getPointsBetweenTwoPoints(x1, y1, x2, y2)
-        {
-            var diff_X = x1 - x2;
-            var diff_Y = y1 - y2;
-            var dist = Math.sqrt(diff_X * diff_X + diff_Y * diff_Y);
-            var pointNum = (dist / 0.000100);
-
-            var interval_X = diff_X / (pointNum);
-            var interval_Y = diff_Y / (pointNum);
-
-            for (var i = 0; i <= pointNum; i++)
-            {
-                new google.maps.Marker({ position: { lat: x1 - interval_X * i, lng: y1 - interval_Y * i } }).setMap(map);
-            }
-        }
-
-        window.onload = function()
-        {
-
-            overlay = new google.maps.OverlayView();
-            overlay.draw = function() {};
-            overlay.setMap(map);
-
-            GrayBusStopMarkerImage = new google.maps.MarkerImage
-            (
-                '/Content/Images/gray_busstop.png',
-                new google.maps.Size(24, 24),
-                new google.maps.Point(0, 0),
-                new google.maps.Point(12, 12)
-            );
-
-            OrangeBusStopMarkerImage = new google.maps.MarkerImage
-            (
-                '/Content/Images/orange_busstop2.png',
-                new google.maps.Size(24, 24),
-                new google.maps.Point(0, 0),
-                new google.maps.Point(12, 12)
-            );
-
-            OrangeCircleMarkerImage = new google.maps.MarkerImage
-            (
-                '/Content/Images/orange_circle.png',
-                new google.maps.Size(12, 12),
-                new google.maps.Point(0, 0),
-                new google.maps.Point(6, 6)
-            );
-
-            ExistingBusStops.initialize();
-            Directions.initialize();
-
-
-
-
-
-            document.getElementById('correctRoute').onclick = function(e)
-            {
-                Directions.completed = true;
-                e.target.disabled = true;
-                Directions.display.setMap(null);
-                Route.update();
-            };
-
-            document.getElementById('calculatePoints').onclick = function(e)
-            {
-                for (var i = 0; i < Route.points.length - 1; i++)
-                    getPointsBetweenTwoPoints(Route.points[i].lat, Route.points[i].lng, Route.points[i + 1].lat, Route.points[i + 1].lng);
-            };
         };
-    </script>
 
-    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
-    <script src="~/Scripts/Maps.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD44zRKQDHDs7dMdwhXP7a8XjJzwuuFNJA&callback=initMap" async defer></script>
-</body>
-</html>
-
-
+        document.getElementById('calculatePoints').onclick = function(e)
+        {
+            for (var i = 0; i < Route.points.length - 1; i++)
+                getPointsBetweenTwoPoints(Route.points[i].lat, Route.points[i].lng, Route.points[i + 1].lat, Route.points[i + 1].lng);
+        };
+    };
+</script>

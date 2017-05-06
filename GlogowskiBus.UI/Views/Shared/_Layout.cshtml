@@ -19,8 +19,8 @@
 
     <nav>
         <ul>
-            <li><a href="#">GłogowskiBus</a></li>
-            <li><a href="#">ZALOGUJ</a></li><li><a href="#">ROZKŁAD JAZDY</a></li><li><a href="#">WYSZUKAJ POŁĄCZENIE</a></li><li><a class="active" href="#">AUTOBUSY I PRZYSTANKI</a></li>
+            <li><a href='@Url.Action("Index")'>GłogowskiBus</a></li>
+            <li><a href="#">ZALOGUJ</a></li><li><a href="#">ROZKŁAD JAZDY</a></li><li><a href="#">WYSZUKAJ POŁĄCZENIE</a></li><li><a class='@(ViewBag.Title == "Autobusy i przystanki" ? "active" : null)' href='@Url.Action("BusPositions")'>AUTOBUSY I PRZYSTANKI</a></li>
         </ul>
     </nav>
 

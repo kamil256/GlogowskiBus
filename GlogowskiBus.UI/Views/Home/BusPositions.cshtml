@@ -1,185 +1,155 @@
 ﻿@model GlogowskiBus.UI.Models.HomeBusPositionsViewModel
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlogowskiBus</title>
-    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-    <div id="map"></div>
-    <div id="aside">
-        @*<p>Wyznacz na mapie trasę tworzonej linii kolejno od punktu początkowego do docelowego. W kolejnym kroku będziesz mógł skorygować trasę oraz wyznaczyć jej przystanki. Kliknięcie utworzonego punktu spowoduje jego usunięcie. Po zakończeniu </p>
-        <button id="correctRoute">Correct route</button>
-        <button id="calculatePoints">Calculate points</button>*@
+@{ 
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Autobusy i przystanki";
+}
 
+<script>
+    var busLines;
 
+    function getPositionBetweenTwoPoints(startPoint, endPoint, currentTimeOffset)
+    {
+        var latitudeDifference = endPoint.Latitude - startPoint.Latitude;
+        var longitudeDifference = endPoint.Longitude - startPoint.Longitude;
+        var timeRatio = (currentTimeOffset - startPoint.TimeOffset) / (endPoint.TimeOffset - startPoint.TimeOffset);
+        var newPointLatitude = startPoint.Latitude + latitudeDifference * timeRatio;
+        var newPointLongitude = startPoint.Longitude + longitudeDifference * timeRatio;
+        return new google.maps.LatLng(newPointLatitude, newPointLongitude);
+    }
 
-        @*@using (Html.BeginForm())
-        {
-            @Html.TextBoxFor(x => x.BusNumber)
-
-            <div id="busStopsList">
-            </div>
-            <input type="submit" value="Create new route" />
-        }*@
-    </div>
-
-
-
-    <script>
-        var busLines;
-
-        function getPositionBetweenTwoPoints(startPoint, endPoint, currentTimeOffset)
-        {
-            var latitudeDifference = endPoint.Latitude - startPoint.Latitude;
-            var longitudeDifference = endPoint.Longitude - startPoint.Longitude;
-            var timeRatio = (currentTimeOffset - startPoint.TimeOffset) / (endPoint.TimeOffset - startPoint.TimeOffset);
-            var newPointLatitude = startPoint.Latitude + latitudeDifference * timeRatio;
-            var newPointLongitude = startPoint.Longitude + longitudeDifference * timeRatio;
-            return new google.maps.LatLng(newPointLatitude, newPointLongitude);
-        }
-
-        function Bus(busNumberParam, pointsParam, startTimeOffset, departureHoursParam, departureMinutesParam)
-        {
-            var self = this;
+    function Bus(busNumberParam, pointsParam, startTimeOffset, departureHoursParam, departureMinutesParam)
+    {
+        var self = this;
             
-            self.busNumber = busNumberParam;
+        self.busNumber = busNumberParam;
 
-            self.points = pointsParam;
+        self.points = pointsParam;
 
-            self.departureHours = departureHoursParam;
+        self.departureHours = departureHoursParam;
 
-            self.departureMinutes = departureMinutesParam;
+        self.departureMinutes = departureMinutesParam;
 
-            var marker = new google.maps.Marker(
+        var marker = new google.maps.Marker(
+        {
+            label: self.busNumber,
+            map: map,
+            position:
             {
-                label: self.busNumber,
-                map: map,
-                position:
-                {
-                    lat: self.points[0].Latitude,
-                    lng: self.points[0].Longitude
-                }
-            });
+                lat: self.points[0].Latitude,
+                lng: self.points[0].Longitude
+            }
+        });
 
-            var timeOffset = startTimeOffset;
+        var timeOffset = startTimeOffset;
 
-            var refresh = function()
+        var refresh = function()
+        {
+            if (timeOffset > self.points[self.points.length - 1].TimeOffset)
             {
-                if (timeOffset > self.points[self.points.length - 1].TimeOffset)
+                marker.setMap(null);
+                buses.splice(buses.indexOf(self), 1);
+            }
+            else
+            {
+                for (var k = 0; k < self.points.length - 1; k++)
                 {
-                    marker.setMap(null);
-                    buses.splice(buses.indexOf(self), 1);
-                }
-                else
-                {
-                    for (var k = 0; k < self.points.length - 1; k++)
-                    {
                             
-                        if ((timeOffset >= self.points[k].TimeOffset && timeOffset < self.points[k + 1].TimeOffset))
-                        {
-                            var newPosition = getPositionBetweenTwoPoints(self.points[k], self.points[k + 1], timeOffset);
-                            marker.setPosition(newPosition);
-                            break;
-                        }
-                    }
-                    setTimeout(refresh, 100);
-                    timeOffset += 100;
-                }
-            }
-
-            refresh();
-        }
-
-        var buses = [];
-
-        function refreshBuses()
-        {
-            for (var i = 0; i < busLines.length; i++)
-            {
-                for (var r = 0; r < busLines[i].Routes.length; r++)
-                {
-                    for (var j = 0; j < busLines[i].Routes[r].DepartureTimes.length; j++)
+                    if ((timeOffset >= self.points[k].TimeOffset && timeOffset < self.points[k + 1].TimeOffset))
                     {
-                        var departureHours = busLines[i].Routes[r].DepartureTimes[j].Hours;
-                        var departureMinutes = busLines[i].Routes[r].DepartureTimes[j].Minutes;
-                        var departureTotalMilliseconds =  new Date(2017, 5 - 1, 3, departureHours, departureMinutes, 0).getTime();
-                        var arrivalTotalMilliseconds =  departureTotalMilliseconds + busLines[i].Routes[r].Points[busLines[i].Routes[r].Points.length - 1].TimeOffset;
-                        if (serverTime.getTotalMilliseconds() >= departureTotalMilliseconds && serverTime.getTotalMilliseconds() < arrivalTotalMilliseconds) 
+                        var newPosition = getPositionBetweenTwoPoints(self.points[k], self.points[k + 1], timeOffset);
+                        marker.setPosition(newPosition);
+                        break;
+                    }
+                }
+                setTimeout(refresh, 100);
+                timeOffset += 100;
+            }
+        }
+
+        refresh();
+    }
+
+    var buses = [];
+
+    function refreshBuses()
+    {
+        for (var i = 0; i < busLines.length; i++)
+        {
+            for (var r = 0; r < busLines[i].Routes.length; r++)
+            {
+                for (var j = 0; j < busLines[i].Routes[r].DepartureTimes.length; j++)
+                {
+                    var departureHours = busLines[i].Routes[r].DepartureTimes[j].Hours;
+                    var departureMinutes = busLines[i].Routes[r].DepartureTimes[j].Minutes;
+                    var departureTotalMilliseconds =  new Date(2017, 5 - 1, 3, departureHours, departureMinutes, 0).getTime();
+                    var arrivalTotalMilliseconds =  departureTotalMilliseconds + busLines[i].Routes[r].Points[busLines[i].Routes[r].Points.length - 1].TimeOffset;
+                    if (serverTime.getTotalMilliseconds() >= departureTotalMilliseconds && serverTime.getTotalMilliseconds() < arrivalTotalMilliseconds) 
+                    {
+                        var busAdded = false;
+                        for (var k = 0; k < buses.length; k++)
                         {
-                            var busAdded = false;
-                            for (var k = 0; k < buses.length; k++)
+                            if (buses[k].busNumber === busLines[i].BusNumber && buses[k].departureHours === departureHours && buses[k].departureMinutes === departureMinutes)
                             {
-                                if (buses[k].busNumber === busLines[i].BusNumber && buses[k].departureHours === departureHours && buses[k].departureMinutes === departureMinutes)
-                                {
-                                    busAdded = true;
-                                    break;
-                                }
+                                busAdded = true;
+                                break;
                             }
-                            if (!busAdded)
-                            {
-                                buses.push(new Bus(busLines[i].BusNumber, busLines[i].Routes[r].Points, serverTime.getTotalMilliseconds() - departureTotalMilliseconds, departureHours, departureMinutes));
-                            }
+                        }
+                        if (!busAdded)
+                        {
+                            buses.push(new Bus(busLines[i].BusNumber, busLines[i].Routes[r].Points, serverTime.getTotalMilliseconds() - departureTotalMilliseconds, departureHours, departureMinutes));
                         }
                     }
                 }
             }
         }
+    }
 
-        function ServerTime()
+    function ServerTime()
+    {
+        var self = this;
+
+        var totalMilliseconds = Number(@Model.ServerTimeMilliseconds);
+
+        self.getHours = function()
         {
-            var self = this;
-
-            var totalMilliseconds = Number(@Model.ServerTimeMilliseconds);
-
-            self.getHours = function()
-            {
-                return new Date(totalMilliseconds).getHours();
-            }
-
-            self.getMinutes = function()
-            {
-                return new Date(totalMilliseconds).getMinutes();
-            }
-
-            self.getSeconds = function()
-            {
-                return new Date(totalMilliseconds).getSeconds();
-            }
-
-            self.getTotalMilliseconds = function()
-            {
-                return totalMilliseconds;
-            }
-
-            var tick = function()
-            {
-                setTimeout(tick, 1000);
-                totalMilliseconds += 1000;
-                if (self.getSeconds() === 0)
-                {
-                    refreshBuses();
-                }
-            }
-
-            tick();
+            return new Date(totalMilliseconds).getHours();
         }
 
-        var serverTime;
-
-        window.onload = function()
+        self.getMinutes = function()
         {
-            busLines = @Html.Raw(Json.Encode(@Model.BusLines));
-            serverTime = new ServerTime();
-            refreshBuses();
+            return new Date(totalMilliseconds).getMinutes();
         }
-    </script>
 
-    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
-    <script src="~/Scripts/Maps.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD44zRKQDHDs7dMdwhXP7a8XjJzwuuFNJA&callback=initMap" async defer></script>
-</body>
-</html>
+        self.getSeconds = function()
+        {
+            return new Date(totalMilliseconds).getSeconds();
+        }
+
+        self.getTotalMilliseconds = function()
+        {
+            return totalMilliseconds;
+        }
+
+        var tick = function()
+        {
+            setTimeout(tick, 1000);
+            totalMilliseconds += 1000;
+            if (self.getSeconds() === 0)
+            {
+                refreshBuses();
+            }
+        }
+
+        tick();
+    }
+
+    var serverTime;
+
+    window.onload = function()
+    {
+        busLines = @Html.Raw(Json.Encode(@Model.BusLines));
+        serverTime = new ServerTime();
+        refreshBuses();
+    }
+</script>
