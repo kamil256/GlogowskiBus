@@ -24,8 +24,8 @@ namespace GlogowskiBus.BLL.Concrete
             return unitOfWork.BusStopRepository.Get().Select(x => new BusStop()
             {
                 Name = x.Name,
-                Latitude = x.Points.ElementAt(0).Latitude,
-                Longitude = x.Points.ElementAt(0).Longitude,
+                Latitude = x.Latitude,
+                Longitude = x.Longitude,
                 BusNumbers = x.Points.Select(y => y.Route.BusLine.BusNumber).Distinct().ToList()
             }).ToList();
         }
@@ -75,13 +75,15 @@ namespace GlogowskiBus.BLL.Concrete
                 DAL.Entities.BusStop busStop = null;
                 if (routePoints[i].IsBusStop)
                 {
-                    busStop = unitOfWork.BusStopRepository.Get().FirstOrDefault(x => x.Points.ElementAt(0).Latitude == routePoints[i].Latitude &&
-                                                                                     x.Points.ElementAt(0).Longitude == routePoints[i].Longitude);
+                    busStop = unitOfWork.BusStopRepository.Get().FirstOrDefault(x => x.Latitude == routePoints[i].Latitude &&
+                                                                                     x.Longitude == routePoints[i].Longitude);
                     if (busStop == null)
                     {
                         busStop = new DAL.Entities.BusStop()
                         {
-                            Name = "New bus stop"
+                            Name = "New bus stop",
+                            Latitude = routePoints[i].Latitude,
+                            Longitude = routePoints[i].Longitude
                         };
                         unitOfWork.BusStopRepository.Insert(busStop);
                     }
@@ -110,8 +112,8 @@ namespace GlogowskiBus.BLL.Concrete
                     Details = y.Details,
                     Points = y.Points.OrderBy(z => z.TimeOffset).Select(z => new Point()
                     {
-                        Latitude = z.Latitude,
-                        Longitude = z.Longitude,
+                        Latitude = z.BusStop == null ? z.Latitude : z.BusStop.Latitude,
+                        Longitude = z.BusStop == null ? z.Longitude : z.BusStop.Longitude,
                         IsBusStop = z.BusStop != null,
                         TimeOffset = z.TimeOffset
                     }).ToList(),

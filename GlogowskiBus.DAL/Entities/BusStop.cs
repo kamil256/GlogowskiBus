@@ -10,6 +10,8 @@ namespace GlogowskiBus.DAL.Entities
     {
         public int BusStopId { get; set; }
         public string Name { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
 
         public virtual ICollection<Point> Points { get; set; } 
     }

@@ -38,11 +38,15 @@ namespace GlogowskiBus.UnitTests
         {
             new DAL.Entities.BusStop()
             {
-                Name = "Bus stop 1"
+                Name = "Bus stop 1",
+                Latitude = 1.2,
+                Longitude = 2.3
             },
             new DAL.Entities.BusStop()
             {
-                Name = "Bus stop 2"
+                Name = "Bus stop 2",
+                Latitude = 5.6,
+                Longitude = 6.7
             }
         };
 
@@ -50,8 +54,6 @@ namespace GlogowskiBus.UnitTests
         {
             new DAL.Entities.Point
             {
-                Latitude = 1.2,
-                Longitude = 2.3,
                 TimeOffset = 0,
                 Route = fakeRoutes[0],
                 BusStop = fakeBusStops[0]
@@ -66,8 +68,6 @@ namespace GlogowskiBus.UnitTests
             },
             new DAL.Entities.Point
             {
-                Latitude = 5.6,
-                Longitude = 6.7,
                 TimeOffset = 2000,
                 Route = fakeRoutes[0],
                 BusStop = fakeBusStops[1]
@@ -459,7 +459,9 @@ namespace GlogowskiBus.UnitTests
             routeRepository.Received().Insert(Arg.Is<DAL.Entities.Route>(x => x.Details == "Some details" &&
                                                                               x.BusLine != null));
 
-            busStopRepository.Received().Insert(Arg.Is<DAL.Entities.BusStop>(x => x.Name == "New bus stop"));
+            busStopRepository.Received().Insert(Arg.Is<DAL.Entities.BusStop>(x => x.Name == "New bus stop" &&
+                                                                                  x.Latitude == 2.3 &&
+                                                                                  x.Longitude == 5.6));
 
             pointRepository.Received().Insert(Arg.Is<DAL.Entities.Point>(x => x.Latitude == 1.2 &&
                                                                               x.Longitude == 2.3 &&

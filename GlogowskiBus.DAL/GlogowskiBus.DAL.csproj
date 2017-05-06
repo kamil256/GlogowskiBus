@@ -67,6 +67,10 @@
     <Compile Include="Migrations\201705031540074_Make BusStopId nullable in Point entity..Designer.cs">
       <DependentUpon>201705031540074_Make BusStopId nullable in Point entity..cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705062256421_Add latitude and longitude to BusStop entity..cs" />
+    <Compile Include="Migrations\201705062256421_Add latitude and longitude to BusStop entity..Designer.cs">
+      <DependentUpon>201705062256421_Add latitude and longitude to BusStop entity..cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -80,6 +84,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201705031540074_Make BusStopId nullable in Point entity..resx">
       <DependentUpon>201705031540074_Make BusStopId nullable in Point entity..cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705062256421_Add latitude and longitude to BusStop entity..resx">
+      <DependentUpon>201705062256421_Add latitude and longitude to BusStop entity..cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

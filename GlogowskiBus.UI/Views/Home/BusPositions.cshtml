@@ -82,7 +82,8 @@
                 {
                     var departureHours = busLines[i].Routes[r].DepartureTimes[j].Hours;
                     var departureMinutes = busLines[i].Routes[r].DepartureTimes[j].Minutes;
-                    var departureTotalMilliseconds =  new Date(2017, 5 - 1, 3, departureHours, departureMinutes, 0).getTime();
+                    var now = new Date();
+                    var departureTotalMilliseconds =  new Date(now.getFullYear(), now.getMonth(), now.getDate(), departureHours, departureMinutes, 0).getTime();
                     var arrivalTotalMilliseconds =  departureTotalMilliseconds + busLines[i].Routes[r].Points[busLines[i].Routes[r].Points.length - 1].TimeOffset;
                     if (serverTime.getTotalMilliseconds() >= departureTotalMilliseconds && serverTime.getTotalMilliseconds() < arrivalTotalMilliseconds) 
                     {
