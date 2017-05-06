@@ -22,14 +22,7 @@ namespace GlogowskiBus.UI.Controllers
 
         public ViewResult Index()
         {
-            HomeIndexViewModel model = new HomeIndexViewModel();
-            model.BusStops = busService.GetAllBusStops().Select(x => new Models.BusStop()
-            {
-                Latitude = x.Latitude,
-                Longitude = x.Longitude,
-                BusNumbers = x.BusNumbers
-            });
-            return View(model);
+            return View();
         }
 
         public ViewResult BusPositions()

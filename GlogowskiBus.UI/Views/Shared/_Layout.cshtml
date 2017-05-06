@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        #map {
+            float: initial;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <nav>
+        <ul>
+            <li><a href="#">GłogowskiBus</a></li>
+            <li><a href="#">ZALOGUJ</a></li><li><a href="#">ROZKŁAD JAZDY</a></li><li><a href="#">WYSZUKAJ POŁĄCZENIE</a></li><li><a class="active" href="#">AUTOBUSY I PRZYSTANKI</a></li>
+        </ul>
+    </nav>
+
+    @RenderBody()
+
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/Maps.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD44zRKQDHDs7dMdwhXP7a8XjJzwuuFNJA&callback=initMap" async defer></script>
+</body>
+</html>
