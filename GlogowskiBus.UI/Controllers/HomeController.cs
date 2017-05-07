@@ -52,6 +52,15 @@ namespace GlogowskiBus.UI.Controllers
                     }).ToList()
                 }).ToList()
             }).ToList();
+
+            model.BusStops = busService.GetAllBusStops().Select(x => new Models.BusStop()
+            {
+                Latitude = x.Latitude,
+                Longitude = x.Longitude,
+                Name = x.Name,
+                BusNumbers = x.BusNumbers
+            });
+
             return View("BusPositions", model);
         }
 

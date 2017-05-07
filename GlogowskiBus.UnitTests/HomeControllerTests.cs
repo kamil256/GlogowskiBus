@@ -265,6 +265,7 @@ namespace GlogowskiBus.UnitTests
             // Arrange
             IBusService busService = Substitute.For<IBusService>();
             busService.GetAllBusLines().Returns(fakeBusLines);
+            busService.GetAllBusStops().Returns(fakeBusStops);
 
             // Act
             HomeController homeController = new HomeController(busService);
@@ -306,6 +307,20 @@ namespace GlogowskiBus.UnitTests
             Assert.AreEqual(true, model.BusLines[0].Routes[0].DepartureTimes[0].WorkingDay);
             Assert.AreEqual(false, model.BusLines[0].Routes[0].DepartureTimes[0].Saturday);
             Assert.AreEqual(false, model.BusLines[0].Routes[0].DepartureTimes[0].Sunday);
+
+            Assert.AreEqual(2, model.BusStops.Count());
+
+            Assert.AreEqual(1, model.BusStops.ElementAt(0).BusNumbers.Count());
+            Assert.AreEqual("1", model.BusStops.ElementAt(0).BusNumbers[0]);
+            Assert.AreEqual(1.2, model.BusStops.ElementAt(0).Latitude, 1);
+            Assert.AreEqual(2.3, model.BusStops.ElementAt(0).Longitude);
+            Assert.AreEqual("Bus stop 1", model.BusStops.ElementAt(0).Name);
+
+            Assert.AreEqual(1, model.BusStops.ElementAt(1).BusNumbers.Count());
+            Assert.AreEqual("1", model.BusStops.ElementAt(1).BusNumbers[0]);
+            Assert.AreEqual(5.6, model.BusStops.ElementAt(1).Latitude);
+            Assert.AreEqual(6.7, model.BusStops.ElementAt(1).Longitude);
+            Assert.AreEqual("Bus stop 2", model.BusStops.ElementAt(1).Name);
 
             Assert.AreEqual("BusPositions", viewResult.ViewName);
         }

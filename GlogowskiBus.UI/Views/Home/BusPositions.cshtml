@@ -8,21 +8,6 @@
 <div id="showHideLines">
     <p>Pokaż/ukryj linie:</p>
     <ul id="busLinesTiles">
-        <li class="active">A</li>
-        <li class="active">57</li>
-        <li>61</li>
-        <li class="active">1</li>
-        <li>2</li>
-        <li class="active">3</li>
-        <li>4</li>
-        <li class="active">5</li>
-        <li>6</li>
-        <li class="active">7</li>
-        <li>8</li>
-        <li class="active">9</li>
-        <li>10</li>
-        <li class="active">11</li>
-        <li>12</li>
     </ul>
     <p>
         <span class="textButton">Pokaż wszystkie</span> | <span class="textButton">Ukryj wszystkie</span>
@@ -45,6 +30,63 @@
 
 <script>
     var busLines;
+    var selectedLine = 
+    {
+        lines: [],
+        update: function(lineNumber)
+        {
+            for (var i = 0; i < selectedLine.lines.length; i++)
+                selectedLine.lines[i].setMap(null);
+
+            if (lineNumber)
+                for (var i = 0; i < busLines.length; i++)
+                    if (busLines[i].BusNumber === lineNumber)
+                    {
+                        for (var j = 0; j < busLines[i].Routes[0].Points.length - 1; j++)
+                        {
+                            selectedLine.lines.push(new google.maps.Polyline(
+                            {
+                                map: map,
+                                path: [new google.maps.LatLng(busLines[i].Routes[0].Points[j].Latitude, busLines[i].Routes[0].Points[j].Longitude), new google.maps.LatLng(busLines[i].Routes[0].Points[j + 1].Latitude, busLines[i].Routes[0].Points[j + 1].Longitude)],
+                                geodesic: true,
+                                strokeColor: '#FF6A00',
+                                strokeOpacity: 1,
+                                strokeWeight: 5,
+                            }));
+                        }
+                        break;
+                    }
+        }
+    };
+
+    var ExistingBusStops =
+    {
+        markers: [],
+        initialize: function()
+        {
+            var busStops = @Html.Raw(Json.Encode(@Model.BusStops));
+            for (var i = 0; i < busStops.length; i++)
+            {
+                ExistingBusStops.markers.push(new google.maps.Marker(
+                {
+                    icon: OrangeBusStopMarkerImage,
+                    map: map,
+                    optimized: false,
+                    position:
+                    {
+                        lat: busStops[i].Latitude,
+                        lng: busStops[i].Longitude
+                    },
+                    zIndex: 0
+                }));
+
+                ExistingBusStops.markers[i].addListener('click', function(e)
+                {
+                    
+                });
+            }
+        }
+    };
 
     function refreshBusLinesTiles()
     {
@@ -57,7 +99,7 @@
             if (busLines[i].show === true)
                 tile.className = 'active';
             tile.textContent = busLines[i].BusNumber;
-            tile.onclick = function(i) 
+            tile.onclick = function(i)
             {
                 for (var i = 0; i < busLines.length; i++)
                     if (busLines[i].BusNumber === this.textContent)
@@ -84,7 +126,7 @@
     function Bus(busNumberParam, pointsParam, startTimeOffset, departureHoursParam, departureMinutesParam)
     {
         var self = this;
-            
+
         self.busNumber = busNumberParam;
 
         self.points = pointsParam;
@@ -102,6 +144,10 @@
                 lat: self.points[0].Latitude,
                 lng: self.points[0].Longitude
             }
+        });
+        marker.addListener('click', function(e)
+        {
+            selectedLine.update(self.busNumber);
         });
         var timeOffset = startTimeOffset;
 
@@ -126,7 +172,7 @@
             {
                 for (var k = 0; k < self.points.length - 1; k++)
                 {
-                            
+
                     if ((timeOffset >= self.points[k].TimeOffset && timeOffset < self.points[k + 1].TimeOffset))
                     {
                         var newPosition = getPositionBetweenTwoPoints(self.points[k], self.points[k + 1], timeOffset);
@@ -157,7 +203,7 @@
                     var now = new Date();
                     var departureTotalMilliseconds =  new Date(now.getFullYear(), now.getMonth(), now.getDate(), departureHours, departureMinutes, 0).getTime();
                     var arrivalTotalMilliseconds =  departureTotalMilliseconds + busLines[i].Routes[r].Points[busLines[i].Routes[r].Points.length - 1].TimeOffset;
-                    if (serverTime.getTotalMilliseconds() >= departureTotalMilliseconds && serverTime.getTotalMilliseconds() < arrivalTotalMilliseconds) 
+                    if (serverTime.getTotalMilliseconds() >= departureTotalMilliseconds && serverTime.getTotalMilliseconds() < arrivalTotalMilliseconds)
                     {
                         var busAdded = false;
                         for (var k = 0; k < buses.length; k++)
@@ -221,6 +267,34 @@
 
     window.onload = function()
     {
+        GrayBusStopMarkerImage = new google.maps.MarkerImage
+        (
+            '/Content/Images/gray_busstop.png',
+            new google.maps.Size(24, 24),
+            new google.maps.Point(0, 0),
+            new google.maps.Point(12, 12)
+        );
+
+        OrangeBusStopMarkerImage = new google.maps.MarkerImage
+        (
+            '/Content/Images/orange_busstop2.png',
+            new google.maps.Size(24, 24),
+            new google.maps.Point(0, 0),
+            new google.maps.Point(12, 12)
+        );
+
+        OrangeCircleMarkerImage = new google.maps.MarkerImage
+        (
+            '/Content/Images/orange_circle.png',
+            new google.maps.Size(12, 12),
+            new google.maps.Point(0, 0),
+            new google.maps.Point(6, 6)
+        );
+
+        ExistingBusStops.initialize();
+
+
+
         busLines = @Html.Raw(Json.Encode(@Model.BusLines));
 
         for (var i = 0; i < busLines.length; i++)
@@ -229,5 +303,10 @@
 
         serverTime = new ServerTime();
         refreshBuses();
+
+        map.addListener('click', function(e)
+        {
+            selectedLine.update(null);    
+        });
     }
 </script>

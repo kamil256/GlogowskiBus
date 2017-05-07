@@ -10,5 +10,6 @@ namespace GlogowskiBus.UI.Models
     {
         public long ServerTimeMilliseconds { get; set; }
         public List<BusLine> BusLines { get; set; }
+        public IEnumerable<BusStop> BusStops { get; set; }
     }
 }
