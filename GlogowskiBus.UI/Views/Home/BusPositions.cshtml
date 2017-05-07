@@ -5,8 +5,71 @@
     ViewBag.Title = "Autobusy i przystanki";
 }
 
+<div id="showHideLines">
+    <p>Pokaż/ukryj linie:</p>
+    <ul id="busLinesTiles">
+        <li class="active">A</li>
+        <li class="active">57</li>
+        <li>61</li>
+        <li class="active">1</li>
+        <li>2</li>
+        <li class="active">3</li>
+        <li>4</li>
+        <li class="active">5</li>
+        <li>6</li>
+        <li class="active">7</li>
+        <li>8</li>
+        <li class="active">9</li>
+        <li>10</li>
+        <li class="active">11</li>
+        <li>12</li>
+    </ul>
+    <p>
+        <span class="textButton">Pokaż wszystkie</span> | <span class="textButton">Ukryj wszystkie</span>
+    </p>
+</div>
+
+@*<hr />
+
+<div id="lineDetails">
+    <p>
+        Szczegóły linii:
+    </p>
+    <select class="form-control">
+        <option>Linia: A, Trasa: Wojska Polskiego II &rarr; Dworzec Główny PKP</option>
+        <option>50</option>
+        <option>57</option>
+        <option>61</option>
+    </select>
+</div>*@
+
 <script>
     var busLines;
+
+    function refreshBusLinesTiles()
+    {
+        var busLinesTiles = document.getElementById('busLinesTiles');
+        while (busLinesTiles.firstChild)
+            busLinesTiles.removeChild(busLinesTiles.firstChild);
+        for (var i = 0; i < busLines.length; i++)
+        {
+            var tile = document.createElement('li');
+            if (busLines[i].show === true)
+                tile.className = 'active';
+            tile.textContent = busLines[i].BusNumber;
+            tile.onclick = function(i) 
+            {
+                for (var i = 0; i < busLines.length; i++)
+                    if (busLines[i].BusNumber === this.textContent)
+                    {
+                        busLines[i].show = !busLines[i].show;
+                        refreshBusLinesTiles();
+                        break;
+                    }
+            };
+            busLinesTiles.appendChild(tile);
+        }
+    }
 
     function getPositionBetweenTwoPoints(startPoint, endPoint, currentTimeOffset)
     {
@@ -40,11 +103,20 @@
                 lng: self.points[0].Longitude
             }
         });
-
         var timeOffset = startTimeOffset;
 
         var refresh = function()
         {
+            for (var i = 0; i < busLines.length; i++)
+                if (busLines[i].BusNumber === self.busNumber)
+                {
+                    if (busLines[i].show === true && marker.getMap() === null)
+                        marker.setMap(map);
+                    else if (busLines[i].show === false && marker.getMap() != null)
+                        marker.setMap(null);
+                    break;
+                }
+
             if (timeOffset > self.points[self.points.length - 1].TimeOffset)
             {
                 marker.setMap(null);
@@ -150,6 +222,11 @@
     window.onload = function()
     {
         busLines = @Html.Raw(Json.Encode(@Model.BusLines));
+
+        for (var i = 0; i < busLines.length; i++)
+            busLines[i].show = true;
+        refreshBusLinesTiles();
+
         serverTime = new ServerTime();
         refreshBuses();
     }

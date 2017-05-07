@@ -66,15 +66,60 @@ nav > ul > li:first-child > a {
 
 aside {
     background-color: rgba(0, 0, 0, 0.7);
-    border-radius: 5px;
+    border-radius: 3px;
     color: white;
-    height: calc(100% - 90px);
+    /*height: calc(100% - 90px);*/
     padding: 15px;
     position: fixed;
     right: 7px;
     top: 80px;
     width: 500px;
 }
+
+aside p {
+    color: #eee;
+    font-weight: bold;
+}
+
+aside > #showHideLines > ul {
+    list-style-type: none;
+    margin: 0;
+    margin-bottom: 5px;
+    padding: 0;
+    overflow: auto;
+}
+
+aside > #showHideLines > ul > li {
+    cursor: pointer;
+    float: left;
+    font-weight: bold;
+    height: 50px;
+    line-height: 50px;
+    margin: 1px;
+    text-align: center;
+    vertical-align: middle;
+    width: 50px;
+}
+
+aside > #showHideLines > ul > li:not(.active) {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: #777;
+}
+
+aside > #showHideLines > ul > li.active {
+    background-color: rgba(0, 0, 0, 0.75);
+    color: #ccc;
+}
+
+aside .textButton {
+    color: #aaa;
+    cursor: pointer;
+    font-weight: normal;
+}
+
+/*aside select {
+    max-width: initial;
+}*/
 
 #aside {
     float: left;
