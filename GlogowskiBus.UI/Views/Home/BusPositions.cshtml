@@ -8,6 +8,10 @@
 <div id="showHideLines">
     <p>Pokaż/ukryj linie:</p>
     <ul id="busLinesTiles">
+        @for (int i = 0; i < Model.BusLines.Count; i++)
+        {
+            <li class="active" onclick="showHideBuses(this, '@Model.BusLines[i].BusNumber')">@Model.BusLines[i].BusNumber</li>
+        }
     </ul>
     <p>
         <span class="textButton">Pokaż wszystkie</span> | <span class="textButton">Ukryj wszystkie</span>
@@ -29,101 +33,166 @@
 </div>*@
 
 <script>
-    var busLines;
-    var selectedLine = 
+    function showHideBuses(element, busNumber)
     {
-        lines: [],
-        update: function(lineNumber)
-        {
-            for (var i = 0; i < selectedLine.lines.length; i++)
-                selectedLine.lines[i].setMap(null);
-
-            if (lineNumber)
-                for (var i = 0; i < busLines.length; i++)
-                    if (busLines[i].BusNumber === lineNumber)
-                    {
-                        for (var j = 0; j < busLines[i].Routes[0].Points.length - 1; j++)
-                        {
-                            selectedLine.lines.push(new google.maps.Polyline(
-                            {
-                                map: map,
-                                path: [new google.maps.LatLng(busLines[i].Routes[0].Points[j].Latitude, busLines[i].Routes[0].Points[j].Longitude), new google.maps.LatLng(busLines[i].Routes[0].Points[j + 1].Latitude, busLines[i].Routes[0].Points[j + 1].Longitude)],
-                                geodesic: true,
-                                strokeColor: '#FF6A00',
-                                strokeOpacity: 1,
-                                strokeWeight: 5,
-                            }));
-                        }
-                        break;
-                    }
-        }
-    };
-
-    var ExistingBusStops =
-    {
-        markers: [],
-        initialize: function()
-        {
-            var busStops = @Html.Raw(Json.Encode(@Model.BusStops));
-            for (var i = 0; i < busStops.length; i++)
-            {
-                ExistingBusStops.markers.push(new google.maps.Marker(
-                {
-                    icon: OrangeBusStopMarkerImage,
-                    map: map,
-                    optimized: false,
-                    position:
-                    {
-                        lat: busStops[i].Latitude,
-                        lng: busStops[i].Longitude
-                    },
-                    zIndex: 0
-                }));
-
-                ExistingBusStops.markers[i].addListener('click', function(e)
-                {
-                    
-                });
-            }
-        }
-    };
-
-    function refreshBusLinesTiles()
-    {
-        var busLinesTiles = document.getElementById('busLinesTiles');
-        while (busLinesTiles.firstChild)
-            busLinesTiles.removeChild(busLinesTiles.firstChild);
+        element.className = element.className === 'active' ? '' : 'active';
         for (var i = 0; i < busLines.length; i++)
-        {
-            var tile = document.createElement('li');
-            if (busLines[i].show === true)
-                tile.className = 'active';
-            tile.textContent = busLines[i].BusNumber;
-            tile.onclick = function(i)
+            if (busLines[i].BusNumber === busNumber)
             {
-                for (var i = 0; i < busLines.length; i++)
-                    if (busLines[i].BusNumber === this.textContent)
-                    {
-                        busLines[i].show = !busLines[i].show;
-                        refreshBusLinesTiles();
-                        break;
-                    }
-            };
-            busLinesTiles.appendChild(tile);
-        }
+                busLines[i].show = !busLines[i].show;
+                if (busLines[i].show)
+                    buses.show(busLines[i].BusNumber);
+                else
+                    buses.hide(busLines[i].BusNumber);
+                //refreshBusLinesTiles();
+                break;
+            }
     }
 
-    function getPositionBetweenTwoPoints(startPoint, endPoint, currentTimeOffset)
+    function ServerTime()
     {
-        var latitudeDifference = endPoint.Latitude - startPoint.Latitude;
-        var longitudeDifference = endPoint.Longitude - startPoint.Longitude;
-        var timeRatio = (currentTimeOffset - startPoint.TimeOffset) / (endPoint.TimeOffset - startPoint.TimeOffset);
-        var newPointLatitude = startPoint.Latitude + latitudeDifference * timeRatio;
-        var newPointLongitude = startPoint.Longitude + longitudeDifference * timeRatio;
-        return new google.maps.LatLng(newPointLatitude, newPointLongitude);
+        var self = this;
+
+        var serverTime = Number(@Model.ServerTimeMilliseconds);
+
+        var timeDifference = serverTime - new Date().getTime();
+
+        self.now = function()
+        {
+            return new Date(new Date().getTime() + timeDifference);
+        };
     }
 
-    function Bus(busNumberParam, pointsParam, startTimeOffset, departureHoursParam, departureMinutesParam)
+    function BusStop(busStop)
+    {
+        var self = this;
+
+        var marker = new google.maps.Marker(
+        {
+            icon: OrangeBusStopMarkerImage,
+            map: map,
+            optimized: false,
+            position:
+            {
+                lat: busStop.Latitude,
+                lng: busStop.Longitude
+            },
+            zIndex: 0
+        });
+
+        marker.addListener('click', function(e)
+        {
+            console.log('Bus stop clicked');
+        });
+
+        self.hide = function()
+        {
+            if (marker.getMap() != null)
+                marker.setMap(null);
+        };
+
+        self.show = function()
+        {
+            if (marker.getMap() == null)
+                marker.setMap(map);
+        };
+    };
+
+    function BusStops()
+    {
+        var self = this;
+
+        var busStops = [];
+
+        self.hide = function()
+        {
+            for (var i = 0; i < busStops.length; i++)
+                busStops[i].hide();
+        };
+
+        self.show = function()
+        {
+            for (var i = 0; i < busStops.length; i++)
+                busStops[i].show();
+        };
+
+        var busStopsModel = @Html.Raw(Json.Encode(@Model.BusStops));
+        for (var i = 0; i < busStopsModel.length; i++)
+            busStops.push(new BusStop(busStopsModel[i]));
+    }
+
+    function RoutePolyline(busLineIndexParam, routeIndexParam)
+    {
+        var self = this;
+
+        self.busLineIndex = busLineIndexParam;
+
+        self.routeIndex = routeIndexParam;
+
+        var points = busLines[self.busLineIndex].Routes[self.routeIndex].Points;
+
+        var path = [];
+        for (var i = 0; i < points.length; i++)
+        {
+            path.push(new google.maps.LatLng(points[i].Latitude, points[i].Longitude));
+        }
+
+        var polyline = new google.maps.Polyline(
+        {
+            map: map,
+            path: path,
+            //geodesic: true,
+            strokeColor: '#FF6A00',
+            strokeOpacity: 1,
+            strokeWeight: 5,
+        });
+
+        self.hide = function()
+        {
+            if (polyline.getMap() != null)
+                polyline.setMap(null);
+        };
+
+        self.show = function()
+        {
+            if (polyline.getMap() == null)
+                polyline.setMap(map);
+        };
+    }
+
+    function RoutePolylines()
+    {
+        var self = this;
+
+        var routePolylines = [];
+
+        self.add = function(busLineIndex, routeIndex)
+        {
+            if (self.get(busLineIndex, routeIndex).length == 0)
+            {
+                var routePolyline = new RoutePolyline(busLineIndex, routeIndex);
+                routePolylines.push(routePolyline);
+            }
+        };
+
+        self.removeAll = function()
+        {
+            for (var i = 0; i < routePolylines.length; i++)
+                routePolylines[i].hide();
+            routePolylines = [];
+        };
+
+        self.get = function(busLineIndex, routeIndex)
+        {
+            var result = [];
+            for (var i = 0; i < routePolylines.length; i++)
+                if (routePolylines[i].busLineIndex === busLineIndex && routePolylines[i].routeIndex === routeIndex)
+                    result.push(routePolylines[i]);
+            return result;
+        };
+    }
+
+    function Bus(busNumberParam, pointsParam, startTimeOffsetParam, departureHoursParam, departureMinutesParam, busLineIndex, routeIndex, departureTimeIndex)
     {
         var self = this;
 
@@ -131,9 +200,17 @@
 
         self.points = pointsParam;
 
+        var startTimeOffset = startTimeOffsetParam;
+
         self.departureHours = departureHoursParam;
 
         self.departureMinutes = departureMinutesParam;
+
+        self.busLineIndex = busLineIndex;
+
+        self.routeIndex = routeIndex;
+
+        self.departureTimeIndex = departureTimeIndex;
 
         var marker = new google.maps.Marker(
         {
@@ -145,125 +222,157 @@
                 lng: self.points[0].Longitude
             }
         });
+
         marker.addListener('click', function(e)
         {
-            selectedLine.update(self.busNumber);
+            routePolylines.add(self.busLineIndex, self.routeIndex);
         });
-        var timeOffset = startTimeOffset;
 
-        var refresh = function()
+        self.hide = function()
         {
-            for (var i = 0; i < busLines.length; i++)
-                if (busLines[i].BusNumber === self.busNumber)
-                {
-                    if (busLines[i].show === true && marker.getMap() === null)
-                        marker.setMap(map);
-                    else if (busLines[i].show === false && marker.getMap() != null)
-                        marker.setMap(null);
-                    break;
-                }
+            if (marker.getMap() != null)
+                marker.setMap(null);
+        };
 
-            if (timeOffset > self.points[self.points.length - 1].TimeOffset)
+        self.show = function()
+        {
+            if (marker.getMap() == null)
+                marker.setMap(map);
+        };
+
+        var startTotalMilliseconds = serverTime.now().getTime();
+
+        var getCurrentTimeOffset = function()
+        {
+            return serverTime.now().getTime() - startTotalMilliseconds + startTimeOffset;
+        };
+
+        var update = function()
+        {
+            var currentTimeOffset = getCurrentTimeOffset();
+            if (currentTimeOffset > self.points[self.points.length - 1].TimeOffset)
             {
                 marker.setMap(null);
-                buses.splice(buses.indexOf(self), 1);
+                buses.remove(self);
             }
             else
             {
                 for (var k = 0; k < self.points.length - 1; k++)
                 {
 
-                    if ((timeOffset >= self.points[k].TimeOffset && timeOffset < self.points[k + 1].TimeOffset))
+                    if ((currentTimeOffset >= self.points[k].TimeOffset && currentTimeOffset < self.points[k + 1].TimeOffset))
                     {
-                        var newPosition = getPositionBetweenTwoPoints(self.points[k], self.points[k + 1], timeOffset);
+                        var newPosition = getPositionBetweenTwoPoints(self.points[k], self.points[k + 1], currentTimeOffset);
                         marker.setPosition(newPosition);
                         break;
                     }
                 }
-                setTimeout(refresh, 100);
-                timeOffset += 100;
+                setTimeout(update, 100);
             }
         }
 
-        refresh();
+        update();
     }
 
-    var buses = [];
-
-    function refreshBuses()
+    function Buses()
     {
-        for (var i = 0; i < busLines.length; i++)
+        var self = this;
+
+        var buses = [];
+
+        self.add = function(busNumber, points, startTimeOffset, departureHours, departureMinutes, busLineIndex, routeIndex, departureTimeIndex)
         {
-            for (var r = 0; r < busLines[i].Routes.length; r++)
+            if (self.get(busNumber, departureHours, departureMinutes).length == 0)
             {
-                for (var j = 0; j < busLines[i].Routes[r].DepartureTimes.length; j++)
-                {
-                    var departureHours = busLines[i].Routes[r].DepartureTimes[j].Hours;
-                    var departureMinutes = busLines[i].Routes[r].DepartureTimes[j].Minutes;
-                    var now = new Date();
-                    var departureTotalMilliseconds =  new Date(now.getFullYear(), now.getMonth(), now.getDate(), departureHours, departureMinutes, 0).getTime();
-                    var arrivalTotalMilliseconds =  departureTotalMilliseconds + busLines[i].Routes[r].Points[busLines[i].Routes[r].Points.length - 1].TimeOffset;
-                    if (serverTime.getTotalMilliseconds() >= departureTotalMilliseconds && serverTime.getTotalMilliseconds() < arrivalTotalMilliseconds)
+                var bus = new Bus(busNumber, points, startTimeOffset, departureHours, departureMinutes, busLineIndex, routeIndex, departureTimeIndex);
+
+                // Todo: getLine()
+                for (var i = 0; i < busLines.length; i++)
+                    if (busLines[i].BusNumber === busNumber && !busLines[i].show)
                     {
-                        var busAdded = false;
-                        for (var k = 0; k < buses.length; k++)
+                        bus.hide();
+                    }
+
+                buses.push(bus);
+            }
+        };
+
+        self.remove = function(bus)
+        {
+            buses.splice(buses.indexOf(bus), 1);
+        };
+
+        self.get = function(busNumber, departureHours, departureMinutes)
+        {
+            var result = [];
+            for (var i = 0; i < buses.length; i++)
+                if (buses[i].busNumber === busNumber &&
+                    (departureHours == undefined || buses[i].departureHours === departureHours) &&
+                    (departureMinutes == undefined || buses[i].departureMinutes === departureMinutes))
+                    result.push(buses[i]);
+            return result;
+        };
+
+        self.hide = function(busNumber)
+        {
+            var busesToHide = self.get(busNumber);
+            for (var i = 0; i < busesToHide.length; i++)
+                busesToHide[i].hide();
+        };
+
+        self.show = function(busNumber)
+        {
+            var busesToShow = self.get(busNumber);
+            for (var i = 0; i < busesToShow.length; i++)
+                busesToShow[i].show();
+        };
+
+        var update = function(fullMinute)
+        {
+            if (fullMinute === false || (fullMinute === true && serverTime.now().getSeconds() === 0))
+            {
+                var now = serverTime.now();
+                for (var i = 0; i < busLines.length; i++)
+                {
+                    var busLine = busLines[i];
+                    for (var j = 0; j < busLine.Routes.length; j++)
+                    {
+                        var route = busLine.Routes[j];
+                        for (var k = 0; k < route.DepartureTimes.length; k++)
                         {
-                            if (buses[k].busNumber === busLines[i].BusNumber && buses[k].departureHours === departureHours && buses[k].departureMinutes === departureMinutes)
-                            {
-                                busAdded = true;
-                                break;
-                            }
-                        }
-                        if (!busAdded)
-                        {
-                            buses.push(new Bus(busLines[i].BusNumber, busLines[i].Routes[r].Points, serverTime.getTotalMilliseconds() - departureTotalMilliseconds, departureHours, departureMinutes));
+                            var departureTime = route.DepartureTimes[k];
+                            var departureDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), departureTime.Hours, departureTime.Minutes, 0);
+                            var arrivalDate = new Date(departureDate.getTime() + route.Points[route.Points.length - 1].TimeOffset);
+                            if (now >= departureDate && now < arrivalDate)
+                                self.add(busLine.BusNumber, route.Points, now - departureDate, departureTime.Hours, departureTime.Minutes, i, j, k);
                         }
                     }
                 }
             }
-        }
-    }
-
-    function ServerTime()
-    {
-        var self = this;
-
-        var totalMilliseconds = Number(@Model.ServerTimeMilliseconds);
-
-        self.getHours = function()
-        {
-            return new Date(totalMilliseconds).getHours();
-        }
-
-        self.getMinutes = function()
-        {
-            return new Date(totalMilliseconds).getMinutes();
-        }
-
-        self.getSeconds = function()
-        {
-            return new Date(totalMilliseconds).getSeconds();
-        }
-
-        self.getTotalMilliseconds = function()
-        {
-            return totalMilliseconds;
-        }
-
-        var tick = function()
-        {
-            setTimeout(tick, 1000);
-            totalMilliseconds += 1000;
-            if (self.getSeconds() === 0)
+            setTimeout(function()
             {
-                refreshBuses();
-            }
-        }
+                update(true);
+            }, 900);
+        };
 
-        tick();
+        update(false);
     }
 
-    var serverTime;
+    
+
+    function getPositionBetweenTwoPoints(startPoint, endPoint, currentTimeOffset)
+    {
+        var latitudeDifference = endPoint.Latitude - startPoint.Latitude;
+        var longitudeDifference = endPoint.Longitude - startPoint.Longitude;
+        var timeRatio = (currentTimeOffset - startPoint.TimeOffset) / (endPoint.TimeOffset - startPoint.TimeOffset);
+        var newPointLatitude = startPoint.Latitude + latitudeDifference * timeRatio;
+        var newPointLongitude = startPoint.Longitude + longitudeDifference * timeRatio;
+        return new google.maps.LatLng(newPointLatitude, newPointLongitude);
+    }
+
+
+
+
 
     window.onload = function()
     {
@@ -291,22 +400,22 @@
             new google.maps.Point(6, 6)
         );
 
-        ExistingBusStops.initialize();
-
-
-
+        serverTime = new ServerTime();
+        busStops = new BusStops();
         busLines = @Html.Raw(Json.Encode(@Model.BusLines));
 
         for (var i = 0; i < busLines.length; i++)
             busLines[i].show = true;
-        refreshBusLinesTiles();
+        //refreshBusLinesTiles();
 
-        serverTime = new ServerTime();
-        refreshBuses();
+        buses = new Buses();
+
+        routePolylines = new RoutePolylines();
 
         map.addListener('click', function(e)
         {
-            selectedLine.update(null);    
+            routePolylines.removeAll();
+            //selectedLine.update(null);
         });
     }
 </script>
