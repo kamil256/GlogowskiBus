@@ -36,14 +36,14 @@
     function showHideBuses(element, busNumber)
     {
         element.className = element.className === 'active' ? '' : 'active';
-        for (var i = 0; i < busLines.length; i++)
-            if (busLines[i].BusNumber === busNumber)
+        for (var i = 0; i < context.busLines.length; i++)
+            if (context.busLines[i].busNumber === busNumber)
             {
-                busLines[i].show = !busLines[i].show;
-                if (busLines[i].show)
-                    buses.show(busLines[i].BusNumber);
-                else
-                    buses.hide(busLines[i].BusNumber);
+                context.busLines[i].isVisible = !context.busLines[i].isVisible;
+                //if (busLines[i].show)
+                //    buses.show(busLines[i].BusNumber);
+                //else
+                //    buses.hide(busLines[i].BusNumber);
                 //refreshBusLinesTiles();
                 break;
             }
@@ -63,9 +63,13 @@
         };
     }
 
-    function BusStop(busStop)
+    function BusStop(busStopFromModel)
     {
         var self = this;
+
+        self.name = busStopFromModel.Name;
+        self.latitude = busStopFromModel.Latitude;
+        self.longitude = busStopFromModel.Longitude;
 
         var marker = new google.maps.Marker(
         {
@@ -74,8 +78,8 @@
             optimized: false,
             position:
             {
-                lat: busStop.Latitude,
-                lng: busStop.Longitude
+                lat: self.latitude,
+                lng: self.longitude
             },
             zIndex: 0
         });
@@ -98,27 +102,184 @@
         };
     };
 
-    function BusStops()
+    function BusStops(busStopsFromModel)
     {
         var self = this;
 
         var busStops = [];
+        for (var i = 0; i < busStopsFromModel.length; i++)
+            busStops.push(new BusStop(busStopsFromModel[i]));
 
-        self.hide = function()
+        self.getByPosition = function(latitude, longitude)
+        {
+            for (var i = 0; i < busStops.length; i++)
+                if (busStops[i].latitude === latitude && busStops[i].longitude === longitude)
+                    return busStops[i];
+            return null;
+        };
+
+        self.hideAll = function()
         {
             for (var i = 0; i < busStops.length; i++)
                 busStops[i].hide();
         };
 
-        self.show = function()
+        self.showAll = function()
         {
             for (var i = 0; i < busStops.length; i++)
                 busStops[i].show();
         };
+    }
 
-        var busStopsModel = @Html.Raw(Json.Encode(@Model.BusStops));
-        for (var i = 0; i < busStopsModel.length; i++)
-            busStops.push(new BusStop(busStopsModel[i]));
+    function Point(pointFromModel, busStops)
+    {
+        var self = this;
+
+        self.latitude = pointFromModel.Latitude;
+        self.longitude = pointFromModel.Longitude;
+        self.timeOffset = pointFromModel.TimeOffset;
+        self.busStop = busStops.getByPosition(self.latitude, self.longitude);
+    }
+
+    function Points(routes)
+    {
+        var self = this;
+
+        var points = [];
+        for (var i = 0; i < routes.length; i++)
+            points = points.concat(routes[i].points);
+
+        self.length = points.length;
+        
+        for (var i = 0; i < points.length; i++)
+            self[i] = points[i];
+    }
+
+    function DepartureTime(departureTimeFromModel)
+    {
+        var self = this;
+
+        self.hours = departureTimeFromModel.Hours;
+        self.minutes = departureTimeFromModel.Minutes;
+        self.workingDays = departureTimeFromModel.WorkingDay;
+        self.saturdays = departureTimeFromModel.Saturday;
+        self.sundays = departureTimeFromModel.Sunday;
+
+        self.departureDateForDay = function(year, month, day)
+        {
+            return new Date(year, month, day, self.hours, self.minutes, 0);
+        };
+
+        self.arrivalDateForDay = function(year, month, day)
+        {
+            return new Date(self.departureDateForDay(year, month, day).getTime() + self.route.points[self.route.points.length - 1].timeOffset);
+        };
+
+        self.isOnTour = function(now)
+        {
+            // Todo: check week days
+            var departureDate = self.departureDateForDay(now.getFullYear(), now.getMonth(), now.getDate());
+            var arrivalDate = self.arrivalDateForDay(now.getFullYear(), now.getMonth(), now.getDate());
+            return (now >= departureDate && now < arrivalDate);
+        };
+    }
+
+    function DepartureTimes(routes)
+    {
+        var self = this;
+
+        var departureTimes = [];
+        for (var i = 0; i < routes.length; i++)
+            departureTimes = departureTimes.concat(routes[i].departureTimes);
+
+        self.length = departureTimes.length;
+        
+        for (var i = 0; i < departureTimes.length; i++)
+            self[i] = departureTimes[i];
+    }
+
+    function Route(routeFromModel, busStops)
+    {
+        var self = this;
+
+        self.details = routeFromModel.Details;
+
+        self.points = [];
+        for (var i = 0; i < routeFromModel.Points.length; i++)
+        {
+            var point = new Point(routeFromModel.Points[i], busStops);
+            point.route = self;
+            self.points.push(point);
+        }
+
+        self.departureTimes = [];
+        for (var i = 0; i < routeFromModel.DepartureTimes.length; i++)
+        {
+            var departureTime = new DepartureTime(routeFromModel.DepartureTimes[i]);
+            departureTime.route = self;
+            self.departureTimes.push(departureTime);
+        }
+    }
+
+    function Routes(busLines)
+    {
+        var self = this;
+
+        var routes = [];
+        for (var i = 0; i < busLines.length; i++)
+            routes = routes.concat(busLines[i].routes);
+
+        self.length = routes.length;
+        
+        for (var i = 0; i < routes.length; i++)
+            self[i] = routes[i];
+    }
+
+    function BusLine(busLineFromModel, busStops)
+    {
+        var self = this;
+
+        self.busNumber = busLineFromModel.BusNumber;
+
+        self.routes = [];
+        for (var i = 0; i < busLineFromModel.Routes.length; i++)
+        {
+            var route = new Route(busLineFromModel.Routes[i], busStops);
+            route.busLine = self;
+            self.routes.push(route);
+        }
+    }
+
+    function BusLines(busLinesFromModel, busStops)
+    {
+        var self = this;
+
+        var busLines = [];
+        for (var i = 0; i < busLinesFromModel.length; i++)
+        {
+            var busLine = new BusLine(busLinesFromModel[i], busStops);
+            busLine.isVisible = true;
+            busLines.push(busLine);
+        }
+
+        self.length = busLines.length;
+        
+        for (var i = 0; i < busLines.length; i++)
+            self[i] = busLines[i];
+    }
+
+    function Context()
+    {
+        var self = this;
+
+        var busStopsFromModel = @Html.Raw(Json.Encode(@Model.BusStops));
+        var busLinesFromModel = @Html.Raw(Json.Encode(@Model.BusLines));
+
+        self.busStops = new BusStops(busStopsFromModel);
+        self.busLines = new BusLines(busLinesFromModel, self.busStops);
+        self.routes = new Routes(self.busLines);
+        self.points = new Points(self.routes);
+        self.departureTimes = new DepartureTimes(self.routes);
     }
 
     function RoutePolyline(busLineIndexParam, routeIndexParam)
@@ -141,7 +302,6 @@
         {
             map: map,
             path: path,
-            //geodesic: true,
             strokeColor: '#FF6A00',
             strokeOpacity: 1,
             strokeWeight: 5,
@@ -192,25 +352,16 @@
         };
     }
 
-    function Bus(busNumberParam, pointsParam, startTimeOffsetParam, departureHoursParam, departureMinutesParam, busLineIndex, routeIndex, departureTimeIndex)
+    function Bus(departureTime)
     {
         var self = this;
 
-        self.busNumber = busNumberParam;
+        var route = departureTime.route;
+        var points = route.points;
+        var busLine = route.busLine;
 
-        self.points = pointsParam;
-
-        var startTimeOffset = startTimeOffsetParam;
-
-        self.departureHours = departureHoursParam;
-
-        self.departureMinutes = departureMinutesParam;
-
-        self.busLineIndex = busLineIndex;
-
-        self.routeIndex = routeIndex;
-
-        self.departureTimeIndex = departureTimeIndex;
+        self.busNumber = busLine.busNumber;
+        self.departureTime = departureTime;
 
         var marker = new google.maps.Marker(
         {
@@ -218,14 +369,14 @@
             map: map,
             position:
             {
-                lat: self.points[0].Latitude,
-                lng: self.points[0].Longitude
+                lat: points[0].latitude,
+                lng: points[0].longitude
             }
         });
 
         marker.addListener('click', function(e)
         {
-            routePolylines.add(self.busLineIndex, self.routeIndex);
+            routePolylines.add(1, 0);
         });
 
         self.hide = function()
@@ -240,33 +391,32 @@
                 marker.setMap(map);
         };
 
-        var startTotalMilliseconds = serverTime.now().getTime();
-
-        var getCurrentTimeOffset = function()
-        {
-            return serverTime.now().getTime() - startTotalMilliseconds + startTimeOffset;
-        };
+        var now = serverTime.now();
+        var departureDate = departureTime.departureDateForDay(now.getFullYear(), now.getMonth(), now.getDate());
 
         var update = function()
         {
-            var currentTimeOffset = getCurrentTimeOffset();
-            if (currentTimeOffset > self.points[self.points.length - 1].TimeOffset)
+            if (busLine.isVisible)
+                self.show();
+            else
+                self.hide();
+
+            var now = serverTime.now();
+            var currentTimeOffset = now.getTime() - departureDate.getTime();
+            if (currentTimeOffset > points[points.length - 1].timeOffset)
             {
-                marker.setMap(null);
-                buses.remove(self);
+                self.hide();
+                self.onremove(self);
             }
             else
             {
-                for (var k = 0; k < self.points.length - 1; k++)
-                {
-
-                    if ((currentTimeOffset >= self.points[k].TimeOffset && currentTimeOffset < self.points[k + 1].TimeOffset))
+                for (var i = 0; i < points.length - 1; i++)
+                    if ((currentTimeOffset >= points[i].timeOffset && currentTimeOffset < points[i + 1].timeOffset))
                     {
-                        var newPosition = getPositionBetweenTwoPoints(self.points[k], self.points[k + 1], currentTimeOffset);
+                        var newPosition = getPositionBetweenTwoPoints(points[i], points[i + 1], currentTimeOffset);
                         marker.setPosition(newPosition);
                         break;
                     }
-                }
                 setTimeout(update, 100);
             }
         }
@@ -274,103 +424,59 @@
         update();
     }
 
-    function Buses()
+    function Buses(context)
     {
         var self = this;
 
         var buses = [];
 
-        self.add = function(busNumber, points, startTimeOffset, departureHours, departureMinutes, busLineIndex, routeIndex, departureTimeIndex)
+        self.add = function(bus)
         {
-            if (self.get(busNumber, departureHours, departureMinutes).length == 0)
+            if (!self.contains(bus))
             {
-                var bus = new Bus(busNumber, points, startTimeOffset, departureHours, departureMinutes, busLineIndex, routeIndex, departureTimeIndex);
-
-                // Todo: getLine()
-                for (var i = 0; i < busLines.length; i++)
-                    if (busLines[i].BusNumber === busNumber && !busLines[i].show)
-                    {
-                        bus.hide();
-                    }
-
+                bus.onremove = function(busToRemove) 
+                {
+                    buses.splice(buses.indexOf(busToRemove), 1);
+                };
                 buses.push(bus);
             }
         };
 
-        self.remove = function(bus)
+        self.contains = function(bus)
         {
-            buses.splice(buses.indexOf(bus), 1);
-        };
-
-        self.get = function(busNumber, departureHours, departureMinutes)
-        {
-            var result = [];
             for (var i = 0; i < buses.length; i++)
-                if (buses[i].busNumber === busNumber &&
-                    (departureHours == undefined || buses[i].departureHours === departureHours) &&
-                    (departureMinutes == undefined || buses[i].departureMinutes === departureMinutes))
-                    result.push(buses[i]);
-            return result;
+                if (buses[i].departureTime === bus.departureTime)
+                    return true;
+            return false;
         };
-
-        self.hide = function(busNumber)
+        
+        var tick = function()
         {
-            var busesToHide = self.get(busNumber);
-            for (var i = 0; i < busesToHide.length; i++)
-                busesToHide[i].hide();
-        };
+            if (serverTime.now().getSeconds() === 0)
+                update();
+            setTimeout(tick, 1000);
+        }
 
-        self.show = function(busNumber)
+        var update = function()
         {
-            var busesToShow = self.get(busNumber);
-            for (var i = 0; i < busesToShow.length; i++)
-                busesToShow[i].show();
+            for (var i = 0; i < context.departureTimes.length; i++)
+                if (context.departureTimes[i].isOnTour(serverTime.now()))
+                    self.add(new Bus(context.departureTimes[i]));
         };
 
-        var update = function(fullMinute)
-        {
-            if (fullMinute === false || (fullMinute === true && serverTime.now().getSeconds() === 0))
-            {
-                var now = serverTime.now();
-                for (var i = 0; i < busLines.length; i++)
-                {
-                    var busLine = busLines[i];
-                    for (var j = 0; j < busLine.Routes.length; j++)
-                    {
-                        var route = busLine.Routes[j];
-                        for (var k = 0; k < route.DepartureTimes.length; k++)
-                        {
-                            var departureTime = route.DepartureTimes[k];
-                            var departureDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), departureTime.Hours, departureTime.Minutes, 0);
-                            var arrivalDate = new Date(departureDate.getTime() + route.Points[route.Points.length - 1].TimeOffset);
-                            if (now >= departureDate && now < arrivalDate)
-                                self.add(busLine.BusNumber, route.Points, now - departureDate, departureTime.Hours, departureTime.Minutes, i, j, k);
-                        }
-                    }
-                }
-            }
-            setTimeout(function()
-            {
-                update(true);
-            }, 900);
-        };
-
-        update(false);
+        update();
+        tick();
     }
-
-    
 
     function getPositionBetweenTwoPoints(startPoint, endPoint, currentTimeOffset)
     {
-        var latitudeDifference = endPoint.Latitude - startPoint.Latitude;
-        var longitudeDifference = endPoint.Longitude - startPoint.Longitude;
-        var timeRatio = (currentTimeOffset - startPoint.TimeOffset) / (endPoint.TimeOffset - startPoint.TimeOffset);
-        var newPointLatitude = startPoint.Latitude + latitudeDifference * timeRatio;
-        var newPointLongitude = startPoint.Longitude + longitudeDifference * timeRatio;
+        var latitudeDifference = endPoint.latitude - startPoint.latitude;
+        var longitudeDifference = endPoint.longitude - startPoint.longitude;
+        var timeRatio = (currentTimeOffset - startPoint.timeOffset) / (endPoint.timeOffset - startPoint.timeOffset);
+        var newPointLatitude = startPoint.latitude + latitudeDifference * timeRatio;
+        var newPointLongitude = startPoint.longitude + longitudeDifference * timeRatio;
         return new google.maps.LatLng(newPointLatitude, newPointLongitude);
     }
-
-
 
 
 
@@ -401,14 +507,16 @@
         );
 
         serverTime = new ServerTime();
-        busStops = new BusStops();
-        busLines = @Html.Raw(Json.Encode(@Model.BusLines));
 
-        for (var i = 0; i < busLines.length; i++)
-            busLines[i].show = true;
+        /*var */context = new Context();
+        //busStops = new BusStops(@Html.Raw(Json.Encode(@Model.BusStops)));
+        @*busLines = @Html.Raw(Json.Encode(@Model.BusLines));*@
+        //busLines = new BusLines(@Html.Raw(Json.Encode(@Model.BusLines)));
+        //for (var i = 0; i < busLines.length; i++)
+            //busLines[i].show = true;
         //refreshBusLinesTiles();
 
-        buses = new Buses();
+        /*var*/ buses = new Buses(context);
 
         routePolylines = new RoutePolylines();
 
