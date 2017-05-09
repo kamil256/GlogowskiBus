@@ -219,6 +219,33 @@
             departureTime.route = self;
             self.departureTimes.push(departureTime);
         }
+
+        //self.isVisible = false;
+
+        var path = [];
+        for (var i = 0; i < self.points.length; i++)
+            path.push(new google.maps.LatLng(self.points[i].latitude, self.points[i].longitude));
+        
+        var polyline = new google.maps.Polyline(
+        {
+            map: null,
+            path: path,
+            strokeColor: '#FF6A00',
+            strokeOpacity: 1,
+            strokeWeight: 5,
+        }); 
+
+        self.hide = function()
+        {
+            if (polyline.getMap() != null)
+                polyline.setMap(null);
+        };
+
+        self.show = function()
+        {
+            if (polyline.getMap() == null)
+                polyline.setMap(map);
+        };
     }
 
     function Routes(busLines)
@@ -233,6 +260,12 @@
         
         for (var i = 0; i < routes.length; i++)
             self[i] = routes[i];
+
+        self.hideAll = function()
+        {
+            for (var i = 0; i < routes.length; i++)
+                routes[i].hide();
+        };
     }
 
     function BusLine(busLineFromModel, busStops)
@@ -248,6 +281,8 @@
             route.busLine = self;
             self.routes.push(route);
         }
+
+        self.isVisible = true;
     }
 
     function BusLines(busLinesFromModel, busStops)
@@ -256,11 +291,7 @@
 
         var busLines = [];
         for (var i = 0; i < busLinesFromModel.length; i++)
-        {
-            var busLine = new BusLine(busLinesFromModel[i], busStops);
-            busLine.isVisible = true;
-            busLines.push(busLine);
-        }
+            busLines.push(new BusLine(busLinesFromModel[i], busStops));
 
         self.length = busLines.length;
         
@@ -376,7 +407,8 @@
 
         marker.addListener('click', function(e)
         {
-            routePolylines.add(1, 0);
+            route.isVisible = true;//routePolylines.add(1, 0);
+            route.show();
         });
 
         self.hide = function()
@@ -522,7 +554,8 @@
 
         map.addListener('click', function(e)
         {
-            routePolylines.removeAll();
+            context.routes.hideAll();
+            //routePolylines.removeAll();
             //selectedLine.update(null);
         });
     }
