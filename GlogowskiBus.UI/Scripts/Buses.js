@@ -8,7 +8,7 @@
 
     var marker = new google.maps.Marker(
     {
-        icon: OrangeBusStopMarkerImage,
+        icon: markerIcons.inactiveBusStop,
         map: map,
         optimized: false,
         position:
@@ -21,7 +21,7 @@
 
     marker.addListener('click', function(e)
     {
-        console.log('Bus stop clicked');
+        self.onactivate(self);
     });
 
     self.hide = function()
@@ -35,6 +35,16 @@
         if (marker.getMap() == null)
             marker.setMap(map);
     };
+
+    self.activate = function()
+    {
+        marker.setIcon(markerIcons.activeBusStop);
+    };
+
+    self.deactivate = function()
+    {
+        marker.setIcon(markerIcons.inactiveBusStop);
+    };
 };
 
 function BusStops(busStopsFromModel)
@@ -43,7 +53,16 @@ function BusStops(busStopsFromModel)
 
     var busStops = [];
     for (var i = 0; i < busStopsFromModel.length; i++)
-        busStops.push(new BusStop(busStopsFromModel[i]));
+    {
+        var busStop = new BusStop(busStopsFromModel[i]);
+
+        busStop.onactivate = function(busStop)
+        {
+            self.activate(busStop);
+        };
+
+        busStops.push(busStop);
+    }
 
     self.getByPosition = function(latitude, longitude)
     {
@@ -63,6 +82,17 @@ function BusStops(busStopsFromModel)
     {
         for (var i = 0; i < busStops.length; i++)
             busStops[i].show();
+    };
+
+    self.activate = function(busStop)
+    {
+        busStop.activate();
+    };
+
+    self.deactivateAll = function()
+    {
+        for (var i = 0; i < busStops.length; i++)
+                busStops[i].deactivate();
     };
 }
 
@@ -155,6 +185,22 @@ function Route(routeFromModel, busStops)
         self.departureTimes.push(departureTime);
     }
 
+    var busStopMarkers = [];
+    for (var i = 0; i < self.points.length; i++)
+        if (self.points[i].busStop != null)
+            busStopMarkers.push(new google.maps.Marker(
+            {
+                icon: markerIcons.orangeBusStop,
+                map: null,
+                optimized: false,
+                position:
+                {
+                    lat: self.points[i].busStop.latitude,
+                    lng: self.points[i].busStop.longitude
+                },
+                zIndex: 2
+            }));
+
     var path = [];
     for (var i = 0; i < self.points.length; i++)
         path.push(new google.maps.LatLng(self.points[i].latitude, self.points[i].longitude));
@@ -163,19 +209,27 @@ function Route(routeFromModel, busStops)
     {
         map: null,
         path: path,
-        strokeColor: '#FF6A00',
+        strokeColor: '#FF7F00',
         strokeOpacity: 1,
         strokeWeight: 3,
     }); 
 
     self.hide = function()
     {
+        for (var i = 0; i < busStopMarkers.length; i++)
+            if (busStopMarkers[i].getMap() != null)
+                busStopMarkers[i].setMap(null);
+
         if (polyline.getMap() != null)
             polyline.setMap(null);
     };
 
     self.show = function()
     {
+        for (var i = 0; i < busStopMarkers.length; i++)
+            if (busStopMarkers[i].getMap() == null)
+                busStopMarkers[i].setMap(map);
+
         if (polyline.getMap() == null)
             polyline.setMap(map);
     };
@@ -274,7 +328,14 @@ function Bus(departureTime)
 
     var marker = new google.maps.Marker(
     {
-        label: self.busNumber,
+        icon: markerIcons.redBus,
+        label:
+        {
+            color: '#FF0000',
+            fontSize: '10px',
+            fontWeight: 'bold',
+            text: self.busNumber
+        },
         map: map,
         position:
         {

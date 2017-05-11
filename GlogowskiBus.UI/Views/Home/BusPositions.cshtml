@@ -74,11 +74,13 @@
         );
 
         serverTime = new ServerTime();
+        markerIcons = new MarkerIcons();
         var context = new Context(@Html.Raw(Json.Encode(@Model.BusStops)), @Html.Raw(Json.Encode(@Model.BusLines)));
         var buses = new Buses(context);
 
         map.addListener('click', function(e)
         {
+            context.busStops.deactivateAll();
             context.routes.hideAll();
         });
 
