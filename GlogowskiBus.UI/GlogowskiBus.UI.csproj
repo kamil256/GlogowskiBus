@@ -150,6 +150,8 @@
     <Content Include="Scripts\Buses.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <Content Include="Scripts\knockout-3.4.2.debug.js" />
+    <Content Include="Scripts\knockout-3.4.2.js" />
     <Content Include="Scripts\Maps.js" />
     <Content Include="Scripts\MarkerIcons.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
