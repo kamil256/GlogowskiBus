@@ -81,7 +81,7 @@ aside p {
     font-weight: bold;
 }
 
-aside > #showHideLines > ul {
+aside ul#busLinesTiles {
     list-style-type: none;
     margin: 0;
     margin-bottom: 5px;
@@ -89,7 +89,7 @@ aside > #showHideLines > ul {
     overflow: auto;
 }
 
-aside > #showHideLines > ul > li {
+aside ul#busLinesTiles > li {
     cursor: pointer;
     float: left;
     font-weight: bold;
@@ -101,12 +101,12 @@ aside > #showHideLines > ul > li {
     width: 50px;
 }
 
-aside > #showHideLines > ul > li:not(.active) {
+aside ul#busLinesTiles > li:not(.active) {
     background-color: rgba(0, 0, 0, 0.2);
     color: #777;
 }
 
-aside > #showHideLines > ul > li.active {
+aside ul#busLinesTiles > li.active {
     background-color: rgba(0, 0, 0, 0.75);
     color: #ccc;
 }
@@ -117,9 +117,9 @@ aside .textButton {
     font-weight: normal;
 }
 
-/*aside select {
+aside select {
     max-width: initial;
-}*/
+}
 
 #aside {
     float: left;

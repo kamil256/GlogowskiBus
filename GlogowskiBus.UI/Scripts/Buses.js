@@ -1,4 +1,4 @@
-﻿function BusStop(busStopFromModel)
+﻿function BusStop(busStopFromModel, context)
 {
     var self = this;
 
@@ -21,79 +21,72 @@
 
     marker.addListener('click', function(e)
     {
-        self.onactivate(self);
+        context.routes.hideAll();
+        context.busStops.activeBusStop(self);
     });
 
-    self.hide = function()
-    {
-        if (marker.getMap() != null)
-            marker.setMap(null);
-    };
-
-    self.show = function()
-    {
-        if (marker.getMap() == null)
-            marker.setMap(map);
-    };
-
-    self.activate = function()
+    self.select = function()
     {
         marker.setIcon(markerIcons.activeBusStop);
     };
 
-    self.deactivate = function()
+    self.deselect = function()
     {
         marker.setIcon(markerIcons.inactiveBusStop);
     };
 };
 
-function BusStops(busStopsFromModel)
+function BusStops(busStopsFromModel, context)
 {
     var self = this;
 
     var busStops = [];
     for (var i = 0; i < busStopsFromModel.length; i++)
-    {
-        var busStop = new BusStop(busStopsFromModel[i]);
+        busStops.push(new BusStop(busStopsFromModel[i], context));
 
-        busStop.onactivate = function(busStop)
-        {
-            self.activate(busStop);
-        };
+    self.length = busStops.length;
 
-        busStops.push(busStop);
-    }
+    for (var i = 0; i < busStops.length; i++)
+        self[i] = busStops[i];
 
     self.getByPosition = function(latitude, longitude)
     {
         for (var i = 0; i < busStops.length; i++)
-            if (busStops[i].latitude === latitude && busStops[i].longitude === longitude)
+            if (busStops[i].latitude.toFixed(6) === latitude.toFixed(6) &&
+                busStops[i].longitude.toFixed(6) === longitude.toFixed(6))
                 return busStops[i];
         return null;
     };
 
-    self.hideAll = function()
-    {
-        for (var i = 0; i < busStops.length; i++)
-            busStops[i].hide();
-    };
+    self.activeBusStop = ko.observable();
 
-    self.showAll = function()
+    self.activeBusStop.subscribe(function(newValue)
     {
-        for (var i = 0; i < busStops.length; i++)
-            busStops[i].show();
-    };
+        console.log(newValue);
 
-    self.activate = function(busStop)
-    {
-        busStop.activate();
-    };
 
-    self.deactivateAll = function()
-    {
+
+
         for (var i = 0; i < busStops.length; i++)
-                busStops[i].deactivate();
-    };
+            if (busStops[i] != newValue)
+                busStops[i].deselect();
+            else
+                busStops[i].select();
+
+        if (newValue != null)
+            for (var i = 0; i < newValue.points.length; i++)
+            {
+                console.log(999);
+                var selectedBusLineContainsActiveBusStop = false;
+                if (newValue.points[i].route.busLine == context.busLines.selectedBusLine())
+                {
+                    selectedBusLineContainsActiveBusStop = true;
+                    break;
+                }
+                if (!selectedBusLineContainsActiveBusStop)
+                    context.busLines.selectedBusLine(null);
+            }
+    });
 }
 
 function Point(pointFromModel, busStops)
@@ -113,6 +106,15 @@ function Points(routes)
     var points = [];
     for (var i = 0; i < routes.length; i++)
         points = points.concat(routes[i].points);
+
+    for (var i = 0; i < points.length; i++)
+    {
+        if (points[i].busStop != null)
+            points[i].busStop.points = [];
+    }
+    for (var i = 0; i < points.length; i++)
+        if (points[i].busStop != null)
+            points[i].busStop.points.push(points[i]);
 
     self.length = points.length;
         
@@ -177,6 +179,11 @@ function Route(routeFromModel, busStops)
         self.points.push(point);
     }
 
+    self.busStops = [];
+    for (var i = 0; i < self.points.length; i++)
+        if (self.points[i].busStop != null)
+            self.busStops.push(self.points[i].busStop);
+
     self.departureTimes = [];
     for (var i = 0; i < routeFromModel.DepartureTimes.length; i++)
     {
@@ -188,7 +195,8 @@ function Route(routeFromModel, busStops)
     var busStopMarkers = [];
     for (var i = 0; i < self.points.length; i++)
         if (self.points[i].busStop != null)
-            busStopMarkers.push(new google.maps.Marker(
+        {
+            var busStopMarker = new google.maps.Marker(
             {
                 icon: markerIcons.orangeBusStop,
                 map: null,
@@ -199,7 +207,13 @@ function Route(routeFromModel, busStops)
                     lng: self.points[i].busStop.longitude
                 },
                 zIndex: 2
-            }));
+            });
+            busStopMarker.addListener('click', function(e)
+            {
+                busStops.activeBusStop(busStops.getByPosition(e.latLng.lat(), e.latLng.lng()));
+            });
+            busStopMarkers.push(busStopMarker);
+        }
 
     var path = [];
     for (var i = 0; i < self.points.length; i++)
@@ -226,13 +240,59 @@ function Route(routeFromModel, busStops)
 
     self.show = function()
     {
+
         for (var i = 0; i < busStopMarkers.length; i++)
             if (busStopMarkers[i].getMap() == null)
                 busStopMarkers[i].setMap(map);
 
         if (polyline.getMap() == null)
             polyline.setMap(map);
+
+        //var routeContainsActiveBusStop = false;
+        //for (var i = 0; i < self.busStops.length; i++)
+        //{
+        //    if (self.busStops[i] == busStops.activeBusStop())
+        //    {
+        //        routeContainsActiveBusStop = true;
+        //        break;
+        //    }
+        //}
+        //if (!routeContainsActiveBusStop)
+        //{
+        //    console.log('sdfsd');
+        //    busStops.activeBusStop(null);
+        //}
     };
+
+    busStops.activeBusStop.subscribe(function(newValue)
+    {
+        for (var i = 0; i < self.busStops.length; i++)
+        {
+            if (self.busStops[i] == newValue)
+                busStopMarkers[i].setIcon(markerIcons.activeBusStop);
+            else
+                busStopMarkers[i].setIcon(markerIcons.orangeBusStop);
+        }
+
+        //if (busStops.activeBusStop() != null)
+        //{
+        //    var routeContainsActiveBusStop = false;
+        //    for (var i = 0; i < self.busStops.length; i++)
+        //    {
+        //        if (self.busStops[i] == busStops.activeBusStop())
+        //        {
+        //            routeContainsActiveBusStop = true;
+        //            break;
+        //        }
+        //    }
+        //    if (!routeContainsActiveBusStop)
+        //    {
+        //        console.log('yyyy');
+        //        context.busLines.selectedBusLine(null);
+        //        self.hide();
+        //    }
+        //}
+    });
 }
 
 function Routes(busLines)
@@ -243,6 +303,11 @@ function Routes(busLines)
     for (var i = 0; i < busLines.length; i++)
         routes = routes.concat(busLines[i].routes);
 
+    for (var i = 0; i < routes.length; i++)
+    {
+
+    }
+
     self.length = routes.length;
         
     for (var i = 0; i < routes.length; i++)
@@ -252,6 +317,7 @@ function Routes(busLines)
     {
         for (var i = 0; i < routes.length; i++)
             routes[i].hide();
+        busLines.selectedBusLine(null);
     };
 }
 
@@ -284,9 +350,37 @@ function BusLines(busLinesFromModel, busStops)
         
     for (var i = 0; i < busLines.length; i++)
         self[i] = busLines[i];
+
+    self.selectedBusLine = ko.observable();
+
+    self.selectedBusLine.subscribe(function(newValue)
+    {
+        for (var i = 0; i < context.routes.length; i++)
+            if (context.routes[i].busLine != newValue)
+                context.routes[i].hide();
+            else
+                context.routes[i].show();
+
+        if (newValue != null && context.busStops.activeBusStop() != null)
+            for (var i = 0; i < newValue.routes.length; i++)
+            {
+                console.log(3423);
+                var selectedBusLineContainsActiveBusStop = false;
+                for (var j = 0; j < newValue.routes[i].points.length; j++)
+                {
+                    if (newValue.routes[i].points[j].busStop == context.busStops.activeBusStop())
+                    {
+                        selectedBusLineContainsActiveBusStop = true;
+                        break;
+                    }
+                }
+                if (!selectedBusLineContainsActiveBusStop)
+                    context.busStops.activeBusStop(null);
+            }
+    });
 }
 
-function Bus(departureTime)
+function Bus(departureTime, busLines)
 {
     var self = this;
 
@@ -317,7 +411,7 @@ function Bus(departureTime)
 
     marker.addListener('click', function(e)
     {
-        route.show();
+        busLines.selectedBusLine(busLine);
     });
 
     self.hide = function()
@@ -368,7 +462,7 @@ function Bus(departureTime)
     update();
 }
 
-function Buses(departureTimes)
+function Buses(departureTimes, busLines)
 {
     var self = this;
 
@@ -378,7 +472,7 @@ function Buses(departureTimes)
     {
         if (!self.contains(departureTime))
         {
-            var bus = new Bus(departureTime);
+            var bus = new Bus(departureTime, busLines);
             bus.onremove = function(busToRemove) 
             {
                 buses.splice(buses.indexOf(busToRemove), 1);
@@ -417,12 +511,12 @@ function Context(busStopsFromModel, busLinesFromModel)
 {
     var self = this;
 
-    self.busStops = new BusStops(busStopsFromModel);
-    self.busLines = new BusLines(busLinesFromModel, self.busStops);
+    self.busStops = new BusStops(busStopsFromModel, self);
+    self.busLines = new BusLines(busLinesFromModel, self.busStops, self);
     self.routes = new Routes(self.busLines);
     self.points = new Points(self.routes);
     self.departureTimes = new DepartureTimes(self.routes);
-    self.buses = new Buses(self.departureTimes);
+    self.buses = new Buses(self.departureTimes, self.busLines);
 
     self.view = ko.observable('Navigation');
 }
