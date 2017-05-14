@@ -5,13 +5,10 @@
     ViewBag.Title = "Autobusy i przystanki";
 }
 
-<div id="showHideLines">
+<div id="showHideLines" data-bind="visible: view() == 'Navigation'">
     <p>Pokaż/ukryj linie:</p>
-    <ul id="busLinesTiles">
-        @for (int i = 0; i < Model.BusLines.Count; i++)
-        {
-            <li class="active">@Model.BusLines[i].BusNumber</li>
-        }
+    <ul id="busLinesTiles" data-bind="foreach: busLines">
+        <li data-bind="click: function() { hidden(!hidden()); }, css: { active: !hidden() }, text: busNumber"></li>
     </ul>
     <p>
         <span class="textButton">Pokaż wszystkie</span> | <span class="textButton">Ukryj wszystkie</span>
@@ -47,29 +44,14 @@
     {
         serverTime = new ServerTime();
         markerIcons = new MarkerIcons();
+
         var context = new Context(@Html.Raw(Json.Encode(@Model.BusStops)), @Html.Raw(Json.Encode(@Model.BusLines)));
-        var buses = new Buses(context);
+        ko.applyBindings(context);
 
         map.addListener('click', function(e)
         {
             context.busStops.deactivateAll();
             context.routes.hideAll();
-        });
-
-        $('#busLinesTiles > li').click(function(e)
-        {
-            var element = $(e.target);
-            var busNumber = element[0].textContent;
-            if (element.hasClass('active'))
-            {
-                element.removeClass('active');
-                context.busLines.hide(busNumber);
-            }
-            else
-            {
-                element.addClass('active');
-                context.busLines.show(busNumber);
-            }
         });
     }
 </script>

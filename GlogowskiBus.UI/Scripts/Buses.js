@@ -269,7 +269,7 @@ function BusLine(busLineFromModel, busStops)
         self.routes.push(route);
     }
 
-    self.isVisible = true;
+    self.hidden = ko.observable(false);
 }
 
 function BusLines(busLinesFromModel, busStops)
@@ -284,35 +284,6 @@ function BusLines(busLinesFromModel, busStops)
         
     for (var i = 0; i < busLines.length; i++)
         self[i] = busLines[i];
-
-    self.hide = function(busNumber)
-    {
-        for (var i = 0; i < busLines.length; i++)
-        {
-            if (busLines[i].busNumber === busNumber)
-                busLines[i].isVisible = false;
-        }
-    };
-
-    self.show = function(busNumber)
-    {
-        for (var i = 0; i < busLines.length; i++)
-        {
-            if (busLines[i].busNumber === busNumber)
-                busLines[i].isVisible = true;
-        }
-    };
-}
-
-function Context(busStopsFromModel, busLinesFromModel)
-{
-    var self = this;
-
-    self.busStops = new BusStops(busStopsFromModel);
-    self.busLines = new BusLines(busLinesFromModel, self.busStops);
-    self.routes = new Routes(self.busLines);
-    self.points = new Points(self.routes);
-    self.departureTimes = new DepartureTimes(self.routes);
 }
 
 function Bus(departureTime)
@@ -336,7 +307,7 @@ function Bus(departureTime)
             fontWeight: 'bold',
             text: self.busNumber
         },
-        map: map,
+        map: busLine.hidden() ? null : map,
         position:
         {
             lat: points[0].latitude,
@@ -361,16 +332,19 @@ function Bus(departureTime)
             marker.setMap(map);
     };
 
+    busLine.hidden.subscribe(function(newValue)
+    {
+        if (newValue)
+            self.hide();
+        else
+            self.show();
+    });
+
     var now = serverTime.now();
     var departureDate = departureTime.departureDateForDay(now.getFullYear(), now.getMonth(), now.getDate());
 
     var update = function()
     {
-        if (busLine.isVisible)
-            self.show();
-        else
-            self.hide();
-
         var now = serverTime.now();
         var currentTimeOffset = now.getTime() - departureDate.getTime();
         if (currentTimeOffset > points[points.length - 1].timeOffset)
@@ -394,7 +368,7 @@ function Bus(departureTime)
     update();
 }
 
-function Buses(context)
+function Buses(departureTimes)
 {
     var self = this;
 
@@ -430,11 +404,25 @@ function Buses(context)
 
     var update = function()
     {
-        for (var i = 0; i < context.departureTimes.length; i++)
-            if (context.departureTimes[i].isOnTour(serverTime.now()))
-                self.add(context.departureTimes[i]);
+        for (var i = 0; i < departureTimes.length; i++)
+            if (departureTimes[i].isOnTour(serverTime.now()))
+                self.add(departureTimes[i]);
     };
 
     update();
     tick();
+}
+
+function Context(busStopsFromModel, busLinesFromModel)
+{
+    var self = this;
+
+    self.busStops = new BusStops(busStopsFromModel);
+    self.busLines = new BusLines(busLinesFromModel, self.busStops);
+    self.routes = new Routes(self.busLines);
+    self.points = new Points(self.routes);
+    self.departureTimes = new DepartureTimes(self.routes);
+    self.buses = new Buses(self.departureTimes);
+
+    self.view = ko.observable('Navigation');
 }
