@@ -1,200 +1,224 @@
-﻿function BusStop(busStopFromModel, context)
+﻿function Context(busStopsFromModel, busLinesFromModel)
 {
-    var self = this;
+    var context = this;
 
-    self.name = busStopFromModel.Name;
-    self.latitude = busStopFromModel.Latitude;
-    self.longitude = busStopFromModel.Longitude;
+    context.busStops = new BusStops(busStopsFromModel);
+    context.busLines = new BusLines(busLinesFromModel);
+    context.routes = new Routes();
+    context.points = new Points();
+    context.departureTimes = new DepartureTimes();
+    context.buses = new Buses();
 
-    var marker = new google.maps.Marker(
+    context.timeTable = ko.observable(new TimeTable(context.departureTimes[10]));
+
+    context.view = ko.observable('Navigation');
+
+    function TimeTable(departureTime)
     {
-        icon: markerIcons.inactiveBusStop,
-        map: map,
-        optimized: false,
-        position:
-        {
-            lat: self.latitude,
-            lng: self.longitude
-        },
-        zIndex: 0
-    });
+        var self = this;
 
-    marker.addListener('click', function(e)
-    {
-        context.routes.hideAll();
-        context.busStops.activeBusStop(self);
-    });
-
-    self.select = function()
-    {
-        marker.setIcon(markerIcons.activeBusStop);
-    };
-
-    self.deselect = function()
-    {
-        marker.setIcon(markerIcons.inactiveBusStop);
-    };
-};
-
-function BusStops(busStopsFromModel, context)
-{
-    var self = this;
-
-    var busStops = [];
-    for (var i = 0; i < busStopsFromModel.length; i++)
-        busStops.push(new BusStop(busStopsFromModel[i], context));
-
-    self.length = busStops.length;
-
-    for (var i = 0; i < busStops.length; i++)
-        self[i] = busStops[i];
-
-    self.getByPosition = function(latitude, longitude)
-    {
-        for (var i = 0; i < busStops.length; i++)
-            if (busStops[i].latitude.toFixed(6) === latitude.toFixed(6) &&
-                busStops[i].longitude.toFixed(6) === longitude.toFixed(6))
-                return busStops[i];
-        return null;
-    };
-
-    self.activeBusStop = ko.observable();
-
-    self.activeBusStop.subscribe(function(newValue)
-    {
-        console.log(newValue);
-
-
-
-
-        for (var i = 0; i < busStops.length; i++)
-            if (busStops[i] != newValue)
-                busStops[i].deselect();
-            else
-                busStops[i].select();
-
-        if (newValue != null)
-            for (var i = 0; i < newValue.points.length; i++)
-            {
-                console.log(999);
-                var selectedBusLineContainsActiveBusStop = false;
-                if (newValue.points[i].route.busLine == context.busLines.selectedBusLine())
+        self.busStops = ko.observableArray([]);
+        for (var i = 0; i < departureTime.route.points.length; i++)
+            if (departureTime.route.points[i].busStop != null)
+                self.busStops.push(
                 {
-                    selectedBusLineContainsActiveBusStop = true;
-                    break;
-                }
-                if (!selectedBusLineContainsActiveBusStop)
-                    context.busLines.selectedBusLine(null);
-            }
-    });
-}
+                    name: departureTime.route.points[i].busStop.name,
+                    timeOffset: departureTime.route.points[i].timeOffset
+                });
 
-function Point(pointFromModel, busStops)
-{
-    var self = this;
+        self.hours = [];
+        for (var i = 0; i < 24; i++)
+            self.hours[i] = ko.observableArray([]);
+        for (var i = 0; i < departureTime.route.departureTimes.length; i++)
+        {
+            self.hours[departureTime.route.departureTimes[i].hours].push(departureTime.route.departureTimes[i].minutes);
+        }
 
-    self.latitude = pointFromModel.Latitude;
-    self.longitude = pointFromModel.Longitude;
-    self.timeOffset = pointFromModel.TimeOffset;
-    self.busStop = busStops.getByPosition(self.latitude, self.longitude);
-}
-
-function Points(routes)
-{
-    var self = this;
-
-    var points = [];
-    for (var i = 0; i < routes.length; i++)
-        points = points.concat(routes[i].points);
-
-    for (var i = 0; i < points.length; i++)
-    {
-        if (points[i].busStop != null)
-            points[i].busStop.points = [];
-    }
-    for (var i = 0; i < points.length; i++)
-        if (points[i].busStop != null)
-            points[i].busStop.points.push(points[i]);
-
-    self.length = points.length;
-        
-    for (var i = 0; i < points.length; i++)
-        self[i] = points[i];
-}
-
-function DepartureTime(departureTimeFromModel)
-{
-    var self = this;
-
-    self.hours = departureTimeFromModel.Hours;
-    self.minutes = departureTimeFromModel.Minutes;
-    self.workingDays = departureTimeFromModel.WorkingDay;
-    self.saturdays = departureTimeFromModel.Saturday;
-    self.sundays = departureTimeFromModel.Sunday;
-
-    self.departureDateForDay = function(year, month, day)
-    {
-        return new Date(year, month, day, self.hours, self.minutes, 0);
-    };
-
-    self.arrivalDateForDay = function(year, month, day)
-    {
-        return new Date(self.departureDateForDay(year, month, day).getTime() + self.route.points[self.route.points.length - 1].timeOffset);
-    };
-
-    self.isOnTour = function(now)
-    {
-        // Todo: check week days
-        var departureDate = self.departureDateForDay(now.getFullYear(), now.getMonth(), now.getDate());
-        var arrivalDate = self.arrivalDateForDay(now.getFullYear(), now.getMonth(), now.getDate());
-        return (now >= departureDate && now < arrivalDate);
-    };
-}
-
-function DepartureTimes(routes)
-{
-    var self = this;
-
-    var departureTimes = [];
-    for (var i = 0; i < routes.length; i++)
-        departureTimes = departureTimes.concat(routes[i].departureTimes);
-
-    self.length = departureTimes.length;
-        
-    for (var i = 0; i < departureTimes.length; i++)
-        self[i] = departureTimes[i];
-}
-
-function Route(routeFromModel, busStops)
-{
-    var self = this;
-
-    self.details = routeFromModel.Details;
-
-    self.points = [];
-    for (var i = 0; i < routeFromModel.Points.length; i++)
-    {
-        var point = new Point(routeFromModel.Points[i], busStops);
-        point.route = self;
-        self.points.push(point);
+        console.log(self);
     }
 
-    self.busStops = [];
-    for (var i = 0; i < self.points.length; i++)
-        if (self.points[i].busStop != null)
-            self.busStops.push(self.points[i].busStop);
-
-    self.departureTimes = [];
-    for (var i = 0; i < routeFromModel.DepartureTimes.length; i++)
+    function BusStop(busStopFromModel)
     {
-        var departureTime = new DepartureTime(routeFromModel.DepartureTimes[i]);
-        departureTime.route = self;
-        self.departureTimes.push(departureTime);
+        var self = this;
+
+        self.name = busStopFromModel.Name;
+        self.latitude = busStopFromModel.Latitude;
+        self.longitude = busStopFromModel.Longitude;
+
+        self.points = [];
+
+        var marker = new google.maps.Marker(
+        {
+            icon: markerIcons.inactiveBusStop,
+            map: map,
+            optimized: false,
+            position:
+            {
+                lat: self.latitude,
+                lng: self.longitude
+            },
+            zIndex: 0
+        });
+
+        marker.addListener('click', function(e)
+        {
+            context.busStops.activeBusStop(self);
+        });
+
+        self.select = function()
+        {
+            marker.setIcon(markerIcons.activeBusStop);
+        };
+
+        self.deselect = function()
+        {
+            marker.setIcon(markerIcons.inactiveBusStop);
+        };
+    };
+
+    function BusStops(busStopsFromModel)
+    {
+        var self = this;
+
+        var busStops = [];
+        for (var i = 0; i < busStopsFromModel.length; i++)
+            busStops.push(new BusStop(busStopsFromModel[i]));
+
+        self.length = busStops.length;
+
+        for (var i = 0; i < busStops.length; i++)
+            self[i] = busStops[i];
+
+        self.getByPosition = function(latitude, longitude)
+        {
+            for (var i = 0; i < busStops.length; i++)
+                if (busStops[i].latitude.toFixed(6) === latitude.toFixed(6) &&
+                    busStops[i].longitude.toFixed(6) === longitude.toFixed(6))
+                    return busStops[i];
+            return null;
+        };
+
+        self.activeBusStop = ko.observable();
+
+        self.activeBusStop.subscribe(function(newActiveBusStop)
+        {
+            for (var i = 0; i < busStops.length; i++)
+                if (busStops[i] != newActiveBusStop)
+                    busStops[i].deselect();
+                else
+                    busStops[i].select();
+
+            if (newActiveBusStop != null && context.busLines.selectedBusLine() != null && !context.busLines.selectedBusLine().containsBusStop(newActiveBusStop))
+                context.busLines.selectedBusLine(null);
+        });
     }
 
-    var busStopMarkers = [];
-    for (var i = 0; i < self.points.length; i++)
-        if (self.points[i].busStop != null)
+    function Point(pointFromModel)
+    {
+        var self = this;
+
+        self.latitude = pointFromModel.Latitude;
+        self.longitude = pointFromModel.Longitude;
+        self.timeOffset = pointFromModel.TimeOffset;
+
+        self.busStop = context.busStops.getByPosition(self.latitude, self.longitude);
+        self.route = null;
+    }
+
+    function Points()
+    {
+        var self = this;
+
+        var points = [];
+        for (var i = 0; i < context.routes.length; i++)
+            points = points.concat(context.routes[i].points);
+
+        for (var i = 0; i < points.length; i++)
+            if (points[i].busStop != null)
+                points[i].busStop.points.push(points[i]);
+
+        self.length = points.length;
+
+        for (var i = 0; i < points.length; i++)
+            self[i] = points[i];
+    }
+
+    function DepartureTime(departureTimeFromModel)
+    {
+        var self = this;
+
+        self.hours = departureTimeFromModel.Hours;
+        self.minutes = departureTimeFromModel.Minutes;
+        self.workingDays = departureTimeFromModel.WorkingDay;
+        self.saturdays = departureTimeFromModel.Saturday;
+        self.sundays = departureTimeFromModel.Sunday;
+
+        self.route = null;
+
+        self.departureDateForDay = function(year, month, day)
+        {
+            return new Date(year, month, day, self.hours, self.minutes, 0);
+        };
+
+        self.arrivalDateForDay = function(year, month, day)
+        {
+            return new Date(self.departureDateForDay(year, month, day).getTime() + self.route.points[self.route.points.length - 1].timeOffset);
+        };
+
+        self.isOnTour = function(now)
+        {
+            // Todo: check week days
+            var departureDate = self.departureDateForDay(now.getFullYear(), now.getMonth(), now.getDate());
+            var arrivalDate = self.arrivalDateForDay(now.getFullYear(), now.getMonth(), now.getDate());
+            return (now >= departureDate && now < arrivalDate);
+        };
+    }
+
+    function DepartureTimes()
+    {
+        var self = this;
+
+        var departureTimes = [];
+        for (var i = 0; i < context.routes.length; i++)
+            departureTimes = departureTimes.concat(context.routes[i].departureTimes);
+
+        self.length = departureTimes.length;
+
+        for (var i = 0; i < departureTimes.length; i++)
+            self[i] = departureTimes[i];
+    }
+
+    function Route(routeFromModel)
+    {
+        var self = this;
+
+        self.details = routeFromModel.Details;
+
+        self.points = [];
+        for (var i = 0; i < routeFromModel.Points.length; i++)
+        {
+            var point = new Point(routeFromModel.Points[i]);
+            point.route = self;
+            self.points.push(point);
+        }
+
+        self.busStops = [];
+        for (var i = 0; i < self.points.length; i++)
+            if (self.points[i].busStop != null)
+                self.busStops.push(self.points[i].busStop);
+
+        self.departureTimes = [];
+        for (var i = 0; i < routeFromModel.DepartureTimes.length; i++)
+        {
+            var departureTime = new DepartureTime(routeFromModel.DepartureTimes[i]);
+            departureTime.route = self;
+            self.departureTimes.push(departureTime);
+        }
+
+        self.busLine = null;
+
+        var busStopMarkers = [];
+        for (var i = 0; i < self.busStops.length; i++)
         {
             var busStopMarker = new google.maps.Marker(
             {
@@ -203,320 +227,256 @@ function Route(routeFromModel, busStops)
                 optimized: false,
                 position:
                 {
-                    lat: self.points[i].busStop.latitude,
-                    lng: self.points[i].busStop.longitude
+                    lat: self.busStops[i].latitude,
+                    lng: self.busStops[i].longitude
                 },
                 zIndex: 2
             });
+
             busStopMarker.addListener('click', function(e)
             {
-                busStops.activeBusStop(busStops.getByPosition(e.latLng.lat(), e.latLng.lng()));
+                var newActiveBusStop = self.busStops[busStopMarkers.indexOf(this)];
+                context.busStops.activeBusStop(newActiveBusStop);
             });
+
             busStopMarkers.push(busStopMarker);
         }
 
-    var path = [];
-    for (var i = 0; i < self.points.length; i++)
-        path.push(new google.maps.LatLng(self.points[i].latitude, self.points[i].longitude));
-        
-    var polyline = new google.maps.Polyline(
-    {
-        map: null,
-        path: path,
-        strokeColor: '#FF7F00',
-        strokeOpacity: 1,
-        strokeWeight: 3,
-    }); 
+        var path = [];
+        for (var i = 0; i < self.points.length; i++)
+            path.push(new google.maps.LatLng(self.points[i].latitude, self.points[i].longitude));
 
-    self.hide = function()
-    {
-        for (var i = 0; i < busStopMarkers.length; i++)
-            if (busStopMarkers[i].getMap() != null)
-                busStopMarkers[i].setMap(null);
-
-        if (polyline.getMap() != null)
-            polyline.setMap(null);
-    };
-
-    self.show = function()
-    {
-
-        for (var i = 0; i < busStopMarkers.length; i++)
-            if (busStopMarkers[i].getMap() == null)
-                busStopMarkers[i].setMap(map);
-
-        if (polyline.getMap() == null)
-            polyline.setMap(map);
-
-        //var routeContainsActiveBusStop = false;
-        //for (var i = 0; i < self.busStops.length; i++)
-        //{
-        //    if (self.busStops[i] == busStops.activeBusStop())
-        //    {
-        //        routeContainsActiveBusStop = true;
-        //        break;
-        //    }
-        //}
-        //if (!routeContainsActiveBusStop)
-        //{
-        //    console.log('sdfsd');
-        //    busStops.activeBusStop(null);
-        //}
-    };
-
-    busStops.activeBusStop.subscribe(function(newValue)
-    {
-        for (var i = 0; i < self.busStops.length; i++)
+        var polyline = new google.maps.Polyline(
         {
-            if (self.busStops[i] == newValue)
-                busStopMarkers[i].setIcon(markerIcons.activeBusStop);
-            else
-                busStopMarkers[i].setIcon(markerIcons.orangeBusStop);
+            map: null,
+            path: path,
+            strokeColor: '#FF7F00',
+            strokeOpacity: 1,
+            strokeWeight: 3,
+        });
+
+        self.hide = function()
+        {
+            for (var i = 0; i < busStopMarkers.length; i++)
+                if (busStopMarkers[i].getMap() != null)
+                    busStopMarkers[i].setMap(null);
+
+            if (polyline.getMap() != null)
+                polyline.setMap(null);
+        };
+
+        self.show = function()
+        {
+
+            for (var i = 0; i < busStopMarkers.length; i++)
+                if (busStopMarkers[i].getMap() == null)
+                    busStopMarkers[i].setMap(map);
+
+            if (polyline.getMap() == null)
+                polyline.setMap(map);
+        };
+
+        context.busStops.activeBusStop.subscribe(function(newActiveBusStop)
+        {
+            for (var i = 0; i < self.busStops.length; i++)
+                if (self.busStops[i] === newActiveBusStop)
+                    busStopMarkers[i].setIcon(markerIcons.activeBusStop);
+                else
+                    busStopMarkers[i].setIcon(markerIcons.orangeBusStop);
+        });
+    }
+
+    function Routes()
+    {
+        var self = this;
+
+        var routes = [];
+        for (var i = 0; i < context.busLines.length; i++)
+            routes = routes.concat(context.busLines[i].routes);
+
+        self.length = routes.length;
+
+        for (var i = 0; i < routes.length; i++)
+            self[i] = routes[i];
+    }
+
+    function BusLine(busLineFromModel)
+    {
+        var self = this;
+
+        self.busNumber = busLineFromModel.BusNumber;
+
+        self.routes = [];
+        for (var i = 0; i < busLineFromModel.Routes.length; i++)
+        {
+            var route = new Route(busLineFromModel.Routes[i]);
+            route.busLine = self;
+            self.routes.push(route);
         }
 
-        //if (busStops.activeBusStop() != null)
-        //{
-        //    var routeContainsActiveBusStop = false;
-        //    for (var i = 0; i < self.busStops.length; i++)
-        //    {
-        //        if (self.busStops[i] == busStops.activeBusStop())
-        //        {
-        //            routeContainsActiveBusStop = true;
-        //            break;
-        //        }
-        //    }
-        //    if (!routeContainsActiveBusStop)
-        //    {
-        //        console.log('yyyy');
-        //        context.busLines.selectedBusLine(null);
-        //        self.hide();
-        //    }
-        //}
-    });
-}
+        self.hidden = ko.observable(false);
 
-function Routes(busLines)
-{
-    var self = this;
-
-    var routes = [];
-    for (var i = 0; i < busLines.length; i++)
-        routes = routes.concat(busLines[i].routes);
-
-    for (var i = 0; i < routes.length; i++)
-    {
-
+        self.containsBusStop = function(busStop)
+        {
+            for (var i = 0; i < busStop.points.length; i++)
+                if (busStop.points[i].route.busLine === self)
+                    return true;
+            return false;
+        };
     }
 
-    self.length = routes.length;
-        
-    for (var i = 0; i < routes.length; i++)
-        self[i] = routes[i];
-
-    self.hideAll = function()
+    function BusLines(busLinesFromModel)
     {
-        for (var i = 0; i < routes.length; i++)
-            routes[i].hide();
-        busLines.selectedBusLine(null);
-    };
-}
+        var self = this;
 
-function BusLine(busLineFromModel, busStops)
-{
-    var self = this;
+        var busLines = [];
+        for (var i = 0; i < busLinesFromModel.length; i++)
+            busLines.push(new BusLine(busLinesFromModel[i]));
 
-    self.busNumber = busLineFromModel.BusNumber;
+        self.length = busLines.length;
 
-    self.routes = [];
-    for (var i = 0; i < busLineFromModel.Routes.length; i++)
-    {
-        var route = new Route(busLineFromModel.Routes[i], busStops);
-        route.busLine = self;
-        self.routes.push(route);
+        for (var i = 0; i < busLines.length; i++)
+            self[i] = busLines[i];
+
+        self.selectedBusLine = ko.observable();
+
+        self.selectedBusLine.subscribe(function(newSelectedBusLine)
+        {
+            for (var i = 0; i < context.routes.length; i++)
+                if (context.routes[i].busLine != newSelectedBusLine)
+                    context.routes[i].hide();
+                else
+                    context.routes[i].show();
+
+            if (newSelectedBusLine != null && context.busStops.activeBusStop() != null && !newSelectedBusLine.containsBusStop(context.busStops.activeBusStop()))
+                context.busStops.activeBusStop(null);
+        });
     }
 
-    self.hidden = ko.observable(false);
-}
-
-function BusLines(busLinesFromModel, busStops)
-{
-    var self = this;
-
-    var busLines = [];
-    for (var i = 0; i < busLinesFromModel.length; i++)
-        busLines.push(new BusLine(busLinesFromModel[i], busStops));
-
-    self.length = busLines.length;
-        
-    for (var i = 0; i < busLines.length; i++)
-        self[i] = busLines[i];
-
-    self.selectedBusLine = ko.observable();
-
-    self.selectedBusLine.subscribe(function(newValue)
+    function Bus(departureTime)
     {
-        for (var i = 0; i < context.routes.length; i++)
-            if (context.routes[i].busLine != newValue)
-                context.routes[i].hide();
-            else
-                context.routes[i].show();
+        var self = this;
 
-        if (newValue != null && context.busStops.activeBusStop() != null)
-            for (var i = 0; i < newValue.routes.length; i++)
+        var route = departureTime.route;
+        var points = route.points;
+        var busLine = route.busLine;
+
+        self.busNumber = busLine.busNumber;
+        self.departureTime = departureTime;
+
+        var marker = new google.maps.Marker(
+        {
+            icon: markerIcons.redBus,
+            label:
             {
-                console.log(3423);
-                var selectedBusLineContainsActiveBusStop = false;
-                for (var j = 0; j < newValue.routes[i].points.length; j++)
-                {
-                    if (newValue.routes[i].points[j].busStop == context.busStops.activeBusStop())
+                color: '#FF0000',
+                fontSize: '10px',
+                fontWeight: 'bold',
+                text: self.busNumber
+            },
+            map: busLine.hidden() ? null : map,
+            position:
+            {
+                lat: points[0].latitude,
+                lng: points[0].longitude
+            }
+        });
+
+        marker.addListener('click', function(e)
+        {
+            context.busLines.selectedBusLine(busLine);
+        });
+
+        self.hide = function()
+        {
+            if (marker.getMap() != null)
+                marker.setMap(null);
+        };
+
+        self.show = function()
+        {
+            if (marker.getMap() == null)
+                marker.setMap(map);
+        };
+
+        busLine.hidden.subscribe(function(newValue)
+        {
+            if (newValue)
+                self.hide();
+            else
+                self.show();
+        });
+
+        var now = serverTime.now();
+        var departureDate = departureTime.departureDateForDay(now.getFullYear(), now.getMonth(), now.getDate());
+
+        var update = function()
+        {
+            var now = serverTime.now();
+            var currentTimeOffset = now.getTime() - departureDate.getTime();
+            if (currentTimeOffset > points[points.length - 1].timeOffset)
+            {
+                self.hide();
+                self.onremove(self);
+            }
+            else
+            {
+                for (var i = 0; i < points.length - 1; i++)
+                    if ((currentTimeOffset >= points[i].timeOffset && currentTimeOffset < points[i + 1].timeOffset))
                     {
-                        selectedBusLineContainsActiveBusStop = true;
+                        var newPosition = getPositionBetweenTwoPoints(points[i], points[i + 1], currentTimeOffset);
+                        marker.setPosition(newPosition);
                         break;
                     }
-                }
-                if (!selectedBusLineContainsActiveBusStop)
-                    context.busStops.activeBusStop(null);
+                setTimeout(update, 100);
             }
-    });
-}
-
-function Bus(departureTime, busLines)
-{
-    var self = this;
-
-    var route = departureTime.route;
-    var points = route.points;
-    var busLine = route.busLine;
-
-    self.busNumber = busLine.busNumber;
-    self.departureTime = departureTime;
-
-    var marker = new google.maps.Marker(
-    {
-        icon: markerIcons.redBus,
-        label:
-        {
-            color: '#FF0000',
-            fontSize: '10px',
-            fontWeight: 'bold',
-            text: self.busNumber
-        },
-        map: busLine.hidden() ? null : map,
-        position:
-        {
-            lat: points[0].latitude,
-            lng: points[0].longitude
         }
-    });
 
-    marker.addListener('click', function(e)
-    {
-        busLines.selectedBusLine(busLine);
-    });
-
-    self.hide = function()
-    {
-        if (marker.getMap() != null)
-            marker.setMap(null);
-    };
-
-    self.show = function()
-    {
-        if (marker.getMap() == null)
-            marker.setMap(map);
-    };
-
-    busLine.hidden.subscribe(function(newValue)
-    {
-        if (newValue)
-            self.hide();
-        else
-            self.show();
-    });
-
-    var now = serverTime.now();
-    var departureDate = departureTime.departureDateForDay(now.getFullYear(), now.getMonth(), now.getDate());
-
-    var update = function()
-    {
-        var now = serverTime.now();
-        var currentTimeOffset = now.getTime() - departureDate.getTime();
-        if (currentTimeOffset > points[points.length - 1].timeOffset)
-        {
-            self.hide();
-            self.onremove(self);
-        }
-        else
-        {
-            for (var i = 0; i < points.length - 1; i++)
-                if ((currentTimeOffset >= points[i].timeOffset && currentTimeOffset < points[i + 1].timeOffset))
-                {
-                    var newPosition = getPositionBetweenTwoPoints(points[i], points[i + 1], currentTimeOffset);
-                    marker.setPosition(newPosition);
-                    break;
-                }
-            setTimeout(update, 100);
-        }
+        update();
     }
 
-    update();
-}
-
-function Buses(departureTimes, busLines)
-{
-    var self = this;
-
-    var buses = [];
-
-    self.add = function(departureTime)
+    function Buses()
     {
-        if (!self.contains(departureTime))
+        var self = this;
+
+        var buses = [];
+
+        self.add = function(departureTime)
         {
-            var bus = new Bus(departureTime, busLines);
-            bus.onremove = function(busToRemove) 
+            if (!self.contains(departureTime))
             {
-                buses.splice(buses.indexOf(busToRemove), 1);
-            };
-            buses.push(bus);
+                var bus = new Bus(departureTime);
+                bus.onremove = function(busToRemove)
+                {
+                    buses.splice(buses.indexOf(busToRemove), 1);
+                };
+                buses.push(bus);
+            }
+        };
+
+        self.contains = function(departureTime)
+        {
+            for (var i = 0; i < buses.length; i++)
+                if (buses[i].departureTime === departureTime)
+                    return true;
+            return false;
+        };
+
+        var tick = function()
+        {
+            if (serverTime.now().getSeconds() === 0)
+                update();
+            setTimeout(tick, 1000);
         }
-    };
 
-    self.contains = function(departureTime)
-    {
-        for (var i = 0; i < buses.length; i++)
-            if (buses[i].departureTime === departureTime)
-                return true;
-        return false;
-    };
-        
-    var tick = function()
-    {
-        if (serverTime.now().getSeconds() === 0)
-            update();
-        setTimeout(tick, 1000);
+        var update = function()
+        {
+            for (var i = 0; i < context.departureTimes.length; i++)
+                if (context.departureTimes[i].isOnTour(serverTime.now()))
+                    self.add(context.departureTimes[i]);
+        };
+
+        update();
+        tick();
     }
-
-    var update = function()
-    {
-        for (var i = 0; i < departureTimes.length; i++)
-            if (departureTimes[i].isOnTour(serverTime.now()))
-                self.add(departureTimes[i]);
-    };
-
-    update();
-    tick();
-}
-
-function Context(busStopsFromModel, busLinesFromModel)
-{
-    var self = this;
-
-    self.busStops = new BusStops(busStopsFromModel, self);
-    self.busLines = new BusLines(busLinesFromModel, self.busStops, self);
-    self.routes = new Routes(self.busLines);
-    self.points = new Points(self.routes);
-    self.departureTimes = new DepartureTimes(self.routes);
-    self.buses = new Buses(self.departureTimes, self.busLines);
-
-    self.view = ko.observable('Navigation');
 }
