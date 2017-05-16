@@ -23,18 +23,16 @@
                 self.busStops.push(
                 {
                     name: departureTime.route.points[i].busStop.name,
-                    timeOffset: departureTime.route.points[i].timeOffset
+                    timeOffset: departureTime.route.points[i].timeOffset / 60000
                 });
 
         self.hours = [];
         for (var i = 0; i < 24; i++)
-            self.hours[i] = ko.observableArray([]);
+            self.hours[i] = [];
         for (var i = 0; i < departureTime.route.departureTimes.length; i++)
         {
             self.hours[departureTime.route.departureTimes[i].hours].push(departureTime.route.departureTimes[i].minutes);
         }
-
-        console.log(self);
     }
 
     function BusStop(busStopFromModel)

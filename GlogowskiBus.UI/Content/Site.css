@@ -121,8 +121,26 @@ aside select {
     max-width: initial;
 }
 
-#aside {
+aside #timeTable .busStops {
     float: left;
-    padding: 10px;
-    width: calc(30% - 20px);
+}
+
+aside #timeTable .departureTimes {
+    float: left;
+}
+
+aside #timeTable .departureTimes td {
+    border: 1px solid white;
+    padding: 3px;
+    /*text-align: center;*/
+    vertical-align: middle;
+}
+
+aside #timeTable .departureTimes tr:first-child, aside #timeTable .departureTimes td:first-child {
+    font-weight: bold;
+    text-align: center;
+}
+
+aside #timeTable .departureTimes td:not(:first-child) {
+    min-width: 100px;
 }

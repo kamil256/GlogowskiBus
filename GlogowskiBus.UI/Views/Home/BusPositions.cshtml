@@ -18,174 +18,71 @@
 <div id="findRoute" data-bind="visible: view() == 'FindRoute'">
 </div>
 
-<div id="schedule" data-bind="visible: view() == 'Schedule'">
+<div id="timeTable" data-bind="visible: view() == 'TimeTable'">
     <p>Przystanek:</p>
     <select class="form-control" data-bind="options: busStops, optionsText: 'name', optionsCaption: '-', value: busStops.activeBusStop"></select>
     <br />
 
     <!-- ko if: busStops.activeBusStop() -->
-        <p>Linia:</p>
-        <ul id="busLinesTiles" data-bind="foreach: busStops.activeBusStop().points">
-            <li data-bind="click: function() { $root.busLines.selectedBusLine(route.busLine) }, css: { active: $root.busLines.selectedBusLine() == route.busLine }, text: route.busLine.busNumber"></li>
-        </ul>
+    <p>Linia:</p>
+    <ul id="busLinesTiles" data-bind="foreach: busStops.activeBusStop().points">
+        <li data-bind="click: function() { $root.busLines.selectedBusLine(route.busLine) }, css: { active: $root.busLines.selectedBusLine() == route.busLine }, text: route.busLine.busNumber"></li>
+    </ul>
     <!-- /ko -->
 
     <!-- ko if: busStops.activeBusStop() && busLines.selectedBusLine() -->
-        <ul><li>Dzień roboczy</li><li>Sobota</li><li>Niedziela</li></ul>
-        @*<table data-bind="foreach: timeTable().busStops">
-            <tr>
-                <td data-bind="text: timeOffset"></td>
-                <td data-bind="text: name"></td>
-            </tr>
-        </table>*@
-
-        <table>
-            <tr>
-                <td>0</td>
-                <!-- ko foreach: $root.timeTable().hours[0] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>1</td>
-                <!-- ko foreach: $root.timeTable().hours[1] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>2</td>
-                <!-- ko foreach: $root.timeTable().hours[2] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>3</td>
-                <!-- ko foreach: $root.timeTable().hours[3] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>4</td>
-                <!-- ko foreach: $root.timeTable().hours[4] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>5</td>
-                <!-- ko foreach: $root.timeTable().hours[5] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>6</td>
-                <!-- ko foreach: $root.timeTable().hours[6] -->
-                <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>7</td>
-                <!-- ko foreach: $root.timeTable().hours[7] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>8</td>
-                <!-- ko foreach: $root.timeTable().hours[8] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>9</td>
-                <!-- ko foreach: $root.timeTable().hours[9] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>10</td>
-                <!-- ko foreach: $root.timeTable().hours[10] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>11</td>
-                <!-- ko foreach: $root.timeTable().hours[11] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>12</td>
-                <!-- ko foreach: $root.timeTable().hours[12] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>13</td>
-                <!-- ko foreach: $root.timeTable().hours[13] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>14</td>
-                <!-- ko foreach: $root.timeTable().hours[14] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>15</td>
-                <!-- ko foreach: $root.timeTable().hours[15] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>16</td>
-                <!-- ko foreach: $root.timeTable().hours[16] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>17</td>
-                <!-- ko foreach: $root.timeTable().hours[17] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>18</td>
-                <!-- ko foreach: $root.timeTable().hours[18] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>19</td>
-                <!-- ko foreach: $root.timeTable().hours[19] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>20</td>
-                <!-- ko foreach: $root.timeTable().hours[20] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>21</td>
-                <!-- ko foreach: $root.timeTable().hours[21] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>22</td>
-                <!-- ko foreach: $root.timeTable().hours[22] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-            <tr>
-                <td>23</td>
-                <!-- ko foreach: $root.timeTable().hours[23] -->
-                    <td data-bind="text: $data"></td>
-                <!-- /ko -->
-            </tr>
-        </table>
+    <ul class="dayOfWeek">
+        <li>Dzień roboczy</li>
+        <li>Sobota</li>
+        <li>Niedziela</li>
+    </ul>
         
+    <table class="busStops" data-bind="foreach: timeTable().busStops">
+        <tr>
+            <td data-bind="text: name"></td>
+            <td data-bind="text: timeOffset"></td>
+        </tr>
+    </table>
+
+    <table class="departureTimes">
+        <tr>
+            <td>
+
+            </td>
+            <td>
+                Dzień roboczy
+            </td>
+            <td>
+                Sobota
+            </td>
+            <td>
+                Niedziela
+            </td>
+        </tr>
+        <!-- ko foreach: timeTable().hours -->
+        <tr>
+            <td data-bind="text: $index"></td>
+            <td>
+                <!-- ko foreach: $root.timeTable().hours[$index()] -->
+                    <span data-bind="text: $data"></span>
+                <!-- /ko -->
+            </td>
+
+            <td>
+                <!-- ko foreach: $root.timeTable().hours[$index()] -->
+                <span data-bind="text: $data"></span>
+                <!-- /ko -->
+            </td>
+
+            <td>
+                <!-- ko foreach: $root.timeTable().hours[$index()] -->
+                <span data-bind="text: $data"></span>
+                <!-- /ko -->
+            </td>
+        </tr>
+        <!-- /ko -->
+    </table>
+
     <!-- /ko -->
 </div>
 
