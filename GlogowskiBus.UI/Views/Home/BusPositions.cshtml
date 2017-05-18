@@ -26,7 +26,7 @@
     <!-- ko if: busStops.activeBusStop() -->
     <p>Linia:</p>
     <ul id="busLinesTiles" data-bind="foreach: busStops.activeBusStop().points">
-        <li data-bind="click: function() { $root.busLines.selectedBusLine(route.busLine) }, css: { active: $root.busLines.selectedBusLine() == route.busLine }, text: route.busLine.busNumber"></li>
+        <li data-bind="click: function() { $root.departureTimes.selectNextDepartureTime(route.busLine) }, css: { active: $root.departureTimes.selectedDepartureTime() && $root.departureTimes.selectedDepartureTime().route.busLine == route.busLine }, text: route.busLine.busNumber"></li>
     </ul>
     <!-- /ko -->
 
@@ -52,8 +52,8 @@
                         <td>
                             <div data-bind="text: $index"></div>
                         </td>
-                        <td data-bind="css: { active: $index() == $root.selectedDepartureTime.hours }, foreach: $root.timeTable().hours[$index()]">
-                            <div data-bind="click: function(data, event) { $root.setDepartureTime(event); }, css: { active: $data == $root.selectedDepartureTime.minutes }, text: $data"></div>
+                        <td data-bind="css: { active: $index() == $root.departureTimes.selectedDepartureTime().hours }, foreach: $root.timeTable().hours[$index()]">
+                            <div data-bind="click: function(data, event) { $root.setDepartureTime(event); }, css: { active: $data == $root.departureTimes.selectedDepartureTime().minutes }, text: $data"></div>
                         </td>
                     </tr>
                 </table>
@@ -100,7 +100,7 @@
         map.addListener('click', function(e)
         {
             context.busStops.activeBusStop(null);
-            context.busLines.selectedBusLine(null);
+            context.departureTimes.selectedDepartureTime(null);
         });
     }
 </script>

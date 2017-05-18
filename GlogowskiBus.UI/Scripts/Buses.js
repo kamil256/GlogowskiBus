@@ -10,7 +10,6 @@
     context.buses = new Buses();
 
     context.selectedDayOfWeek = "WorkingDay";
-    context.selectedDepartureTime = null;
 
     context.timeTable = ko.observable();
 
@@ -18,15 +17,14 @@
 
     context.busStops.activeBusStop.subscribe(function(newActiveBusStop)
     {
-        if (newActiveBusStop && context.busLines.selectedBusLine())
+        if (newActiveBusStop && context.departureTimes.selectedDepartureTime())
         {
             // Todo: set current day
             context.selectedDayOfWeek = "WorkingDay";
 
-            // Todo: set closest departure time
-            context.selectedDepartureTime = context.departureTimes[10];
+            
 
-            context.timeTable(new TimeTable(context.selectedDepartureTime));
+            context.timeTable(new TimeTable());
         }
         else
         {
@@ -39,31 +37,29 @@
         var hours = event.target.parentElement.parentElement.children[0].children[0].textContent;
         var minutes = event.target.textContent;
 
-        for (var i = 0; i < context.busLines.selectedBusLine().routes.length; i++)
+        for (var i = 0; i < context.departureTimes.selectedDepartureTime().route.busLine.routes.length; i++)
         {
-            for (var j = 0; j < context.busLines.selectedBusLine().routes[i].departureTimes.length; j++)
+            for (var j = 0; j < context.departureTimes.selectedDepartureTime().route.busLine.routes[i].departureTimes.length; j++)
             {
-                if (context.busLines.selectedBusLine().routes[i].departureTimes[j].hours == hours &&
-                    context.busLines.selectedBusLine().routes[i].departureTimes[j].minutes == minutes)
+                if (context.departureTimes.selectedDepartureTime().route.busLine.routes[i].departureTimes[j].hours == hours &&
+                    context.departureTimes.selectedDepartureTime().route.busLine.routes[i].departureTimes[j].minutes == minutes)
                 {
-                    context.selectedDepartureTime = context.busLines.selectedBusLine().routes[i].departureTimes[j];
-                    context.timeTable(new TimeTable(context.selectedDepartureTime));
+                    context.departureTimes.selectedDepartureTime(context.departureTimes.selectedDepartureTime().route.busLine.routes[i].departureTimes[j]);
                     break;
                 }
             }
         }
     }
 
-    context.busLines.selectedBusLine.subscribe(function(newSelectedBusLine)
+    context.departureTimes.selectedDepartureTime.subscribe(function(newSelectedDepartureTime)
     {
-        if (context.busStops.activeBusStop() && newSelectedBusLine)
+        if (context.busStops.activeBusStop() && newSelectedDepartureTime)
         {
             // Todo: set current day
             context.selectedDayOfWeek = "WorkingDay";
 
             // Todo: set closest departure time
-            context.selectedDepartureTime = context.departureTimes[21];
-            context.timeTable(new TimeTable(context.selectedDepartureTime));
+            context.timeTable(new TimeTable());
         }
         else
         {
@@ -71,36 +67,36 @@
         }
     });
 
-    function TimeTable(departureTime)
+    function TimeTable()
     {
         var self = this;
 
         self.busStops = ko.observableArray([]);
         var pointForSelectedBusStop = null;
-        for (var j = 0; j < departureTime.route.points.length; j++)
+        for (var j = 0; j < context.departureTimes.selectedDepartureTime().route.points.length; j++)
         {
-            if (departureTime.route.points[j].busStop == context.busStops.activeBusStop())
+            if (context.departureTimes.selectedDepartureTime().route.points[j].busStop == context.busStops.activeBusStop())
             {
-                pointForSelectedBusStop = departureTime.route.points[j];
+                pointForSelectedBusStop = context.departureTimes.selectedDepartureTime().route.points[j];
                 break;
             }
         }
-        for (var i = 0; i < departureTime.route.points.length; i++)
-            if (departureTime.route.points[i].busStop != null)
+        for (var i = 0; i < context.departureTimes.selectedDepartureTime().route.points.length; i++)
+            if (context.departureTimes.selectedDepartureTime().route.points[i].busStop != null)
             {
                 self.busStops.push(
                 {
-                    name: departureTime.route.points[i].busStop.name,
-                    timeOffset: (departureTime.route.points[i].timeOffset - pointForSelectedBusStop.timeOffset) / 60000
+                    name: context.departureTimes.selectedDepartureTime().route.points[i].busStop.name,
+                    timeOffset: (context.departureTimes.selectedDepartureTime().route.points[i].timeOffset - pointForSelectedBusStop.timeOffset) / 60000
                 });
             }
 
         self.hours = [];
         for (var i = 0; i < 24; i++)
             self.hours[i] = [];
-        for (var i = 0; i < departureTime.route.departureTimes.length; i++)
+        for (var i = 0; i < context.departureTimes.selectedDepartureTime().route.departureTimes.length; i++)
         {
-            self.hours[departureTime.route.departureTimes[i].hours].push(departureTime.route.departureTimes[i].minutes);
+            self.hours[context.departureTimes.selectedDepartureTime().route.departureTimes[i].hours].push(context.departureTimes.selectedDepartureTime().route.departureTimes[i].minutes);
         }
     }
 
@@ -175,8 +171,8 @@
                 else
                     busStops[i].select();
 
-            if (newActiveBusStop != null && context.busLines.selectedBusLine() != null && !context.busLines.selectedBusLine().containsBusStop(newActiveBusStop))
-                context.busLines.selectedBusLine(null);
+            if (newActiveBusStop != null && context.departureTimes.selectedDepartureTime() != null && !context.departureTimes.selectedDepartureTime().route.busLine.containsBusStop(newActiveBusStop))
+                context.departureTimes.selectedDepartureTime(null);
         });
     }
 
@@ -254,17 +250,22 @@
         for (var i = 0; i < departureTimes.length; i++)
             self[i] = departureTimes[i];
 
+        self.selectNextDepartureTime = function(busLine)
+        {
+            self.selectedDepartureTime(busLine.routes[0].departureTimes[0]);
+        }
+
         self.selectedDepartureTime = ko.observable();
 
         self.selectedDepartureTime.subscribe(function(newSelectedDepartureTime)
         {
             for (var i = 0; i < context.routes.length; i++)
-                if (context.routes[i] != newSelectedDepartureTime.route)
-                    context.routes[i].hide();
-                else
+                if (newSelectedDepartureTime != null && context.routes[i] == newSelectedDepartureTime.route)
                     context.routes[i].show();
+                else
+                    context.routes[i].hide();
 
-            if (newSelectedBusLine != null && context.busStops.activeBusStop() != null && !newSelectedBusLine.containsBusStop(context.busStops.activeBusStop()))
+            if (newSelectedDepartureTime != null && context.busStops.activeBusStop() != null && !newSelectedDepartureTime.route.busLine.containsBusStop(context.busStops.activeBusStop()))
                 context.busStops.activeBusStop(null);
         });
     }
@@ -419,19 +420,19 @@
         for (var i = 0; i < busLines.length; i++)
             self[i] = busLines[i];
 
-        self.selectedBusLine = ko.observable();
+        //self.selectedBusLine = ko.observable();
 
-        self.selectedBusLine.subscribe(function(newSelectedBusLine)
-        {
-            for (var i = 0; i < context.routes.length; i++)
-                if (context.routes[i].busLine != newSelectedBusLine)
-                    context.routes[i].hide();
-                else
-                    context.routes[i].show();
+        //self.selectedBusLine.subscribe(function(newSelectedBusLine)
+        //{
+        //    for (var i = 0; i < context.routes.length; i++)
+        //        if (context.routes[i].busLine != newSelectedBusLine)
+        //            context.routes[i].hide();
+        //        else
+        //            context.routes[i].show();
 
-            if (newSelectedBusLine != null && context.busStops.activeBusStop() != null && !newSelectedBusLine.containsBusStop(context.busStops.activeBusStop()))
-                context.busStops.activeBusStop(null);
-        });
+        //    if (newSelectedBusLine != null && context.busStops.activeBusStop() != null && !newSelectedBusLine.containsBusStop(context.busStops.activeBusStop()))
+        //        context.busStops.activeBusStop(null);
+        //});
     }
 
     function Bus(departureTime)
@@ -465,7 +466,7 @@
 
         marker.addListener('click', function(e)
         {
-            context.busLines.selectedBusLine(busLine);
+            context.departureTimes.selectNextDepartureTime(busLine);
         });
 
         self.hide = function()
