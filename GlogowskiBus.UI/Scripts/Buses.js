@@ -256,7 +256,31 @@
 
         self.selectNextDepartureTime = function(busLine)
         {
-            self.selectedDepartureTime(busLine.routes[0].departureTimes[0]);
+            var nextDepartureTime = busLine.routes[0].departureTimes[0];
+            var minTimeDifference = 86400000;
+            console.log(minTimeDifference);
+            var currentTime = new Date(1970, 0, 1, serverTime.now().getHours(), serverTime.now().getMinutes(), serverTime.now().getSeconds(), serverTime.now().getMilliseconds()).getTime();
+
+
+            for (var i = 0; i < busLine.routes.length; i++)
+            {
+                for (var j = 0; j < busLine.routes[i].departureTimes.length; j++)
+                {
+                    var departureTime = context.departureTimes.getDepartureTimeForBusStop(busLine.routes[i].departureTimes[j], context.busStops.activeBusStop());
+                    
+                    var time = new Date(1970, 0, 1, departureTime.hours, departureTime.minutes, 0, 0).getTime();
+                    
+                    var timeDifference = time - currentTime;
+                    console.log(timeDifference);
+                    if (timeDifference >= 0 && timeDifference < minTimeDifference)
+                    {
+                        nextDepartureTime = busLine.routes[i].departureTimes[j];
+                        minTimeDifference = timeDifference;
+                    }
+                }
+            }
+
+            self.selectedDepartureTime(nextDepartureTime);
         }
 
         self.selectedDepartureTime = ko.observable();
