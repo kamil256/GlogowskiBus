@@ -9,22 +9,91 @@
     context.departureTimes = new DepartureTimes();
     context.buses = new Buses();
 
-    context.timeTable = ko.observable(new TimeTable(context.departureTimes[10]));
+    context.selectedDayOfWeek = "WorkingDay";
+    context.selectedDepartureTime = null;
+
+    context.timeTable = ko.observable();
 
     context.view = ko.observable('Navigation');
+
+    context.busStops.activeBusStop.subscribe(function(newActiveBusStop)
+    {
+        if (newActiveBusStop && context.busLines.selectedBusLine())
+        {
+            // Todo: set current day
+            context.selectedDayOfWeek = "WorkingDay";
+
+            // Todo: set closest departure time
+            context.selectedDepartureTime = context.departureTimes[10];
+
+            context.timeTable(new TimeTable(context.selectedDepartureTime));
+        }
+        else
+        {
+            context.timeTable(null);
+        }
+    });
+
+    context.setDepartureTime = function(event)
+    {
+        var hours = event.target.parentElement.parentElement.children[0].children[0].textContent;
+        var minutes = event.target.textContent;
+
+        for (var i = 0; i < context.busLines.selectedBusLine().routes.length; i++)
+        {
+            for (var j = 0; j < context.busLines.selectedBusLine().routes[i].departureTimes.length; j++)
+            {
+                if (context.busLines.selectedBusLine().routes[i].departureTimes[j].hours == hours &&
+                    context.busLines.selectedBusLine().routes[i].departureTimes[j].minutes == minutes)
+                {
+                    context.selectedDepartureTime = context.busLines.selectedBusLine().routes[i].departureTimes[j];
+                    context.timeTable(new TimeTable(context.selectedDepartureTime));
+                    break;
+                }
+            }
+        }
+    }
+
+    context.busLines.selectedBusLine.subscribe(function(newSelectedBusLine)
+    {
+        if (context.busStops.activeBusStop() && newSelectedBusLine)
+        {
+            // Todo: set current day
+            context.selectedDayOfWeek = "WorkingDay";
+
+            // Todo: set closest departure time
+            context.selectedDepartureTime = context.departureTimes[21];
+            context.timeTable(new TimeTable(context.selectedDepartureTime));
+        }
+        else
+        {
+            context.timeTable(null);
+        }
+    });
 
     function TimeTable(departureTime)
     {
         var self = this;
 
         self.busStops = ko.observableArray([]);
+        var pointForSelectedBusStop = null;
+        for (var j = 0; j < departureTime.route.points.length; j++)
+        {
+            if (departureTime.route.points[j].busStop == context.busStops.activeBusStop())
+            {
+                pointForSelectedBusStop = departureTime.route.points[j];
+                break;
+            }
+        }
         for (var i = 0; i < departureTime.route.points.length; i++)
             if (departureTime.route.points[i].busStop != null)
+            {
                 self.busStops.push(
                 {
                     name: departureTime.route.points[i].busStop.name,
-                    timeOffset: departureTime.route.points[i].timeOffset / 60000
+                    timeOffset: (departureTime.route.points[i].timeOffset - pointForSelectedBusStop.timeOffset) / 60000
                 });
+            }
 
         self.hours = [];
         for (var i = 0; i < 24; i++)
@@ -184,6 +253,20 @@
 
         for (var i = 0; i < departureTimes.length; i++)
             self[i] = departureTimes[i];
+
+        self.selectedDepartureTime = ko.observable();
+
+        self.selectedDepartureTime.subscribe(function(newSelectedDepartureTime)
+        {
+            for (var i = 0; i < context.routes.length; i++)
+                if (context.routes[i] != newSelectedDepartureTime.route)
+                    context.routes[i].hide();
+                else
+                    context.routes[i].show();
+
+            if (newSelectedBusLine != null && context.busStops.activeBusStop() != null && !newSelectedBusLine.containsBusStop(context.busStops.activeBusStop()))
+                context.busStops.activeBusStop(null);
+        });
     }
 
     function Route(routeFromModel)

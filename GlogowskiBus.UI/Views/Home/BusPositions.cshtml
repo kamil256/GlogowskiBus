@@ -30,57 +30,35 @@
     </ul>
     <!-- /ko -->
 
-    <!-- ko if: busStops.activeBusStop() && busLines.selectedBusLine() -->
+    <!-- ko if: timeTable() -->
     <ul class="dayOfWeek">
-        <li>Dzień roboczy</li>
-        <li>Sobota</li>
-        <li>Niedziela</li>
+        <li>Dzień roboczy</li><li>Sobota</li><li>Niedziela</li>
     </ul>
         
-    <table class="busStops" data-bind="foreach: timeTable().busStops">
-        <tr>
-            <td data-bind="text: name"></td>
-            <td data-bind="text: timeOffset"></td>
-        </tr>
-    </table>
-
-    <table class="departureTimes">
+    <table cellspacing="0" class="timeTable">
         <tr>
             <td>
+                <table class="busStops" data-bind="foreach: timeTable().busStops">
+                    <tr>
+                        <td data-bind="text: timeOffset"></td>
+                        <td data-bind="css: { active: name == $root.busStops.activeBusStop().name }, text: name"></td>
+                    </tr>
+                </table>
+            </td>
 
-            </td>
             <td>
-                Dzień roboczy
-            </td>
-            <td>
-                Sobota
-            </td>
-            <td>
-                Niedziela
+                <table class="departureTimes" data-bind="foreach: timeTable().hours">
+                    <tr data-bind="visible: $root.timeTable().hours[$index()].length > 0">
+                        <td>
+                            <div data-bind="text: $index"></div>
+                        </td>
+                        <td data-bind="css: { active: $index() == $root.selectedDepartureTime.hours }, foreach: $root.timeTable().hours[$index()]">
+                            <div data-bind="click: function(data, event) { $root.setDepartureTime(event); }, css: { active: $data == $root.selectedDepartureTime.minutes }, text: $data"></div>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
-        <!-- ko foreach: timeTable().hours -->
-        <tr>
-            <td data-bind="text: $index"></td>
-            <td>
-                <!-- ko foreach: $root.timeTable().hours[$index()] -->
-                    <span data-bind="text: $data"></span>
-                <!-- /ko -->
-            </td>
-
-            <td>
-                <!-- ko foreach: $root.timeTable().hours[$index()] -->
-                <span data-bind="text: $data"></span>
-                <!-- /ko -->
-            </td>
-
-            <td>
-                <!-- ko foreach: $root.timeTable().hours[$index()] -->
-                <span data-bind="text: $data"></span>
-                <!-- /ko -->
-            </td>
-        </tr>
-        <!-- /ko -->
     </table>
 
     <!-- /ko -->
