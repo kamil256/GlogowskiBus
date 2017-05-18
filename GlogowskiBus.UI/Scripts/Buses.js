@@ -177,6 +177,9 @@
 
             if (newActiveBusStop != null && context.departureTimes.selectedDepartureTime() != null && !context.departureTimes.selectedDepartureTime().route.busLine.containsBusStop(newActiveBusStop))
                 context.departureTimes.selectedDepartureTime(null);
+
+            if (context.departureTimes.selectedDepartureTime() != null)
+                context.departureTimes.selectNextDepartureTime(context.departureTimes.selectedDepartureTime().route.busLine);
         });
     }
 
