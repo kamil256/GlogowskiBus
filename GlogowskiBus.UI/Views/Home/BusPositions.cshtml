@@ -52,8 +52,8 @@
                         <td>
                             <div data-bind="text: $index"></div>
                         </td>
-                        <td data-bind="css: { active: $index() == $root.departureTimes.selectedDepartureTime().hours }, foreach: $root.timeTable().hours[$index()]">
-                            <div data-bind="click: function(data, event) { $root.setDepartureTime(event); }, css: { active: $data == $root.departureTimes.selectedDepartureTime().minutes }, text: $data"></div>
+                        <td data-bind="css: { active: $index() == $root.departureTimes.getDepartureTimeForBusStop($root.departureTimes.selectedDepartureTime(), $root.busStops.activeBusStop()).hours }, foreach: $root.timeTable().hours[$index()]">
+                            <div data-bind="click: function(data, event) { $root.setDepartureTime(event); }, css: { active: $data == $root.departureTimes.getDepartureTimeForBusStop($root.departureTimes.selectedDepartureTime(), $root.busStops.activeBusStop()).minutes }, text: $data"></div>
                         </td>
                     </tr>
                 </table>
