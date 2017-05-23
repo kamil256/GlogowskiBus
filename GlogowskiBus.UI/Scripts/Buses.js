@@ -72,22 +72,14 @@
         var self = this;
 
         self.busStops = ko.observableArray([]);
-        var pointForSelectedBusStop = null;
-        for (var j = 0; j < context.departureTimes.selectedDepartureTime().route.points.length; j++)
-        {
-            if (context.departureTimes.selectedDepartureTime().route.points[j].busStop == context.busStops.activeBusStop())
-            {
-                pointForSelectedBusStop = context.departureTimes.selectedDepartureTime().route.points[j];
-                break;
-            }
-        }
+        var selectedPoint = context.points.getPointForBusStopOfRoute(context.departureTimes.selectedDepartureTime().route, context.busStops.activeBusStop());
         for (var i = 0; i < context.departureTimes.selectedDepartureTime().route.points.length; i++)
             if (context.departureTimes.selectedDepartureTime().route.points[i].busStop != null)
             {
                 self.busStops.push(
                 {
                     name: context.departureTimes.selectedDepartureTime().route.points[i].busStop.name,
-                    timeOffset: (context.departureTimes.selectedDepartureTime().route.points[i].timeOffset - pointForSelectedBusStop.timeOffset) / 60000
+                    timeOffset: (context.departureTimes.selectedDepartureTime().route.points[i].timeOffset - selectedPoint.timeOffset) / 60000
                 });
             }
 
@@ -211,6 +203,14 @@
 
         for (var i = 0; i < points.length; i++)
             self[i] = points[i];
+
+        self.getPointForBusStopOfRoute = function(route, busStop)
+        {
+            for (var i = 0; i < route.points.length; i++)
+                if (route.points[i].busStop === busStop)
+                    return route.points[i];
+            return null;
+        };
     }
 
     function DepartureTime(departureTimeFromModel)
