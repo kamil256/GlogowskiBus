@@ -72,7 +72,7 @@
         var self = this;
 
         self.busStops = ko.observableArray([]);
-        var selectedPoint = context.points.getPointForBusStopOfRoute(context.departureTimes.selectedDepartureTime().route, context.busStops.activeBusStop());
+        var selectedPoint = context.points.getPointForBusStopOnTheRoute(context.departureTimes.selectedDepartureTime().route, context.busStops.activeBusStop());
         for (var i = 0; i < context.departureTimes.selectedDepartureTime().route.points.length; i++)
             if (context.departureTimes.selectedDepartureTime().route.points[i].busStop != null)
             {
@@ -204,7 +204,7 @@
         for (var i = 0; i < points.length; i++)
             self[i] = points[i];
 
-        self.getPointForBusStopOfRoute = function(route, busStop)
+        self.getPointForBusStopOnTheRoute = function(route, busStop)
         {
             for (var i = 0; i < route.points.length; i++)
                 if (route.points[i].busStop === busStop)
@@ -302,20 +302,11 @@
 
         self.getDepartureTimeForBusStop = function(departureTime, busStop)
         {
-            var pointForBusStop = null;
-            for (var j = 0; j < departureTime.route.points.length; j++)
-            {
-                if (departureTime.route.points[j].busStop == busStop)
-                {
-                    pointForBusStop = departureTime.route.points[j];
-                    break;
-                }
-            }
-
+            var pointForBusStopOnTheRoute = context.points.getPointForBusStopOnTheRoute(departureTime.route, busStop);
             var originalHours = departureTime.hours;
             var originalMinutes = departureTime.minutes;
             var originalTime = new Date(1970, 0, 1, originalHours, originalMinutes, 0, 0);
-            var newTime = new Date(originalTime.getTime() + pointForBusStop.timeOffset);
+            var newTime = new Date(originalTime.getTime() + pointForBusStopOnTheRoute.timeOffset);
 
             var result =
             {
