@@ -20,17 +20,17 @@
 
 <div id="timeTable" data-bind="visible: view() == 'TimeTable'">
     <p>Przystanek:</p>
-    <select class="form-control" data-bind="options: busStops, optionsText: 'name', optionsCaption: '-', value: busStops.activeBusStop"></select>
+    <select class="form-control" data-bind="options: busStops, optionsText: 'name', optionsCaption: '-', value: actualSelection.busStop"></select>
     <br />
 
-    <!-- ko if: busStops.activeBusStop() -->
+    <!-- ko if: actualSelection.busStop() -->
     <p>Linia:</p>
-    <ul id="busLinesTiles" data-bind="foreach: busStops.activeBusStop().points">
-        <li data-bind="click: function() { $root.departureTimes.selectNextDepartureTime(route.busLine) }, css: { active: $root.departureTimes.selectedDepartureTime() && $root.departureTimes.selectedDepartureTime().route.busLine == route.busLine }, text: route.busLine.busNumber"></li>
+    <ul id="busLinesTiles" data-bind="foreach: actualSelection.busStop().points">
+        <li data-bind="click: function() { $root.actualSelection.departureTime($root.departureTimes.getNextDepartureTime(route.busLine)) }, css: { active: $root.actualSelection.departureTime() && $root.actualSelection.departureTime().route.busLine == route.busLine }, text: route.busLine.busNumber"></li>
     </ul>
     <!-- /ko -->
 
-    <!-- ko if: timeTable() -->
+    <!-- ko if: actualSelection.busStop() && actualSelection.departureTime() -->
     <ul class="dayOfWeek">
         <li>Dzień roboczy</li><li>Sobota</li><li>Niedziela</li>
     </ul>
@@ -38,22 +38,22 @@
     <table cellspacing="0" class="timeTable">
         <tr>
             <td>
-                <table class="busStops" data-bind="foreach: timeTable().busStops">
+                <table class="busStops" data-bind="foreach: actualSelection.busStops()">
                     <tr>
                         <td data-bind="text: timeOffset"></td>
-                        <td data-bind="css: { active: name == $root.busStops.activeBusStop().name }, text: name"></td>
+                        <td data-bind="css: { active: name == $root.actualSelection.busStop().name }, text: name"></td>
                     </tr>
                 </table>
             </td>
 
             <td>
-                <table class="departureTimes" data-bind="foreach: timeTable().hours">
-                    <tr data-bind="visible: $root.timeTable().hours[$index()].length > 0">
+                <table class="departureTimes" data-bind="foreach: actualSelection.departureTimes()">
+                    <tr data-bind="visible: $root.actualSelection.departureTimes()[$index()].length > 0">
                         <td>
                             <div data-bind="text: $index"></div>
                         </td>
-                        <td data-bind="css: { active: $index() == $root.departureTimes.getDepartureTimeForBusStop($root.departureTimes.selectedDepartureTime(), $root.busStops.activeBusStop()).hours }, foreach: $root.timeTable().hours[$index()]">
-                            <div data-bind="click: function(data, event) { $root.setDepartureTime(event); }, css: { active: $data == $root.departureTimes.getDepartureTimeForBusStop($root.departureTimes.selectedDepartureTime(), $root.busStops.activeBusStop()).minutes }, text: $data"></div>
+                        <td data-bind="css: { active: $index() == $root.actualSelection.departureHoursForBusStop() }, foreach: $root.actualSelection.departureTimes()[$index()]">
+                            <div data-bind="click: function(data, event) { $root.actualSelection.setDepartureTime(event); }, css: { active: $data == $root.actualSelection.departureMinutesForBusStop() }, text: $data"></div>
                         </td>
                     </tr>
                 </table>
@@ -99,8 +99,11 @@
 
         map.addListener('click', function(e)
         {
-            context.busStops.activeBusStop(null);
-            context.departureTimes.selectedDepartureTime(null);
+            //context.busStops.activeBusStop(null);
+            //context.departureTimes.selectedDepartureTime(null);
+
+            context.actualSelection.busStop(null);
+            context.actualSelection.departureTime(null);
         });
     }
 </script>
