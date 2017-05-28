@@ -4,6 +4,18 @@
 
     // Todo: move to serverTime
     context.daysOfWeek = ['Dzień roboczy', 'Sobota', 'Niedziela'];
+    context.actualDayOfWeek = null;
+    switch (serverTime.now().getDay())
+    {
+        case 0:
+            context.actualDayOfWeek = context.daysOfWeek[2];
+            break;
+        case 1: case 2: case 3: case 4: case 5:
+            context.actualDayOfWeek = context.daysOfWeek[0];
+            break;
+        case 6:
+            context.actualDayOfWeek = context.daysOfWeek[1];
+    }
 
     context.busStops = new BusStops(busStopsFromModel);
     context.busLines = new BusLines(busLinesFromModel);
@@ -23,19 +35,8 @@
         self.departureTime = ko.observable();
 
         //self.daysOfWeek = ['Dzień roboczy', 'Sobota', 'Niedziela'];
-        self.actualDayOfWeek = null;
-        switch (serverTime.now().getDay())
-        {
-            case 0:
-                self.actualDayOfWeek = context.daysOfWeek[2];
-                break;
-            case 1: case 2: case 3: case 4: case 5:
-                self.actualDayOfWeek = context.daysOfWeek[0];
-                break;
-            case 6:
-                self.actualDayOfWeek = context.daysOfWeek[1];
-        }
-        self.selectedDayOfWeek = ko.observable(self.actualDayOfWeek);
+        
+        self.selectedDayOfWeek = ko.observable(context.actualDayOfWeek);
 
         self.busStops = ko.computed(function()
         {
@@ -84,7 +85,7 @@
                                             self.departureTime().dayOfWeek == busLine.routes[i].departureTimes[j].dayOfWeek
                                 });
                                 //    departureTime.minutes);
-                                //if (self.selectedDayOfWeek() == self.actualDayOfWeek)
+                                //if (self.selectedDayOfWeek() == context.actualDayOfWeek)
                                 //    departureTimes[departureTime.hours][j].active = true;
                             }
                         }
@@ -276,10 +277,34 @@
 
         self.isOnTour = function(now)
         {
+            var currentMinutesSinceMidnight = 60 * serverTime.now().getHours() + serverTime.now().getMinutes();
+            var departureMinutesSinceMidnight = 60 * self.hours + self.minutes;
+            var arrivalMinutesSinceMidnight = departureMinutesSinceMidnight + Math.floor(self.route.points[self.route.points.length - 1].timeOffset / 60000);
+
+            var previousDay = null;
+            switch ((serverTime.now().getDay() - 1) % 7)
+            {
+                case 0:
+                    previousDay = context.daysOfWeek[2];
+                    break;
+                case 1: case 2: case 3: case 4: case 5:
+                    previousDay = context.daysOfWeek[0];
+                    break;
+                case 6:
+                    previousDay = context.daysOfWeek[1];
+            }
+
+            if (self.dayOfWeek == context.actualDayOfWeek && currentMinutesSinceMidnight >= departureMinutesSinceMidnight && currentMinutesSinceMidnight < arrivalMinutesSinceMidnight)
+                return true;
+            else if (self.dayOfWeek == previousDay && currentMinutesSinceMidnight >= departureMinutesSinceMidnight - 24 * 60 && currentMinutesSinceMidnight < arrivalMinutesSinceMidnight - 24 * 60)
+                return true;
+            else
+                return false;
+
             // Todo: check week days
-            var departureDate = self.departureDateForDay(now.getFullYear(), now.getMonth(), now.getDate());
-            var arrivalDate = self.arrivalDateForDay(now.getFullYear(), now.getMonth(), now.getDate());
-            return (now >= departureDate && now < arrivalDate);
+            //var departureDate = self.departureDateForDay(now.getFullYear(), now.getMonth(), now.getDate());
+            //var arrivalDate = self.arrivalDateForDay(now.getFullYear(), now.getMonth(), now.getDate());
+            //return (now >= departureDate && now < arrivalDate);
         };
     }
 
@@ -290,6 +315,12 @@
         var departureTimes = [];
         for (var i = 0; i < context.routes.length; i++)
             departureTimes = departureTimes.concat(context.routes[i].departureTimes);
+        departureTimes.sort(function(departureTime1, departureTime2)
+        {
+            var departureTime1MinutesFromMidnight = 60 * departureTime1.hours + departureTime1.minutes;
+            var departureTime2MinutesFromMidnight = 60 * departureTime2.hours + departureTime2.minutes;
+            return departureTime1MinutesFromMidnight - departureTime2MinutesFromMidnight;
+        });
 
         self.length = departureTimes.length;
 
@@ -596,7 +627,7 @@
 
         self.getDepartureTimesForToday = function()
         {
-            return self.getDepartureTimesForDayOfWeek(context.actualSelection.actualDayOfWeek);
+            return self.getDepartureTimesForDayOfWeek(context.actualDayOfWeek);
         };
 
         self.getDepartureTimesForNextDay = function()
@@ -695,7 +726,7 @@
 
         self.getDepartureTimesForToday = function()
         {
-            return self.getDepartureTimesForDayOfWeek(context.actualSelection.actualDayOfWeek);
+            return self.getDepartureTimesForDayOfWeek(context.actualDayOfWeek);
         };
 
         self.getDepartureTimesForNextDay = function()
@@ -762,7 +793,6 @@
         marker.addListener('click', function(e)
         {
             context.actualSelection.departureTime(self.departureTime);
-            context.actualSelection.departureTimeDayOfWeek(context.actualSelection.selectedDayOfWeek());
         });
 
         self.hide = function()
@@ -785,13 +815,16 @@
                 self.show();
         });
 
-        var now = serverTime.now();
-        var departureDate = departureTime.departureDateForDay(now.getFullYear(), now.getMonth(), now.getDate());
+        var departureMillisecondsSinceMidnight = 60 * 60 * 1000 * self.departureTime.hours + 60 * 1000 * self.departureTime.minutes;
 
         var update = function()
         {
             var now = serverTime.now();
-            var currentTimeOffset = now.getTime() - departureDate.getTime();
+            var currentMillisecondsSinceMidnight = 60 * 60 * 1000 * now.getHours() + 60 * 1000 * now.getMinutes() + 1000 * now.getSeconds() + now.getMilliseconds();
+            if (currentMillisecondsSinceMidnight < departureMillisecondsSinceMidnight)
+                departureMillisecondsSinceMidnight -= 24 * 60 * 60 * 1000;
+            var currentTimeOffset = currentMillisecondsSinceMidnight - departureMillisecondsSinceMidnight;
+
             if (currentTimeOffset > points[points.length - 1].timeOffset)
             {
                 self.hide();
