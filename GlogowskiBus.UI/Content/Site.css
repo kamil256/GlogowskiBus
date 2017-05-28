@@ -246,7 +246,7 @@ aside #timeTable .departureTimes td:not(:first-child) div {
     white-space: nowrap;
 }
 
-aside #timeTable .departureTimes td.active:not(:first-child) div.active {
+aside #timeTable .departureTimes td:not(:first-child) div.active {
     background-color: yellow;
 }
 

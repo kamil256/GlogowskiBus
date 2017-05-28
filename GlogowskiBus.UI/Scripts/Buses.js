@@ -2,6 +2,9 @@
 {
     var context = this;
 
+    // Todo: move to serverTime
+    context.daysOfWeek = ['Dzień roboczy', 'Sobota', 'Niedziela'];
+
     context.busStops = new BusStops(busStopsFromModel);
     context.busLines = new BusLines(busLinesFromModel);
     context.routes = new Routes();
@@ -9,12 +12,8 @@
     context.departureTimes = new DepartureTimes();
     context.buses = new Buses();
 
-    context.selectedDayOfWeek = "WorkingDay";
-
-    context.timeTable = ko.observable();
-
     context.view = ko.observable('Navigation');
-
+    
     function ActualSelection()
     {
         var self = this;
@@ -23,24 +22,21 @@
 
         self.departureTime = ko.observable();
 
-        self.daysOfWeek = ['Dzień roboczy', 'Sobota', 'Niedziela'];
-        self.dayOfWeek = ko.observable();
-
+        //self.daysOfWeek = ['Dzień roboczy', 'Sobota', 'Niedziela'];
+        self.actualDayOfWeek = null;
         switch (serverTime.now().getDay())
         {
             case 0:
-                self.dayOfWeek(self.daysOfWeek[2]);
+                self.actualDayOfWeek = context.daysOfWeek[2];
                 break;
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-                self.dayOfWeek(self.daysOfWeek[0]);
+            case 1: case 2: case 3: case 4: case 5:
+                self.actualDayOfWeek = context.daysOfWeek[0];
                 break;
             case 6:
-                self.dayOfWeek(self.daysOfWeek[1]);
+                self.actualDayOfWeek = context.daysOfWeek[1];
         }
+        self.selectedDayOfWeek = ko.observable(self.actualDayOfWeek);
+        self.departureTimeDayOfWeek = null;
 
         self.busStops = ko.computed(function()
         {
@@ -79,10 +75,17 @@
                         for (var j = 0; j < busLine.routes[i].departureTimes.length; j++)
                         {
                             var departureTime = context.departureTimes.getDepartureTimeForBusStop(busLine.routes[i].departureTimes[j], self.busStop());
-                            if (departureTime && ((self.dayOfWeek() == "Dzień roboczy" && departureTime.workingDays) ||
-                                                  (self.dayOfWeek() == "Sobota" && departureTime.saturdays) ||
-                                                  (self.dayOfWeek() == "Niedziela" && departureTime.sundays)))
-                                departureTimes[departureTime.hours].push(departureTime.minutes);
+                            if (departureTime && departureTime.dayOfWeek == self.selectedDayOfWeek())
+                            {
+                                departureTimes[departureTime.hours].push(
+                                {
+                                    minutes: departureTime.minutes,
+                                    active: self.departureTime().hours == departureTime.hours && self.departureTime().minutes == departureTime.minutes && self.departureTime().dayOfWeek == self.selectedDayOfWeek()
+                                });
+                                //    departureTime.minutes);
+                                //if (self.selectedDayOfWeek() == self.actualDayOfWeek)
+                                //    departureTimes[departureTime.hours][j].active = true;
+                            }
                         }
                 }
             }
@@ -137,13 +140,13 @@
             if (newDepartureTime != null)
                 newDepartureTime.route.selectBusStop(self.busStop());
             //else
-            //    self.dayOfWeek(dzisiaj);
+            //    self.selectedDayOfWeek(dzisiaj);
 
             if (newDepartureTime != null && self.busStop() != null && !newDepartureTime.route.busLine.containsBusStop(self.busStop()))
                 self.busStop(null);
         });
 
-        self.dayOfWeek.subscribe(function(newDayOfWeek)
+        self.selectedDayOfWeek.subscribe(function(selectedDayOfWeek)
         {
             if (self.departureTime() != null)
                 self.departureTime(context.departureTimes.getNextDepartureTime(self.departureTime().route.busLine));
@@ -252,15 +255,13 @@
         };
     }
 
-    function DepartureTime(departureTimeFromModel)
+    function DepartureTime(hours, minutes, dayOfWeek)
     {
         var self = this;
 
-        self.hours = departureTimeFromModel.Hours;
-        self.minutes = departureTimeFromModel.Minutes;
-        self.workingDays = departureTimeFromModel.WorkingDay;
-        self.saturdays = departureTimeFromModel.Saturday;
-        self.sundays = departureTimeFromModel.Sunday;
+        self.hours = hours;
+        self.minutes = minutes;
+        self.dayOfWeek = dayOfWeek;
 
         self.route = null;
 
@@ -311,9 +312,7 @@
                 {
                     minutes: minutes,
                     hours: hours,
-                    workingDays: departureTime.workingDays,
-                    saturdays: departureTime.saturdays,
-                    sundays: departureTime.sundays
+                    dayOfWeek: departureTime.dayOfWeek
                 };
             }
             return result;
@@ -375,9 +374,24 @@
         self.departureTimes = [];
         for (var i = 0; i < routeFromModel.DepartureTimes.length; i++)
         {
-            var departureTime = new DepartureTime(routeFromModel.DepartureTimes[i]);
-            departureTime.route = self;
-            self.departureTimes.push(departureTime);
+            if (routeFromModel.DepartureTimes[i].WorkingDay)
+            {
+                var departureTime = new DepartureTime(routeFromModel.DepartureTimes[i].Hours, routeFromModel.DepartureTimes[i].Minutes, context.daysOfWeek[0]);
+                departureTime.route = self;
+                self.departureTimes.push(departureTime);
+            }
+            if (routeFromModel.DepartureTimes[i].Saturday)
+            {
+                var departureTime = new DepartureTime(routeFromModel.DepartureTimes[i].Hours, routeFromModel.DepartureTimes[i].Minutes, context.daysOfWeek[1]);
+                departureTime.route = self;
+                self.departureTimes.push(departureTime);
+            }
+            if (routeFromModel.DepartureTimes[i].Sunday)
+            {
+                var departureTime = new DepartureTime(routeFromModel.DepartureTimes[i].Hours, routeFromModel.DepartureTimes[i].Minutes, context.daysOfWeek[2]);
+                departureTime.route = self;
+                self.departureTimes.push(departureTime);
+            }
         }
         self.departureTimes.sort(function(departureTime1, departureTime2)
         {
@@ -478,22 +492,7 @@
             var departureTimes = [];
             for (var i = 0; i < self.departureTimes.length; i++)
             {
-                if ((dayOfWeek == "Dzień roboczy" && self.departureTimes[i].workingDays) ||
-                    (dayOfWeek == "Sobota" && self.departureTimes[i].saturdays) ||
-                    (dayOfWeek == "Niedziela" && self.departureTimes[i].sundays))
-                    departureTimes.push(self.departureTimes[i]);
-            }
-            return departureTimes;
-        }
-
-        self.getDepartureTimesForDayOfWeek = function(dayOfWeek)
-        {
-            var departureTimes = [];
-            for (var i = 0; i < self.departureTimes.length; i++)
-            {
-                if ((dayOfWeek == "Dzień roboczy" && self.departureTimes[i].workingDays) ||
-                    (dayOfWeek == "Sobota" && self.departureTimes[i].saturdays) ||
-                    (dayOfWeek == "Niedziela" && self.departureTimes[i].sundays))
+                if (self.departureTimes[i].dayOfWeek == dayOfWeek)
                     departureTimes.push(self.departureTimes[i]);
             }
             return departureTimes;
@@ -501,23 +500,7 @@
 
         self.getDepartureTimesForToday = function()
         {
-            var dayOfWeek;
-            switch (serverTime.now().getDay())
-            {
-                case 0:
-                    dayOfWeek = 'Niedziela';
-                    break;
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                    dayOfWeek = 'Dzień roboczy';
-                    break;
-                case 6:
-                    dayOfWeek = 'Sobota';
-            }
-            return self.getDepartureTimesForDayOfWeek(dayOfWeek);
+            return self.getDepartureTimesForDayOfWeek(context.actualSelection.actualDayOfWeek);
         };
     }
 
@@ -574,9 +557,7 @@
             var departureTimes = [];
             for (var i = 0; i < self.departureTimes.length; i++)
             {
-                if ((dayOfWeek == "Dzień roboczy" && self.departureTimes[i].workingDays) ||
-                    (dayOfWeek == "Sobota" && self.departureTimes[i].saturdays) ||
-                    (dayOfWeek == "Niedziela" && self.departureTimes[i].sundays))
+                if (self.departureTimes[i].dayOfWeek == dayOfWeek)
                     departureTimes.push(self.departureTimes[i]);
             }
             return departureTimes;
@@ -584,44 +565,24 @@
 
         self.getDepartureTimesForToday = function()
         {
-            var dayOfWeek;
-            switch (serverTime.now().getDay())
-            {
-                case 0:
-                    dayOfWeek = 'Niedziela';
-                    break;
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                    dayOfWeek = 'Dzień roboczy';
-                    break;
-                case 6:
-                    dayOfWeek = 'Sobota';
-            }
-            return self.getDepartureTimesForDayOfWeek(dayOfWeek);
+            return self.getDepartureTimesForDayOfWeek(context.actualSelection.actualDayOfWeek);
         };
 
         self.getDepartureTimesForNextDay = function()
         {
-            var dayOfWeek;
-            switch (serverTime.now().getDay())
+            var nextDay = null;
+            switch ((serverTime.now().getDay() + 1) % 7)
             {
                 case 0:
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                    dayOfWeek = 'Dzień roboczy';
+                    nextDay = context.daysOfWeek[2];
                     break;
-                case 5:
-                    dayOfWeek = 'Sobota';
+                case 1: case 2: case 3: case 4: case 5:
+                    nextDay = context.daysOfWeek[0];
                     break;
                 case 6:
-                    dayOfWeek = 'Niedziela';
+                    nextDay = context.daysOfWeek[1];
             }
-            return self.getDepartureTimesForDayOfWeek(dayOfWeek);
+            return self.getDepartureTimesForDayOfWeek(nextDay);
         };
     }
 
@@ -671,6 +632,7 @@
         marker.addListener('click', function(e)
         {
             context.actualSelection.departureTime(self.departureTime);
+            context.actualSelection.departureTimeDayOfWeek(context.actualSelection.selectedDayOfWeek());
         });
 
         self.hide = function()
