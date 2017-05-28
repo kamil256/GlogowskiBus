@@ -23,39 +23,32 @@
 
         self.departureTime = ko.observable();
 
-        self.dayOfWeek = ko.observable("WorkingDay");
+        self.daysOfWeek = ['Dzień roboczy', 'Sobota', 'Niedziela'];
+        self.dayOfWeek = ko.observable();
 
-        self.departureHoursForBusStop = function()
+        switch (serverTime.now().getDay())
         {
-            var actualPoint = context.points.getPointForBusStopOnTheRoute(self.busStop(), self.departureTime().route);
-
-            var departureTimeMinutes = self.departureTime().minutes + actualPoint.timeOffset / 60000;
-            var departureTimeHours = self.departureTime().hours + Math.floor(departureTimeMinutes / 60);
-            departureTimeMinutes %= 60;
-            departureTimeHours %= 24;
-
-            return departureTimeHours;
-        };
-
-        self.departureMinutesForBusStop = function()
-        {
-            var actualPoint = context.points.getPointForBusStopOnTheRoute(self.busStop(), self.departureTime().route);
-
-            var departureTimeMinutes = self.departureTime().minutes + actualPoint.timeOffset / 60000;
-            var departureTimeHours = self.departureTime().hours + Math.floor(departureTimeMinutes / 60);
-            departureTimeMinutes %= 60;
-            departureTimeHours %= 24;
-
-            return departureTimeMinutes;
-        };
+            case 0:
+                self.dayOfWeek(self.daysOfWeek[2]);
+                break;
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                self.dayOfWeek(self.daysOfWeek[0]);
+                break;
+            case 6:
+                self.dayOfWeek(self.daysOfWeek[1]);
+        }
 
         self.busStops = ko.computed(function()
         {
             var busStops = [];
             if (self.busStop() && self.departureTime())
             {
-                var actualPoint = context.points.getPointForBusStopOnTheRoute(self.busStop(), self.departureTime().route);
-                if (actualPoint)
+                var busStopPoint = context.points.getPointForBusStopOnTheRoute(self.busStop(), self.departureTime().route);
+                if (busStopPoint)
                 {
                     for (var i = 0; i < self.departureTime().route.points.length; i++)
                         if (self.departureTime().route.points[i].busStop != null)
@@ -63,7 +56,7 @@
                             busStops.push(
                             {
                                 name: self.departureTime().route.points[i].busStop.name,
-                                timeOffset: (self.departureTime().route.points[i].timeOffset - actualPoint.timeOffset) / 60000
+                                timeOffset: (self.departureTime().route.points[i].timeOffset - busStopPoint.timeOffset) / 60000
                             });
                         }
                 }
@@ -76,20 +69,21 @@
             var departureTimes = [];
             if (self.busStop() && self.departureTime())
             {
-                var actualPoint = context.points.getPointForBusStopOnTheRoute(self.busStop(), self.departureTime().route);
-                if (actualPoint)
+                var busStopPoint = context.points.getPointForBusStopOnTheRoute(self.busStop(), self.departureTime().route);
+                if (busStopPoint)
                 {
                     for (var i = 0; i < 24; i++)
                         departureTimes[i] = [];
-                    for (var i = 0; i < self.departureTime().route.departureTimes.length; i++)
-                    {
-                        // Todo: take only departure times for actual day of week
-                        var minutes = self.departureTime().route.departureTimes[i].minutes + actualPoint.timeOffset / 60000;
-                        var hours = self.departureTime().route.departureTimes[i].hours + Math.floor(minutes / 60);
-                        minutes %= 60;
-                        hours %= 24;
-                        departureTimes[hours].push(minutes);
-                    }
+                    var busLine = self.departureTime().route.busLine;
+                    for (var i = 0; i < busLine.routes.length; i++)
+                        for (var j = 0; j < busLine.routes[i].departureTimes.length; j++)
+                        {
+                            var departureTime = context.departureTimes.getDepartureTimeForBusStop(busLine.routes[i].departureTimes[j], self.busStop());
+                            if (departureTime && ((self.dayOfWeek() == "Dzień roboczy" && departureTime.workingDays) ||
+                                                  (self.dayOfWeek() == "Sobota" && departureTime.saturdays) ||
+                                                  (self.dayOfWeek() == "Niedziela" && departureTime.sundays)))
+                                departureTimes[departureTime.hours].push(departureTime.minutes);
+                        }
                 }
             }
             return departureTimes;
@@ -99,21 +93,14 @@
         {
             var hours = event.target.parentElement.parentElement.children[0].children[0].textContent;
             var minutes = event.target.textContent;
-            var actualPoint = context.points.getPointForBusStopOnTheRoute(self.busStop(), self.departureTime().route);
-
             for (var i = 0; i < self.departureTime().route.busLine.routes.length; i++)
             {
                 for (var j = 0; j < self.departureTime().route.busLine.routes[i].departureTimes.length; j++)
                 {
-                    var departureTime = self.departureTime().route.busLine.routes[i].departureTimes[j];
-                    var departureTimeMinutes = departureTime.minutes + actualPoint.timeOffset / 60000;
-                    var departureTimeHours = departureTime.hours + Math.floor(departureTimeMinutes / 60);
-                    departureTimeMinutes %= 60;
-                    departureTimeHours %= 24;
-                    if (departureTimeHours == hours && departureTimeMinutes == minutes)
+                    var departureTime = context.departureTimes.getDepartureTimeForBusStop(self.departureTime().route.busLine.routes[i].departureTimes[j], self.busStop());
+                    if (departureTime && departureTime.hours == hours && departureTime.minutes == minutes)
                     {
-                        self.departureTime(departureTime);
-                        console.log(self.departureTime().hours + ":" + self.departureTime().minutes);
+                        self.departureTime(self.departureTime().route.busLine.routes[i].departureTimes[j]);
                         break;
                     }
                 }
@@ -128,11 +115,13 @@
                 else
                     context.busStops[i].select();
 
+            if (self.departureTime() != null)
+                self.departureTime().route.selectBusStop(newBusStop);
+
             if (newBusStop != null && self.departureTime() != null && !self.departureTime().route.busLine.containsBusStop(newBusStop))
                 self.departureTime(null);
 
             if (self.departureTime() != null)
-                //context.departureTimes.selectNextDepartureTime(self.departureTime().route.busLine);
                 self.departureTime(context.departureTimes.getNextDepartureTime(self.departureTime().route.busLine));
         });
 
@@ -144,8 +133,20 @@
                 else
                     context.routes[i].hide();
 
+            // Todo: if null then set day of week as today
+            if (newDepartureTime != null)
+                newDepartureTime.route.selectBusStop(self.busStop());
+            //else
+            //    self.dayOfWeek(dzisiaj);
+
             if (newDepartureTime != null && self.busStop() != null && !newDepartureTime.route.busLine.containsBusStop(self.busStop()))
                 self.busStop(null);
+        });
+
+        self.dayOfWeek.subscribe(function(newDayOfWeek)
+        {
+            if (self.departureTime() != null)
+                self.departureTime(context.departureTimes.getNextDepartureTime(self.departureTime().route.busLine));
         });
     }
 
@@ -176,7 +177,6 @@
 
         marker.addListener('click', function(e)
         {
-            //context.busStops.activeBusStop(self);
             context.actualSelection.busStop(self);
         });
 
@@ -296,61 +296,60 @@
         for (var i = 0; i < departureTimes.length; i++)
             self[i] = departureTimes[i];
 
+        self.getDepartureTimeForBusStop = function(departureTime, busStop)
+        {
+            var result = null;
+            var busStopPoint = context.points.getPointForBusStopOnTheRoute(busStop, departureTime.route);
+            if (busStopPoint)
+            {
+                // Todo: take only departure times for actual day of week
+                var minutes = departureTime.minutes + busStopPoint.timeOffset / 60000;
+                var hours = departureTime.hours + Math.floor(minutes / 60);
+                minutes %= 60;
+                hours %= 24;
+                result =
+                {
+                    minutes: minutes,
+                    hours: hours,
+                    workingDays: departureTime.workingDays,
+                    saturdays: departureTime.saturdays,
+                    sundays: departureTime.sundays
+                };
+            }
+            return result;
+        };
+
         self.getNextDepartureTime = function(busLine)
         {
             var nextDepartureTime = null;
-            var nextDepartureTimeMinutesFromMidnight;
+            var nextDepartureTimeMinutesSinceMidnight;
             if (context.actualSelection.busStop())
             {
-                var currentMinutesFromMidnight = 60 * serverTime.now().getHours() + serverTime.now().getMinutes();
+                var currentMinutesSinceMidnight = 60 * serverTime.now().getHours() + serverTime.now().getMinutes();
                 for (var i = 0; i < busLine.routes.length; i++)
                 {
-                    var actualPoint = context.points.getPointForBusStopOnTheRoute(context.actualSelection.busStop(), busLine.routes[i]);
-                    if (actualPoint)
+                    var busStopPoint = context.points.getPointForBusStopOnTheRoute(context.actualSelection.busStop(), busLine.routes[i]);
+                    if (busStopPoint)
                     {
-                        for (var j = 0; j < busLine.routes[i].departureTimes.length; j++)
+                        var departureTimesForToday = busLine.routes[i].getDepartureTimesForToday();
+                        for (var j = 0; j < departureTimesForToday.length; j++)
                         {
-                            var departureTime = busLine.routes[i].departureTimes[j];
-                            var hours = (departureTime.hours + Math.floor(actualPoint.timeOffset / 3600000)) % 24;
-                            var minutes = (departureTime.minutes + actualPoint.timeOffset / 60000) % 60;
-                            var departureTimeMinutesFromMidnight = 60 * hours + minutes;
-
-                            if ((departureTimeMinutesFromMidnight > currentMinutesFromMidnight) && (!nextDepartureTime || (departureTimeMinutesFromMidnight < nextDepartureTimeMinutesFromMidnight)))
+                            var departureTimeMinutesSinceMidnight = 60 * departureTimesForToday[j].hours + departureTimesForToday[j].minutes + Math.floor(busStopPoint.timeOffset / 60000);
+                            if ((departureTimeMinutesSinceMidnight >= currentMinutesSinceMidnight) && (!nextDepartureTime || (departureTimeMinutesSinceMidnight < nextDepartureTimeMinutesSinceMidnight)))
                             {
-                                nextDepartureTime = departureTime;
-                                nextDepartureTimeMinutesFromMidnight = departureTimeMinutesFromMidnight;
+                                nextDepartureTime = departureTimesForToday[j];
+                                nextDepartureTimeMinutesSinceMidnight = departureTimeMinutesSinceMidnight;
                             }
                         }
                     }
                 }
-                // Todo: if null: return earliest departure time next day
+
+                if (!nextDepartureTime)
+                {
+                    nextDepartureTime = busLine.getDepartureTimesForNextDay()[0];
+                }
             }
             return nextDepartureTime;
-        }
-
-        self.getDepartureTimeForBusStop = function(departureTime, busStop)
-        {
-            var pointForBusStopOnTheRoute = context.points.getPointForBusStopOnTheRoute(busStop, departureTime.route);
-            if (pointForBusStopOnTheRoute)
-            {
-                //var originalHours = departureTime.hours;
-                //var originalMinutes = departureTime.minutes;
-                //var originalTime = new Date(1970, 0, 1, originalHours, originalMinutes, 0, 0);
-                //var newTime = new Date(originalTime.getTime() + pointForBusStopOnTheRoute.timeOffset);
-
-                var hours = departureTime.hours;
-                var minutes = departureTime.minutes;
-                var minutesOffset = pointForBusStopOnTheRoute.timeOffset / 60000;
-
-                var result =
-                {
-                    hours: hours + Math.floor(minutesOffset / 60),
-                    minutes: minutes + minutesOffset % 60
-                };
-
-                return result;
-            }
-            return null;
         };
     }
 
@@ -380,6 +379,12 @@
             departureTime.route = self;
             self.departureTimes.push(departureTime);
         }
+        self.departureTimes.sort(function(departureTime1, departureTime2)
+        {
+            var departureTime1MinutesFromMidnight = 60 * departureTime1.hours + departureTime1.minutes;
+            var departureTime2MinutesFromMidnight = 60 * departureTime2.hours + departureTime2.minutes;
+            return departureTime1MinutesFromMidnight - departureTime2MinutesFromMidnight;
+        });
 
         self.busLine = null;
 
@@ -402,7 +407,6 @@
             busStopMarker.addListener('click', function(e)
             {
                 var newActiveBusStop = self.busStops[busStopMarkers.indexOf(this)];
-                //context.busStops.activeBusStop(newActiveBusStop);
                 context.actualSelection.busStop(newActiveBusStop);
             });
 
@@ -443,6 +447,15 @@
                 polyline.setMap(map);
         };
 
+        self.selectBusStop = function(busStop)
+        {
+            for (var i = 0; i < self.busStops.length; i++)
+                if (self.busStops[i] === busStop)
+                    busStopMarkers[i].setIcon(markerIcons.activeBusStop);
+                else
+                    busStopMarkers[i].setIcon(markerIcons.orangeBusStop);
+        };
+
         //context.actualSelection.busStop.subscribe(function(newBusStop)
         //{
         //    for (var i = 0; i < self.busStops.length; i++)
@@ -460,6 +473,52 @@
         //        else
         //            busStopMarkers[i].setIcon(markerIcons.orangeBusStop);
         //});
+        self.getDepartureTimesForDayOfWeek = function(dayOfWeek)
+        {
+            var departureTimes = [];
+            for (var i = 0; i < self.departureTimes.length; i++)
+            {
+                if ((dayOfWeek == "Dzień roboczy" && self.departureTimes[i].workingDays) ||
+                    (dayOfWeek == "Sobota" && self.departureTimes[i].saturdays) ||
+                    (dayOfWeek == "Niedziela" && self.departureTimes[i].sundays))
+                    departureTimes.push(self.departureTimes[i]);
+            }
+            return departureTimes;
+        }
+
+        self.getDepartureTimesForDayOfWeek = function(dayOfWeek)
+        {
+            var departureTimes = [];
+            for (var i = 0; i < self.departureTimes.length; i++)
+            {
+                if ((dayOfWeek == "Dzień roboczy" && self.departureTimes[i].workingDays) ||
+                    (dayOfWeek == "Sobota" && self.departureTimes[i].saturdays) ||
+                    (dayOfWeek == "Niedziela" && self.departureTimes[i].sundays))
+                    departureTimes.push(self.departureTimes[i]);
+            }
+            return departureTimes;
+        };
+
+        self.getDepartureTimesForToday = function()
+        {
+            var dayOfWeek;
+            switch (serverTime.now().getDay())
+            {
+                case 0:
+                    dayOfWeek = 'Niedziela';
+                    break;
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    dayOfWeek = 'Dzień roboczy';
+                    break;
+                case 6:
+                    dayOfWeek = 'Sobota';
+            }
+            return self.getDepartureTimesForDayOfWeek(dayOfWeek);
+        };
     }
 
     function Routes()
@@ -490,6 +549,16 @@
             self.routes.push(route);
         }
 
+        self.departureTimes = [];
+        for (var i = 0; i < self.routes.length; i++)
+            self.departureTimes = self.departureTimes.concat(self.routes[i].departureTimes);
+        self.departureTimes.sort(function(departureTime1, departureTime2)
+        {
+            var departureTime1MinutesFromMidnight = 60 * departureTime1.hours + departureTime1.minutes;
+            var departureTime2MinutesFromMidnight = 60 * departureTime2.hours + departureTime2.minutes;
+            return departureTime1MinutesFromMidnight - departureTime2MinutesFromMidnight;
+        });
+
         self.hidden = ko.observable(false);
 
         self.containsBusStop = function(busStop)
@@ -498,6 +567,61 @@
                 if (busStop.points[i].route.busLine === self)
                     return true;
             return false;
+        };
+
+        self.getDepartureTimesForDayOfWeek = function(dayOfWeek)
+        {
+            var departureTimes = [];
+            for (var i = 0; i < self.departureTimes.length; i++)
+            {
+                if ((dayOfWeek == "Dzień roboczy" && self.departureTimes[i].workingDays) ||
+                    (dayOfWeek == "Sobota" && self.departureTimes[i].saturdays) ||
+                    (dayOfWeek == "Niedziela" && self.departureTimes[i].sundays))
+                    departureTimes.push(self.departureTimes[i]);
+            }
+            return departureTimes;
+        };
+
+        self.getDepartureTimesForToday = function()
+        {
+            var dayOfWeek;
+            switch (serverTime.now().getDay())
+            {
+                case 0:
+                    dayOfWeek = 'Niedziela';
+                    break;
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    dayOfWeek = 'Dzień roboczy';
+                    break;
+                case 6:
+                    dayOfWeek = 'Sobota';
+            }
+            return self.getDepartureTimesForDayOfWeek(dayOfWeek);
+        };
+
+        self.getDepartureTimesForNextDay = function()
+        {
+            var dayOfWeek;
+            switch (serverTime.now().getDay())
+            {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                    dayOfWeek = 'Dzień roboczy';
+                    break;
+                case 5:
+                    dayOfWeek = 'Sobota';
+                    break;
+                case 6:
+                    dayOfWeek = 'Niedziela';
+            }
+            return self.getDepartureTimesForDayOfWeek(dayOfWeek);
         };
     }
 
@@ -513,20 +637,6 @@
 
         for (var i = 0; i < busLines.length; i++)
             self[i] = busLines[i];
-
-        //self.selectedBusLine = ko.observable();
-
-        //self.selectedBusLine.subscribe(function(newSelectedBusLine)
-        //{
-        //    for (var i = 0; i < context.routes.length; i++)
-        //        if (context.routes[i].busLine != newSelectedBusLine)
-        //            context.routes[i].hide();
-        //        else
-        //            context.routes[i].show();
-
-        //    if (newSelectedBusLine != null && context.busStops.activeBusStop() != null && !newSelectedBusLine.containsBusStop(context.busStops.activeBusStop()))
-        //        context.busStops.activeBusStop(null);
-        //});
     }
 
     function Bus(departureTime)
@@ -560,7 +670,6 @@
 
         marker.addListener('click', function(e)
         {
-            //context.departureTimes.selectNextDepartureTime(busLine);
             context.actualSelection.departureTime(self.departureTime);
         });
 

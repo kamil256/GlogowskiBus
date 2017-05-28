@@ -25,14 +25,18 @@
 
     <!-- ko if: actualSelection.busStop() -->
     <p>Linia:</p>
-    <ul id="busLinesTiles" data-bind="foreach: actualSelection.busStop().points">
-        <li data-bind="click: function() { $root.actualSelection.departureTime($root.departureTimes.getNextDepartureTime(route.busLine)) }, css: { active: $root.actualSelection.departureTime() && $root.actualSelection.departureTime().route.busLine == route.busLine }, text: route.busLine.busNumber"></li>
+    <ul id="busLinesTiles" data-bind="foreach: busLines">
+        <li data-bind="click: function() { $root.actualSelection.departureTime($root.departureTimes.getNextDepartureTime($data)) }, css: { active: $root.actualSelection.departureTime() && $root.actualSelection.departureTime().route.busLine == $data }, text: busNumber"></li>
     </ul>
+
+    @*<ul id="busLinesTiles" data-bind="foreach: actualSelection.busStop().points">
+        <li data-bind="click: function() { $root.actualSelection.departureTime($root.departureTimes.getNextDepartureTime(route.busLine)) }, css: { active: $root.actualSelection.departureTime() && $root.actualSelection.departureTime().route.busLine == route.busLine }, text: route.busLine.busNumber"></li>
+    </ul>*@
     <!-- /ko -->
 
     <!-- ko if: actualSelection.busStop() && actualSelection.departureTime() -->
-    <ul class="dayOfWeek">
-        <li>Dzień roboczy</li><li>Sobota</li><li>Niedziela</li>
+    <ul class="dayOfWeek" data-bind="foreach: actualSelection.daysOfWeek">
+        <li data-bind="css: { active: $data == $root.actualSelection.dayOfWeek() }, click: function(data, event) { $root.actualSelection.dayOfWeek($data); }, text: $data"></li>
     </ul>
         
     <table cellspacing="0" class="timeTable">
@@ -52,8 +56,8 @@
                         <td>
                             <div data-bind="text: $index"></div>
                         </td>
-                        <td data-bind="css: { active: $index() == $root.actualSelection.departureHoursForBusStop() }, foreach: $root.actualSelection.departureTimes()[$index()]">
-                            <div data-bind="click: function(data, event) { $root.actualSelection.setDepartureTime(event); }, css: { active: $data == $root.actualSelection.departureMinutesForBusStop() }, text: $data"></div>
+                        <td data-bind="css: { active: $index() == $root.departureTimes.getDepartureTimeForBusStop($root.actualSelection.departureTime(), $root.actualSelection.busStop()).hours }, foreach: $root.actualSelection.departureTimes()[$index()]">
+                            <div data-bind="click: function(data, event) { $root.actualSelection.setDepartureTime(event); }, css: { active: $data == $root.departureTimes.getDepartureTimeForBusStop($root.actualSelection.departureTime(), $root.actualSelection.busStop()).minutes }, text: $data"></div>
                         </td>
                     </tr>
                 </table>
