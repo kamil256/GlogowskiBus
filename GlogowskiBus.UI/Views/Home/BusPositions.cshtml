@@ -28,10 +28,6 @@
     <ul id="busLinesTiles" data-bind="foreach: busLines">
         <li data-bind="click: function() { $root.actualSelection.departureTime($root.departureTimes.getNextDepartureTime($data)) }, css: { active: $root.actualSelection.departureTime() && $root.actualSelection.departureTime().route.busLine == $data }, text: busNumber"></li>
     </ul>
-
-    @*<ul id="busLinesTiles" data-bind="foreach: actualSelection.busStop().points">
-        <li data-bind="click: function() { $root.actualSelection.departureTime($root.departureTimes.getNextDepartureTime(route.busLine)) }, css: { active: $root.actualSelection.departureTime() && $root.actualSelection.departureTime().route.busLine == route.busLine }, text: route.busLine.busNumber"></li>
-    </ul>*@
     <!-- /ko -->
 
     <!-- ko if: actualSelection.busStop() && actualSelection.departureTime() -->
@@ -45,7 +41,7 @@
                 <table class="busStops" data-bind="foreach: actualSelection.busStops()">
                     <tr>
                         <td data-bind="text: timeOffset"></td>
-                        <td data-bind="css: { active: name == $root.actualSelection.busStop().name }, text: name"></td>
+                        <td data-bind="css: { active: active }, text: name"></td>
                     </tr>
                 </table>
             </td>
