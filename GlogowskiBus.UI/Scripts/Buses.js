@@ -302,16 +302,32 @@
             var busStopPoint = context.points.getPointForBusStopOnTheRoute(busStop, departureTime.route);
             if (busStopPoint)
             {
-                // Todo: take only departure times for actual day of week
                 var minutes = departureTime.minutes + busStopPoint.timeOffset / 60000;
                 var hours = departureTime.hours + Math.floor(minutes / 60);
-                minutes %= 60;
+                var dayOfWeek = departureTime.dayOfWeek;
+                
+                if (hours > 23)
+                {
+                    switch ((serverTime.now().getDay() + 1) % 7)
+                    {
+                        case 0:
+                            dayOfWeek = context.daysOfWeek[2];
+                            break;
+                        case 1: case 2: case 3: case 4: case 5:
+                            dayOfWeek = context.daysOfWeek[0];
+                            break;
+                        case 6:
+                            dayOfWeek = context.daysOfWeek[1];
+                    }
+                }
                 hours %= 24;
+                minutes %= 60;
+
                 result =
                 {
                     minutes: minutes,
                     hours: hours,
-                    dayOfWeek: departureTime.dayOfWeek
+                    dayOfWeek: dayOfWeek
                 };
             }
             return result;
