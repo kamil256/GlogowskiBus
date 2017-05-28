@@ -103,6 +103,11 @@
                                 });
                             }
                         }
+                    for (var i = 0; i < 24; i++)
+                        departureTimes[i].sort(function(object1, object2)
+                        {
+                            return object1.minutes - object2.minutes;
+                        });
                 }
             }
             return departureTimes;
