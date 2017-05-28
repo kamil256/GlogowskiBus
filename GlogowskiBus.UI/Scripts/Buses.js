@@ -139,11 +139,13 @@
             // Todo: if null then set day of week as today
             if (newDepartureTime != null)
                 newDepartureTime.route.selectBusStop(self.busStop());
-            //else
-            //    self.selectedDayOfWeek(dzisiaj);
+            else
+                self.selectedDayOfWeek(context.actualDayOfWeek);
 
             if (newDepartureTime != null && self.busStop() != null && !newDepartureTime.route.busLine.containsBusStop(self.busStop()))
                 self.busStop(null);
+
+            
         });
 
         self.selectedDayOfWeek.subscribe(function(selectedDayOfWeek)
