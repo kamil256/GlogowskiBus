@@ -407,7 +407,7 @@
                         for (var j = 0; j < departureTimesForPreviousDay.length; j++)
                         {
                             var departureTimeMinutesSinceMidnight = 60 * departureTimesForPreviousDay[j].hours + departureTimesForPreviousDay[j].minutes + Math.floor(busStopPoint.timeOffset / 60000) - 24 * 60;
-                            if (departureTimeMinutesSinceMidnight >= currentMinutesSinceMidnight)
+                            if (departureTimeMinutesSinceMidnight > currentMinutesSinceMidnight)
                             {
                                 nextDepartureTime = departureTimesForPreviousDay[j];
                                 break;
@@ -427,7 +427,7 @@
                             for (var j = 0; j < departureTimesForToday.length; j++)
                             {
                                 var departureTimeMinutesSinceMidnight = 60 * departureTimesForToday[j].hours + departureTimesForToday[j].minutes + Math.floor(busStopPoint.timeOffset / 60000);
-                                if (departureTimeMinutesSinceMidnight >= currentMinutesSinceMidnight)
+                                if (departureTimeMinutesSinceMidnight > currentMinutesSinceMidnight)
                                 {
                                     nextDepartureTime = departureTimesForToday[j];
                                     break;
@@ -448,7 +448,7 @@
                             for (var j = 0; j < departureTimesForNextDay.length; j++)
                             {
                                 var departureTimeMinutesSinceMidnight = 60 * departureTimesForNextDay[j].hours + departureTimesForNextDay[j].minutes + Math.floor(busStopPoint.timeOffset / 60000) + 24 * 60;
-                                if (departureTimeMinutesSinceMidnight >= currentMinutesSinceMidnight)
+                                if (departureTimeMinutesSinceMidnight > currentMinutesSinceMidnight)
                                 {
                                     nextDepartureTime = departureTimesForNextDay[j];
                                     break;
