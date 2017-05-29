@@ -19,12 +19,12 @@
 </div>
 
 <div id="timeTable" data-bind="visible: view() == 'TimeTable'">
-    <p>Przystanek:</p>
+    <p>PRZYSTANEK</p>
     <select class="form-control" data-bind="options: busStops, optionsText: 'name', optionsCaption: '-', value: actualSelection.busStop"></select>
     <br />
 
     <!-- ko if: actualSelection.busStop() -->
-    <p>Linia:</p>
+    <p>LINIA</p>
     <ul id="busLinesTiles" data-bind="foreach: busLines">
         <li data-bind="click: function() { $root.actualSelection.departureTime($root.departureTimes.getNextDepartureTime($data)) }, css: { active: $root.actualSelection.departureTime() && $root.actualSelection.departureTime().route.busLine == $data }, text: busNumber"></li>
     </ul>

@@ -65,10 +65,12 @@ nav > ul > li:first-child > a {
 }
 
 aside {
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(255, 255, 255, 0.7);
+    /*background-color: rgba(0, 0, 0, 0.7);*/
     border-radius: 3px;
     bottom: 7px;
-    color: white;
+    box-shadow: 0 0 10px #000;
+    color: black;
     /*height: calc(100% - 90px);*/
     overflow: auto;
     padding: 15px;
@@ -79,7 +81,8 @@ aside {
 }
 
 aside p {
-    color: #eee;
+    color: black;
+    /*color: #eee;*/
     font-weight: bold;
 }
 
@@ -92,6 +95,7 @@ aside ul#busLinesTiles {
 }
 
 aside ul#busLinesTiles > li {
+    border-radius: 2px;
     cursor: pointer;
     float: left;
     font-weight: bold;
@@ -104,13 +108,17 @@ aside ul#busLinesTiles > li {
 }
 
 aside ul#busLinesTiles > li:not(.active) {
-    background-color: rgba(0, 0, 0, 0.2);
-    color: #777;
+    /*background-color: rgba(0, 0, 0, 0.2);*/
+    background-color: #999;
+    color: white;
+    /*color: #777;*/
 }
 
 aside ul#busLinesTiles > li.active {
-    background-color: rgba(0, 0, 0, 0.75);
-    color: #ccc;
+    background-color: rgba(204, 24, 30, 1);
+    /*background-color: rgba(0, 0, 0, 0.75);*/
+    /*color: #ccc;*/
+    color: white;
 }
 
 aside .textButton {
@@ -123,14 +131,24 @@ aside select {
     max-width: initial;
 }
 
+aside select:focus {
+    /*outline-color: rgba(204, 24, 30, 1) !important;*/
+    /*border-color: rgba(204, 24, 30, 1) !important;*/
+    /*box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(204, 24, 30, 1) !important;*/
+    /*outline: 0 none !important;*/
+}
+
 aside ul.dayOfWeek {
+    cursor: pointer;
     margin: 0;
+    margin-top: 20px;
     padding: 0;
     list-style-type: none;
 }
 
 aside ul.dayOfWeek > li {
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #999;
+    color: #999;
     float: left;
     font-weight: bold;
     margin-bottom: 20px;
@@ -140,21 +158,31 @@ aside ul.dayOfWeek > li {
 }
 
 aside ul.dayOfWeek > li.active {
-    border-bottom: 3px solid rgba(0, 0, 0, 0.75);
+    border-bottom: 3px solid rgba(204, 24, 30, 1);
+    color: rgba(204, 24, 30, 1);
 }
 
+table.timeTable {
+    border-collapse: separate;
+    width: 100%;
+}
 
 .timeTable > tbody > tr > td {
-    border: 2px solid rgba(0, 0, 0, 0.75);
+    border-color:#AAA;
+    border-style: solid;
+    border-top-width: 3px;
+    border-bottom-width: 3px;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    
 }
 
 .timeTable > tbody > tr > td:first-child {
     border-right-width: 0;
 }
 
-table.timeTable {
-    border-collapse: separate;
-    width: 100%;
+.timeTable > tbody > tr > td {
+    padding: 10px;
 }
 
 table.timeTable > tbody > tr > td {
@@ -205,23 +233,23 @@ aside #timeTable .departureTimes td div {
     display: inline-block;
     font-size: 14px;
     font-weight: bold;
-    line-height: 28px;
+    line-height: 30px;
     text-align: center;
-    width: 28px;
+    width: 30px;
 }
 
 aside #timeTable .departureTimes td:first-child div {
-    background-color: rgba(0, 0, 0, 0.75);
-    color: #CCC;
+    background-color: rgba(204, 24, 30, 1);
+    color: #FFF;
     cursor: default;
 }
 
 aside #timeTable .departureTimes td:not(:first-child) div {
-    background-color: rgba(255, 255, 255, 0.75);
-    color: #333;
+    background-color: #999;
+    color: #FFF;
     cursor: pointer;
 }
 
 aside #timeTable .departureTimes td:not(:first-child) div.active {
-    background-color: yellow;
+    background-color: #333;
 }
