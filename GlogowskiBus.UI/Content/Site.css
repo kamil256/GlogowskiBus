@@ -219,11 +219,13 @@ aside #timeTable .departureTimes td div {
 aside #timeTable .departureTimes td:first-child div {
     background-color: rgba(0, 0, 0, 0.75);
     color: #CCC;
+    cursor: default;
 }
 
 aside #timeTable .departureTimes td:not(:first-child) div {
     background-color: rgba(255, 255, 255, 0.75);
     color: #333;
+    cursor: pointer;
 }
 
 aside #timeTable .departureTimes td:not(:first-child) div.active {
