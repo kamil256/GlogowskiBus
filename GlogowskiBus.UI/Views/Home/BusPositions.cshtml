@@ -41,7 +41,7 @@
                 <table class="busStops" data-bind="foreach: actualSelection.busStops()">
                     <tr>
                         <td data-bind="css: { active: timeOffset == 0 }, text: timeOffset == 0 ? timeOffset : (timeOffset > 0 ? '+' + timeOffset : '')"></td>
-                        <td data-bind="css: { active: timeOffset == 0 }, text: name"></td>
+                        <td data-bind="click: function(data, event) { $root.actualSelection.busStop($root.actualSelection.departureTime().route.busStops[$index()]); }, css: { active: timeOffset == 0 }, text: name"></td>
                     </tr>
                 </table>
             </td>
