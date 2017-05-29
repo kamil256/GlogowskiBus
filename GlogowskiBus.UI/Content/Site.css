@@ -201,64 +201,31 @@ aside #timeTable table.busStops td:first-child {
     text-align: right;
 }
 
-aside #timeTable table.departureTimes {
-    /*border: 3px solid white;
-    border-collapse: collapse;*/
-}
-
-aside #timeTable .departureTimes tr {
-    /*border: 1px solid white;*/
-}
-
-aside #timeTable .departureTimes td:first-child {
-    /*border-left: 1px solid white;*/
-    /*border-right: 1px solid rgba(0, 0, 0, 0.75);*/
-    padding: 3px;
-    /*text-align: center;*/
-    vertical-align: middle;
-}
-
-aside #timeTable .departureTimes tr:first-child, aside #timeTable .departureTimes td:first-child {
-    font-weight: bold;
-    padding: 3px;
-    text-align: center;
-}
-
 aside #timeTable .departureTimes td:not(:first-child) {
-    padding: 3px;
-    text-align: left;
-}
-
-aside #timeTable .departureTimes td:not(:first-child) {
+    padding: 2px;
     white-space: nowrap;
 }
 
-aside #timeTable .departureTimes td:not(:first-child) div {
-    background-color: rgba(255, 255, 255, 0.75);
-    border-radius: 3px;
-    color: #333;
+aside #timeTable .departureTimes td div {
+    border-radius: 2px;
     display: inline-block;
     font-size: 14px;
     font-weight: bold;
-    line-height: 35px;
+    line-height: 28px;
     text-align: center;
-    width: 35px;
-    white-space: nowrap;
-}
-
-aside #timeTable .departureTimes td:not(:first-child) div.active {
-    background-color: yellow;
+    width: 28px;
 }
 
 aside #timeTable .departureTimes td:first-child div {
     background-color: rgba(0, 0, 0, 0.75);
-    border-radius: 3px;
     color: #CCC;
-    display: inline-block;
-    font-size: 14px;
-    font-weight: bold;
-    line-height: 35px;
-    margin-right: 0px;
-    text-align: center;
-    width: 35px;
+}
+
+aside #timeTable .departureTimes td:not(:first-child) div {
+    background-color: rgba(255, 255, 255, 0.75);
+    color: #333;
+}
+
+aside #timeTable .departureTimes td:not(:first-child) div.active {
+    background-color: yellow;
 }
