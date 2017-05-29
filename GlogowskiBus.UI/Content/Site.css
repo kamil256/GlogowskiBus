@@ -175,33 +175,25 @@ table.timeTable > tbody > tr > td:last-child {
     border-bottom-right-radius: 4px;
 }
 
-.timeTable td:first-child {
-
-}
-
 aside #timeTable table.busStops td {
-    /*border: 3px solid white;
-    border-right-width: 0;
-    border-top-left-radius: 3px;
-    border-collapse: collapse;*/
     padding-left: 10px;
     padding-right: 10px;
 
-}
-
-aside #timeTable table.busStops td:last-child {
-    width: 100%;
-}
-
-aside #timeTable table.busStops td.active:last-child {
-    font-weight: bold;
 }
 
 aside #timeTable table.busStops td:first-child {
     text-align: right;
 }
 
-aside #timeTable .departureTimes td:not(:first-child) {
+aside #timeTable table.busStops td:last-child {
+    width: 100%;
+}
+
+aside #timeTable table.busStops td.active {
+    font-weight: bold;
+}
+
+aside #timeTable .departureTimes td:last-child {
     padding: 2px;
     white-space: nowrap;
 }

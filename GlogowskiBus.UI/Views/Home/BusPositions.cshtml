@@ -40,8 +40,8 @@
             <td>
                 <table class="busStops" data-bind="foreach: actualSelection.busStops()">
                     <tr>
-                        <td data-bind="text: timeOffset"></td>
-                        <td data-bind="css: { active: active }, text: name"></td>
+                        <td data-bind="css: { active: timeOffset == 0 }, text: timeOffset == 0 ? timeOffset : (timeOffset > 0 ? '+' + timeOffset : '')"></td>
+                        <td data-bind="css: { active: timeOffset == 0 }, text: name"></td>
                     </tr>
                 </table>
             </td>

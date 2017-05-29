@@ -67,7 +67,6 @@
                         {
                             busStops.push(
                             {
-                                active: self.departureTime().route.points[i].busStop == self.busStop(),
                                 name: self.departureTime().route.points[i].busStop.name,
                                 timeOffset: (self.departureTime().route.points[i].timeOffset - busStopPoint.timeOffset) / 60000
                             });
