@@ -65,19 +65,74 @@ nav > ul > li:first-child > a {
 }
 
 aside {
-    background-color: rgba(255, 255, 255, 0.7);
-    /*background-color: rgba(0, 0, 0, 0.7);*/
-    border-radius: 3px;
-    bottom: 7px;
+    bottom: 80px;
     box-shadow: 0 0 10px #000;
-    color: black;
-    /*height: calc(100% - 90px);*/
-    overflow: auto;
-    padding: 15px;
     position: fixed;
-    right: 7px;
-    top: 80px;
+    right: 10px;
+    top: 10px;
     width: 500px;
+}
+
+aside > .tab {
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    font-weight: bold;
+    height: 50px;
+    line-height: 40px;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    width: 50%;
+}
+
+aside > .leftTab {
+    left: 0;
+}
+
+aside > .rightTab {
+    right: 0;
+}
+
+aside > .tab.active {
+    background-color: white;
+    box-shadow: 0 0 10px black;
+    color: black;
+    cursor: default;
+}
+
+aside > .tab:not(.active) {
+    background-color: rgba(0, 0, 0, 0.4);
+    color: #555;
+    cursor: pointer;
+}
+
+aside > .tab.active > .mask {
+    background-color: white;
+    bottom: 0;
+    height: 20px;
+    left: 0;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+}
+
+aside > .tab:not(.active) > .mask {
+    display: none;
+}
+
+aside > .content {
+    box-shadow: 0 0 10px black;
+    width: 100%;
+    height: 10px;
+    background-color: white;
+    height: 200px;
+    height: calc(100% - 40px);
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    overflow: auto;
+    position: absolute;
+    top: 40px;
+    padding: 15px;
 }
 
 aside p {
@@ -252,4 +307,60 @@ aside #timeTable .departureTimes td:not(:first-child) div {
 
 aside #timeTable .departureTimes td:not(:first-child) div.active {
     background-color: #333;
+}
+
+footer {
+    background-color: rgba(255, 255, 255, 0.5);
+    bottom: 0;
+    border-top: 3px solid #999;
+    height: 70px;
+    left: 0;
+    padding-left: 20px;
+    padding-right: 20px;
+    position: fixed;
+    right: 0;
+}
+
+footer > div {
+    display: inline-block;
+    line-height: 70px;
+    padding: 0 20px 0;
+}
+
+footer > .logoDescription, footer > .dspLogo {
+    float: left;
+}
+
+footer > .logoDescription > div:first-child {
+    color: rgb(204, 24, 30);
+    font-size: 24px;
+    font-weight: bold;
+    line-height: initial;
+    padding-top: 10px;
+    padding-bottom: 8px;
+}
+
+footer > .logoDescription > div:last-child {
+    color: black;
+    font-size: 12px;
+    line-height: initial;
+}
+
+footer > .dspLogo > img {
+    height: 50px;
+}
+
+footer > .copyright {
+    color: black;
+    float: right;
+}
+
+footer > .lastUpdate {
+    line-height: initial;
+    padding-top: 10px;
+}
+
+footer > .lastUpdate > div {
+    font-size: 18px;
+    line-height: 26px;
 }

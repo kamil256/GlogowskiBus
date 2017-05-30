@@ -17,16 +17,47 @@
 <body>
     <div id="map"></div>
 
-    <nav>
+    @*<nav>
         <ul>
             <li><a href='@Url.Action("Index")'>GłogowskiBus</a></li>
-            <li><a href="#">ZALOGUJ</a></li><li><a href="#" data-bind="click: function() { view('TimeTable'); }">ROZKŁAD JAZDY</a></li><li><a href="#">WYSZUKAJ POŁĄCZENIE</a></li><li><a class='@(ViewBag.Title == "Autobusy i przystanki" ? "active" : null)' href='#@*@Url.Action("BusPositions")*@' data-bind="click: function() { view('Navigation'); }">AUTOBUSY I PRZYSTANKI</a></li>
+            <li><a href="#">ZALOGUJ</a></li><li><a href="#" data-bind="click: function() { view('TimeTable'); }">ROZKŁAD JAZDY</a></li><li><a href="#">WYSZUKAJ POŁĄCZENIE</a></li><li><a class='@(ViewBag.Title == "Autobusy i przystanki" ? "active" : null)' href='#@*' data-bind="click: function() { view('Navigation'); }">AUTOBUSY I PRZYSTANKI</a></li>
         </ul>
-    </nav>
+    </nav>*@
 
     <aside>
-        @RenderBody()
+        <div class="tab leftTab" data-bind="click: function(data, event) { tab('ROZKŁAD JAZDY'); }, css: { active: tab() == 'ROZKŁAD JAZDY' }">
+            ROZKŁAD JAZDY
+            <div class="mask">
+            </div>
+        </div>
+        
+        <div class="tab rightTab" data-bind="click: function(data, event) { tab('ZNAJDŹ POŁĄCZENIE'); }, css: { active: tab() == 'ZNAJDŹ POŁĄCZENIE' }">
+            ZNAJDŹ POŁĄCZENIE
+            <div class="mask">
+            </div>
+        </div>
+        
+        <div class="content">
+            @RenderBody()
+        </div>
     </aside>
+
+    <footer>
+        <div class="logoDescription">
+            <div>GłogowskiBUS</div>
+            <div>ROZKŁAD JAZDY AUTOBUSÓW MIEJSKICH W GŁOGOWIE</div>
+        </div>
+        <div class="dspLogo">
+            <img src="~/Content/Images/dsp2017-2.png" />
+        </div>
+        <div class="copyright">
+            Copyright &copy; 2017 Kamil Dzierlęga. All rights reserved.
+        </div>
+        <div class="lastUpdate">
+            <div>Ostatnia aktualizacja rozkładu:</div>
+            <div>30 maja 2017</div>
+        </div>
+    </footer>
 
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>

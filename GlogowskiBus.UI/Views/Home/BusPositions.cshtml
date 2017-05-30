@@ -5,7 +5,7 @@
     ViewBag.Title = "Autobusy i przystanki";
 }
 
-<div id="navigation" data-bind="visible: view() == 'Navigation'">
+@*<div id="navigation" data-bind="visible: view() == 'Navigation'">
     <p>Pokaż/ukryj linie:</p>
     <ul id="busLinesTiles" data-bind="foreach: busLines">
         <li data-bind="click: function() { hidden(!hidden()); }, css: { active: !hidden() }, text: busNumber"></li>
@@ -16,9 +16,9 @@
 </div>
 
 <div id="findRoute" data-bind="visible: view() == 'FindRoute'">
-</div>
+</div>*@
 
-<div id="timeTable" data-bind="visible: view() == 'TimeTable'">
+<div id="timeTable" data-bind="visible: tab() == 'ROZKŁAD JAZDY'">
     <p>PRZYSTANEK</p>
     <select class="form-control" data-bind="options: busStops, optionsText: 'name', optionsCaption: '-', value: actualSelection.busStop"></select>
     <br />

@@ -43,6 +43,7 @@
     context.buses = new Buses();
 
     context.view = ko.observable('Navigation');
+    context.tab = ko.observable('ROZKŁAD JAZDY');
     
     function ActualSelection()
     {
