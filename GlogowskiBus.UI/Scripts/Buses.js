@@ -514,9 +514,9 @@
         {
             map: null,
             path: path,
-            strokeColor: '#FF7F00',
+            strokeColor: '#CC181E',//'#FF7F00',
             strokeOpacity: 1,
-            strokeWeight: 3,
+            strokeWeight: 5,
         });
 
         self.hide = function()
