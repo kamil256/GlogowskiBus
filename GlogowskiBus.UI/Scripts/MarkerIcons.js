@@ -58,6 +58,15 @@
         anchor: new google.maps.Point(13, 31),
         labelOrigin: new google.maps.Point(13, 13)
     };
+
+    self.redBus2 =
+    {
+        url: '/Content/Images/red_bus2.png',
+        size: new google.maps.Size(28, 34),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(14, 33),
+        labelOrigin: new google.maps.Point(14, 14)
+    };
     //    new google.maps.MarkerImage
     //(
     //    '/Content/Images/red_bus.png',

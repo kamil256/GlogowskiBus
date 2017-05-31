@@ -653,11 +653,11 @@
 
         var marker = new google.maps.Marker(
         {
-            icon: markerIcons.redBus,
+            icon: markerIcons.redBus2,
             label:
             {
                 color: '#FF0000',
-                fontSize: '10px',
+                fontSize: '9px',
                 fontWeight: 'bold',
                 text: self.busNumber
             },

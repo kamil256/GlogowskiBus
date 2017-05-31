@@ -141,6 +141,7 @@
     <Content Include="Content\Images\orange_dot.png" />
     <Content Include="Content\Images\purple_bus_stop.png" />
     <Content Include="Content\Images\red_bus.png" />
+    <Content Include="Content\Images\red_bus2.png" />
     <Content Include="Content\Images\red_bus_stop.png" />
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
