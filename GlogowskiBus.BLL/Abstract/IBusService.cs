@@ -11,7 +11,7 @@ namespace GlogowskiBus.BLL.Abstract
     {
         List<BusStop> GetAllBusStops();
         BusStop GetBusStop(double latitude, double longitude);
-        void CreateRoute(string busNumber, string description, List<Point> routePoints);
+        void CreateRoute(string busNumber, string description, string indexMark, List<Point> routePoints);
         List<BusLine> GetAllBusLines();
     }
 }

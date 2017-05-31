@@ -35,7 +35,7 @@ namespace GlogowskiBus.BLL.Concrete
             return GetAllBusStops().FirstOrDefault(x => x.Latitude == latitude && x.Longitude == longitude);
         }
 
-        public void CreateRoute(string busNumber, string details, List<Point> routePoints)
+        public void CreateRoute(string busNumber, string details, string indexMark, List<Point> routePoints)
         {
             if (routePoints.Count < 2)
                 throw new Exception("Route cannot contain less than two points!");
@@ -66,7 +66,8 @@ namespace GlogowskiBus.BLL.Concrete
             DAL.Entities.Route newRoute = new DAL.Entities.Route()
             {
                 BusLine = busLine,
-                Details = details
+                Details = details,
+                IndexMark = indexMark
             };
             unitOfWork.RouteRepository.Insert(newRoute);
 
@@ -110,6 +111,7 @@ namespace GlogowskiBus.BLL.Concrete
                 Routes = x.Routes.Select(y => new Route()
                 {
                     Details = y.Details,
+                    IndexMark = y.IndexMark,
                     Points = y.Points.OrderBy(z => z.TimeOffset).Select(z => new Point()
                     {
                         Latitude = z.BusStop == null ? z.Latitude : z.BusStop.Latitude,

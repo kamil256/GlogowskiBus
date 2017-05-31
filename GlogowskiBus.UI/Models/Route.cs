@@ -9,6 +9,7 @@ namespace GlogowskiBus.UI.Models
     public class Route
     {
         public string Details { get; set; }
+        public string IndexMark { get; set; }
         public List<Point> Points { get; set; }
         public List<DepartureTime> DepartureTimes { get; set; }
     }

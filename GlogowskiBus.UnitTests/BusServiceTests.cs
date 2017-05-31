@@ -30,7 +30,8 @@ namespace GlogowskiBus.UnitTests
             new DAL.Entities.Route()
             {
                 Details = "Route details",
-                BusLine = fakeBusLines[0]
+                BusLine = fakeBusLines[0],
+                IndexMark = "R"
             }
         };
 
@@ -184,7 +185,7 @@ namespace GlogowskiBus.UnitTests
             try
             {
                 // Act
-                busService.CreateRoute("2", "Some details", new List<BLL.Concrete.Point>
+                busService.CreateRoute("2", "Some details", "S", new List<BLL.Concrete.Point>
                 {
                     new BLL.Concrete.Point()
                     {
@@ -220,7 +221,7 @@ namespace GlogowskiBus.UnitTests
             try
             {
                 // Act
-                busService.CreateRoute("2", "Some details", new List<BLL.Concrete.Point>
+                busService.CreateRoute("2", "Some details", "S", new List<BLL.Concrete.Point>
                 {
                     new BLL.Concrete.Point()
                     {
@@ -270,7 +271,7 @@ namespace GlogowskiBus.UnitTests
             try
             {
                 // Act
-                busService.CreateRoute("2", "Some details", new List<BLL.Concrete.Point>
+                busService.CreateRoute("2", "Some details", "S", new List<BLL.Concrete.Point>
                 {
                     new BLL.Concrete.Point()
                     {
@@ -320,7 +321,7 @@ namespace GlogowskiBus.UnitTests
             try
             {
                 // Act
-                busService.CreateRoute("2", "Some details", new List<BLL.Concrete.Point>
+                busService.CreateRoute("2", "Some details", "S", new List<BLL.Concrete.Point>
                 {
                     new BLL.Concrete.Point()
                     {
@@ -370,7 +371,7 @@ namespace GlogowskiBus.UnitTests
             try
             {
                 // Act
-                busService.CreateRoute("2", "Some details", new List<BLL.Concrete.Point>
+                busService.CreateRoute("2", "Some details", "S", new List<BLL.Concrete.Point>
                 {
                     new BLL.Concrete.Point()
                     {
@@ -428,7 +429,7 @@ namespace GlogowskiBus.UnitTests
             BusService busService = new BusService(unitOfWork);
 
             // Act
-            busService.CreateRoute("2", "Some details", new List<BLL.Concrete.Point>
+            busService.CreateRoute("2", "Some details", "S", new List<BLL.Concrete.Point>
             {
                 new BLL.Concrete.Point()
                 {
@@ -457,6 +458,7 @@ namespace GlogowskiBus.UnitTests
             busLineRepository.Received().Insert(Arg.Is<DAL.Entities.BusLine>(x => x.BusNumber == "2"));
 
             routeRepository.Received().Insert(Arg.Is<DAL.Entities.Route>(x => x.Details == "Some details" &&
+                                                                              x.IndexMark == "S" && 
                                                                               x.BusLine != null));
 
             busStopRepository.Received().Insert(Arg.Is<DAL.Entities.BusStop>(x => x.Name == "New bus stop" &&
@@ -502,7 +504,7 @@ namespace GlogowskiBus.UnitTests
             BusService busService = new BusService(unitOfWork);
 
             // Act
-            busService.CreateRoute("1", "Some details", new List<BLL.Concrete.Point>
+            busService.CreateRoute("1", "Some details", "S", new List<BLL.Concrete.Point>
             {
                 new BLL.Concrete.Point()
                 {
@@ -531,6 +533,7 @@ namespace GlogowskiBus.UnitTests
             busLineRepository.DidNotReceive().Insert(Arg.Any<DAL.Entities.BusLine>());
 
             routeRepository.Received().Insert(Arg.Is<DAL.Entities.Route>(x => x.Details == "Some details" &&
+                                                                              x.IndexMark == "S" &&
                                                                               x.BusLine != null));
 
             busStopRepository.DidNotReceive().Insert(Arg.Any<DAL.Entities.BusStop>());
@@ -574,7 +577,7 @@ namespace GlogowskiBus.UnitTests
             BusService busService = new BusService(unitOfWork);
 
             // Act
-            busService.CreateRoute("2", "Some details", new List<BLL.Concrete.Point>
+            busService.CreateRoute("2", "Some details", "S", new List<BLL.Concrete.Point>
             {
                 new BLL.Concrete.Point()
                 {
@@ -603,6 +606,7 @@ namespace GlogowskiBus.UnitTests
             busLineRepository.Received().Insert(Arg.Is<DAL.Entities.BusLine>(x => x.BusNumber == "2"));
 
             routeRepository.Received().Insert(Arg.Is<DAL.Entities.Route>(x => x.Details == "Some details" &&
+                                                                              x.IndexMark == "S" &&
                                                                               x.BusLine != null));
 
             busStopRepository.DidNotReceive().Insert(Arg.Any<DAL.Entities.BusStop>());
@@ -646,6 +650,7 @@ namespace GlogowskiBus.UnitTests
 
             Assert.AreEqual(1, busLines[0].Routes.Count);
             Assert.AreEqual("Route details", busLines[0].Routes[0].Details);
+            Assert.AreEqual("R", busLines[0].Routes[0].IndexMark);
 
             Assert.AreEqual(3, busLines[0].Routes[0].Points.Count);
 

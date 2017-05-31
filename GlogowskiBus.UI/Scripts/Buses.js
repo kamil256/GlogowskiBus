@@ -97,6 +97,8 @@
                                 departureTimes[departureTime.hours].push(
                                 {
                                     minutes: departureTime.minutes,
+                                    details: busLine.routes[i].departureTimes[j].route.details ? busLine.routes[i].departureTimes[j].route.details : '',
+                                    indexMark: busLine.routes[i].departureTimes[j].route.indexMark ? busLine.routes[i].departureTimes[j].route.indexMark : '',
                                     active: self.departureTime().hours == busLine.routes[i].departureTimes[j].hours &&
                                             self.departureTime().minutes == busLine.routes[i].departureTimes[j].minutes &&
                                             self.departureTime().dayOfWeek == busLine.routes[i].departureTimes[j].dayOfWeek
@@ -113,10 +115,10 @@
             return departureTimes;
         });
 
-        self.setDepartureTime = function(event)
+        self.setDepartureTime = function(data, event)
         {
-            var hours = event.target.parentElement.parentElement.children[0].children[0].textContent;
-            var minutes = event.target.textContent;
+            var hours = event.delegateTarget.parentElement.parentElement.children[0].children[0].textContent;
+            var minutes = event.delegateTarget.children[0].textContent;
             for (var i = 0; i < self.departureTime().route.busLine.departureTimes.length; i++)
             {
                 var departureTime = context.departureTimes.getDepartureTimeForBusStop(self.departureTime().route.busLine.departureTimes[i], self.busStop());
@@ -437,6 +439,7 @@
         var self = this;
 
         self.details = routeFromModel.Details;
+        self.indexMark = routeFromModel.IndexMark;
 
         self.points = [];
         for (var i = 0; i < routeFromModel.Points.length; i++)

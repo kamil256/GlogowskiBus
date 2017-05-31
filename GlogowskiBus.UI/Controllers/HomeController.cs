@@ -35,6 +35,7 @@ namespace GlogowskiBus.UI.Controllers
                 Routes = x.Routes.Select(y => new Models.Route()
                 {
                     Details = y.Details,
+                    IndexMark = y.IndexMark,
                     Points = y.Points.Select(z => new Models.Point()
                     {
                         Latitude = z.Latitude,
@@ -105,7 +106,7 @@ namespace GlogowskiBus.UI.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    busService.CreateRoute(model.BusNumber, model.RouteDetails, model.Points.Select(x => new BLL.Concrete.Point()
+                    busService.CreateRoute(model.BusNumber, model.RouteDetails, model.IndexMark, model.Points.Select(x => new BLL.Concrete.Point()
                     {
                         Latitude = x.Latitude,
                         Longitude = x.Longitude,

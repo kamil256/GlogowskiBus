@@ -14,6 +14,7 @@ namespace GlogowskiBus.UI.Models
         [Required, StringLength(100)]
         public string BusNumber { get; set; }
         public string RouteDetails { get; set; }
+        public string IndexMark { get; set; }
 
         [Required]
         public double[] Latitudes { get; set; }

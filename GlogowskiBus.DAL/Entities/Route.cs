@@ -11,6 +11,7 @@ namespace GlogowskiBus.DAL.Entities
         public int RouteId { get; set; }
         public int BusLineId { get; set; }
         public string Details { get; set; }
+        public string IndexMark { get; set; }
 
         public virtual BusLine BusLine { get; set; }
         public virtual ICollection<DepartureTime> DepartureTimes { get; set; }
