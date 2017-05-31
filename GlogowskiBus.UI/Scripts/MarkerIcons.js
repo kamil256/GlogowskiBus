@@ -26,6 +26,30 @@
         new google.maps.Point(6, 6)
     );
 
+    self.redBusStopOnRoute = new google.maps.MarkerImage
+    (
+        '/Content/Images/red_bus_stop_on_route.png',
+        new google.maps.Size(18, 18),
+        new google.maps.Point(0, 0),
+        new google.maps.Point(9, 9)
+    );
+
+    self.activeRedBusStop = new google.maps.MarkerImage
+    (
+        '/Content/Images/active_red_bus_stop.png',
+        new google.maps.Size(18, 18),
+        new google.maps.Point(0, 0),
+        new google.maps.Point(9, 9)
+    );
+
+    self.redBusStop = new google.maps.MarkerImage
+    (
+        '/Content/Images/red_bus_stop.png',
+        new google.maps.Size(18, 18),
+        new google.maps.Point(0, 0),
+        new google.maps.Point(9, 9)
+    );
+
     self.greenBusStop = new google.maps.MarkerImage
     (
         '/Content/Images/green_bus_stop.png',

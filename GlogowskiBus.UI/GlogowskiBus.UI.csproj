@@ -126,6 +126,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Images\active_busstop.png" />
     <Content Include="Content\Images\active_bus_stop.png" />
+    <Content Include="Content\Images\active_red_bus_stop.png" />
     <Content Include="Content\Images\blue_bus_stop.png" />
     <Content Include="Content\Images\dot_li_phixr.png" />
     <Content Include="Content\Images\dsp2017-2.png" />
@@ -143,6 +144,7 @@
     <Content Include="Content\Images\red_bus.png" />
     <Content Include="Content\Images\red_bus2.png" />
     <Content Include="Content\Images\red_bus_stop.png" />
+    <Content Include="Content\Images\red_bus_stop_on_route.png" />
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

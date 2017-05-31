@@ -187,7 +187,7 @@
 
         var marker = new google.maps.Marker(
         {
-            icon: markerIcons.inactiveBusStop,
+            icon: markerIcons.redBusStop,//inactiveBusStop,
             map: map,
             optimized: false,
             position:
@@ -205,12 +205,12 @@
 
         self.select = function()
         {
-            marker.setIcon(markerIcons.activeBusStop);
+            marker.setIcon(markerIcons.activeRedBusStop);//activeBusStop);
         };
 
         self.deselect = function()
         {
-            marker.setIcon(markerIcons.inactiveBusStop);
+            marker.setIcon(markerIcons.redBusStop);//inactiveBusStop);
         };
     };
 
@@ -487,7 +487,7 @@
         {
             var busStopMarker = new google.maps.Marker(
             {
-                icon: markerIcons.orangeBusStop,
+                icon: markerIcons.redBusStopOnRoute,//markerIcons.orangeBusStop,
                 map: null,
                 optimized: false,
                 position:
@@ -517,7 +517,7 @@
             path: path,
             strokeColor: '#CC181E',//'#FF7F00',
             strokeOpacity: 1,
-            strokeWeight: 5,
+            strokeWeight: 6,
         });
 
         self.hide = function()
@@ -545,9 +545,9 @@
         {
             for (var i = 0; i < self.busStops.length; i++)
                 if (self.busStops[i] === busStop)
-                    busStopMarkers[i].setIcon(markerIcons.activeBusStop);
+                    busStopMarkers[i].setIcon(markerIcons.activeRedBusStop);//activeBusStop);
                 else
-                    busStopMarkers[i].setIcon(markerIcons.orangeBusStop);
+                    busStopMarkers[i].setIcon(markerIcons.redBusStopOnRoute);//orangeBusStop);
         };
 
         self.getDepartureTimesForDayOfWeek = function(dayOfWeek)
