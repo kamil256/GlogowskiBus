@@ -520,7 +520,7 @@
             path: path,
             strokeColor: '#CC181E',//'#FF7F00',
             strokeOpacity: 1,
-            strokeWeight: 6,
+            strokeWeight: 4
         });
 
         self.hide = function()
