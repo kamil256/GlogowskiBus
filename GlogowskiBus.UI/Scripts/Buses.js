@@ -171,6 +171,7 @@
                 lat: self.latitude,
                 lng: self.longitude
             },
+            title: self.name,
             zIndex: 0
         });
 
@@ -472,6 +473,7 @@
                     lat: self.busStops[i].latitude,
                     lng: self.busStops[i].longitude
                 },
+                title: self.busStops[i].name,
                 zIndex: 2
             });
 
