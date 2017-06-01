@@ -26,7 +26,7 @@
     <!-- ko if: actualSelection.busStop() -->
     <p>LINIA</p>
     <ul id="busLinesTiles" data-bind="foreach: busLines">
-        <li data-bind="click: function() { $root.actualSelection.departureTime($root.departureTimes.getNextDepartureTime($data)) }, css: { active: $root.actualSelection.departureTime() && $root.actualSelection.departureTime().route.busLine == $data }, text: busNumber"></li>
+        <li data-bind="attr: { title: routes[0].busStops[0].name + ' - ' + routes[0].busStops[routes[0].busStops.length - 1].name }, click: function() { $root.actualSelection.departureTime($root.departureTimes.getNextDepartureTime($data)) }, css: { active: $root.actualSelection.departureTime() && $root.actualSelection.departureTime().route.busLine == $data }, text: busNumber"></li>
     </ul>
     <!-- /ko -->
 
