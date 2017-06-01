@@ -93,17 +93,7 @@
                         {
                             var departureTime = context.departureTimes.getDepartureTimeForBusStop(busLine.routes[i].departureTimes[j], self.busStop());
                             if (departureTime && departureTime.dayOfWeek == self.selectedDayOfWeek())
-                            {
-                                departureTimes[departureTime.hours].push(
-                                {
-                                    minutes: departureTime.minutes,
-                                    details: busLine.routes[i].departureTimes[j].route.details ? busLine.routes[i].departureTimes[j].route.details : '',
-                                    indexMark: busLine.routes[i].departureTimes[j].route.indexMark ? busLine.routes[i].departureTimes[j].route.indexMark : '',
-                                    active: self.departureTime().hours == busLine.routes[i].departureTimes[j].hours &&
-                                            self.departureTime().minutes == busLine.routes[i].departureTimes[j].minutes &&
-                                            self.departureTime().dayOfWeek == busLine.routes[i].departureTimes[j].dayOfWeek
-                                });
-                            }
+                                departureTimes[departureTime.hours].push(busLine.routes[i].departureTimes[j]);
                         }
                     for (var i = 0; i < 24; i++)
                         departureTimes[i].sort(function(object1, object2)
@@ -114,22 +104,6 @@
             }
             return departureTimes;
         });
-
-        self.setDepartureTime = function(data, event)
-        {
-            var hours = event.delegateTarget.parentElement.parentElement.children[0].children[0].textContent;
-            var minutes = event.delegateTarget.children[0].textContent;
-            for (var i = 0; i < self.departureTime().route.busLine.departureTimes.length; i++)
-            {
-                var departureTime = context.departureTimes.getDepartureTimeForBusStop(self.departureTime().route.busLine.departureTimes[i], self.busStop());
-                
-                if (departureTime && departureTime.hours == hours && departureTime.minutes == minutes && departureTime.dayOfWeek == self.selectedDayOfWeek())
-                {
-                    self.departureTime(self.departureTime().route.busLine.departureTimes[i]);
-                    break;
-                }
-            }
-        }
 
         self.busStop.subscribe(function(newBusStop)
         {
