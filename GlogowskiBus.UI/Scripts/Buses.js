@@ -35,7 +35,11 @@
         return context.getDayOfWeek((serverTime.now().getDay() + 1) % 7);
     };
 
-    context.busStops = new BusStops(busStopsFromModel);
+    var busStops = [];
+    for (var i = 0; i < busStopsFromModel.length; i++)
+        busStops.push(new BusStop(busStopsFromModel[i].Name, busStopsFromModel[i].Latitude, busStopsFromModel[i].Longitude));
+
+    context.busStops = new BusStops(busStops);
     context.busLines = new BusLines(busLinesFromModel);
     context.routes = new Routes();
     context.points = new Points();
@@ -50,6 +54,15 @@
         var self = this;
 
         self.busStop = ko.observable();
+
+        for (var i = 0; i < context.busStops.count; i++)
+        {
+           
+            context.busStops.getElementAt(i).click = function(busStop)
+            {
+                self.busStop(busStop);
+            };
+        }
 
         self.departureTime = ko.observable();
 
@@ -107,11 +120,11 @@
 
         self.busStop.subscribe(function(newBusStop)
         {
-            for (var i = 0; i < context.busStops.length; i++)
-                if (context.busStops[i] != newBusStop)
-                    context.busStops[i].deselect();
+            for (var i = 0; i < context.busStops.count; i++)
+                if (context.busStops.getElementAt(i) != newBusStop)
+                    context.busStops.getElementAt(i).deselect();
                 else
-                    context.busStops[i].select();
+                    context.busStops.getElementAt(i).select();
 
             if (self.departureTime() != null)
                 self.departureTime().route.selectBusStop(newBusStop);
@@ -151,68 +164,7 @@
 
     context.actualSelection = new ActualSelection();
 
-    function BusStop(busStopFromModel)
-    {
-        var self = this;
-
-        self.name = busStopFromModel.Name;
-        self.latitude = busStopFromModel.Latitude;
-        self.longitude = busStopFromModel.Longitude;
-
-        self.points = [];
-
-        var marker = new google.maps.Marker(
-        {
-            icon: markerIcons.redBusStop,//inactiveBusStop,
-            map: map,
-            optimized: false,
-            position:
-            {
-                lat: self.latitude,
-                lng: self.longitude
-            },
-            title: self.name,
-            zIndex: 0
-        });
-
-        marker.addListener('click', function(e)
-        {
-            context.actualSelection.busStop(self);
-        });
-
-        self.select = function()
-        {
-            marker.setIcon(markerIcons.activeRedBusStop);//activeBusStop);
-        };
-
-        self.deselect = function()
-        {
-            marker.setIcon(markerIcons.redBusStop);//inactiveBusStop);
-        };
-    };
-
-    function BusStops(busStopsFromModel)
-    {
-        var self = this;
-
-        var busStops = [];
-        for (var i = 0; i < busStopsFromModel.length; i++)
-            busStops.push(new BusStop(busStopsFromModel[i]));
-
-        self.length = busStops.length;
-
-        for (var i = 0; i < busStops.length; i++)
-            self[i] = busStops[i];
-
-        self.getByPosition = function(latitude, longitude)
-        {
-            for (var i = 0; i < busStops.length; i++)
-                if (busStops[i].latitude.toFixed(6) === latitude.toFixed(6) &&
-                    busStops[i].longitude.toFixed(6) === longitude.toFixed(6))
-                    return busStops[i];
-            return null;
-        };
-    }
+    
 
     function Point(pointFromModel)
     {
@@ -222,7 +174,7 @@
         self.longitude = pointFromModel.Longitude;
         self.timeOffset = pointFromModel.TimeOffset;
 
-        self.busStop = context.busStops.getByPosition(self.latitude, self.longitude);
+        self.busStop = context.busStops.getSingle(function(busStop) { return busStop.latitude.toFixed(6) == self.latitude.toFixed(6) && busStop.longitude.toFixed(6) == self.longitude.toFixed(6); });
         self.route = null;
     }
 
@@ -234,6 +186,7 @@
         for (var i = 0; i < context.routes.length; i++)
             points = points.concat(context.routes[i].points);
 
+        
         for (var i = 0; i < points.length; i++)
             if (points[i].busStop != null)
                 points[i].busStop.points.push(points[i]);
@@ -424,10 +377,11 @@
             self.points.push(point);
         }
 
-        self.busStops = [];
+        var busStops = [];
         for (var i = 0; i < self.points.length; i++)
             if (self.points[i].busStop != null)
-                self.busStops.push(self.points[i].busStop);
+                busStops.push(self.points[i].busStop);
+        self.busStops = new BusStops(busStops);
 
         self.departureTimes = [];
         for (var i = 0; i < routeFromModel.DepartureTimes.length; i++)
@@ -461,7 +415,7 @@
         self.busLine = null;
 
         var busStopMarkers = [];
-        for (var i = 0; i < self.busStops.length; i++)
+        for (var i = 0; i < self.busStops.count; i++)
         {
             var busStopMarker = new google.maps.Marker(
             {
@@ -470,16 +424,16 @@
                 optimized: false,
                 position:
                 {
-                    lat: self.busStops[i].latitude,
-                    lng: self.busStops[i].longitude
+                    lat: self.busStops.getElementAt(i).latitude,
+                    lng: self.busStops.getElementAt(i).longitude
                 },
-                title: self.busStops[i].name,
+                title: self.busStops.getElementAt(i).name,
                 zIndex: 2
             });
 
             busStopMarker.addListener('click', function(e)
             {
-                var newActiveBusStop = self.busStops[busStopMarkers.indexOf(this)];
+                var newActiveBusStop = self.busStops.getElementAt(busStopMarkers.indexOf(this));
                 context.actualSelection.busStop(newActiveBusStop);
             });
 
@@ -522,8 +476,8 @@
 
         self.selectBusStop = function(busStop)
         {
-            for (var i = 0; i < self.busStops.length; i++)
-                if (self.busStops[i] === busStop)
+            for (var i = 0; i < self.busStops.count; i++)
+                if (self.busStops.getElementAt(i) === busStop)
                     busStopMarkers[i].setIcon(markerIcons.activeRedBusStop);//activeBusStop);
                 else
                     busStopMarkers[i].setIcon(markerIcons.redBusStopOnRoute);//orangeBusStop);

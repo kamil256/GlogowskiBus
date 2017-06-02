@@ -20,13 +20,13 @@
 
 <div id="timeTable" data-bind="visible: tab() == 'ROZKŁAD JAZDY'">
     <p>PRZYSTANEK</p>
-    <select class="form-control" data-bind="options: busStops, optionsText: 'name', optionsCaption: '-', value: actualSelection.busStop"></select>
+    <select class="form-control" data-bind="options: busStops.getAll(), optionsText: 'name', optionsCaption: '-', value: actualSelection.busStop"></select>
     <br />
 
     <!-- ko if: actualSelection.busStop() -->
     <p>LINIA</p>
     <ul id="busLinesTiles" data-bind="foreach: busLines">
-        <li data-bind="attr: { title: routes[0].busStops[0].name + ' - ' + routes[0].busStops[routes[0].busStops.length - 1].name }, click: function() { $root.actualSelection.departureTime($root.departureTimes.getNextDepartureTime($data)) }, css: { active: $root.actualSelection.departureTime() && $root.actualSelection.departureTime().route.busLine == $data }, text: busNumber"></li>
+        <li data-bind="attr: { title: routes[0].busStops.getFirst().name + ' - ' + routes[0].busStops.getLast().name }, click: function() { $root.actualSelection.departureTime($root.departureTimes.getNextDepartureTime($data)) }, css: { active: $root.actualSelection.departureTime() && $root.actualSelection.departureTime().route.busLine == $data }, text: busNumber"></li>
     </ul>
     <!-- /ko -->
 
@@ -41,7 +41,7 @@
                 <table class="busStops" data-bind="foreach: actualSelection.busStops()">
                     <tr>
                         <td data-bind="css: { active: timeOffset == 0 }, text: timeOffset == 0 ? timeOffset : (timeOffset > 0 ? '+' + timeOffset : '')"></td>
-                        <td data-bind="click: function(data, event) { $root.actualSelection.busStop($root.actualSelection.departureTime().route.busStops[$index()]); }, css: { active: timeOffset == 0 }, text: name"></td>
+                        <td data-bind="click: function(data, event) { $root.actualSelection.busStop($root.actualSelection.departureTime().route.busStops.getAll().getElementAt($index())); }, css: { active: timeOffset == 0 }, text: name"></td>
                     </tr>
                 </table>
             </td>
