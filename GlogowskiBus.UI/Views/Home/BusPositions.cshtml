@@ -31,7 +31,7 @@
     <!-- /ko -->
 
     <!-- ko if: actualSelection.busStop() && actualSelection.departureTime() -->
-    <ul class="dayOfWeek" data-bind="foreach: daysOfWeek">
+    <ul class="dayOfWeek" data-bind="foreach: serverTime.daysOfWeek">
         <li data-bind="css: { active: $data == $root.actualSelection.selectedDayOfWeek() }, click: function(data, event) { $root.actualSelection.selectedDayOfWeek($data); }, text: $data"></li>
     </ul>
         
@@ -41,7 +41,7 @@
                 <table class="busStops" data-bind="foreach: actualSelection.busStops()">
                     <tr>
                         <td data-bind="css: { active: timeOffset == 0 }, text: timeOffset == 0 ? timeOffset : (timeOffset > 0 ? '+' + timeOffset : '')"></td>
-                        <td data-bind="click: function(data, event) { $root.actualSelection.busStop($root.actualSelection.departureTime().route.busStops.getAll().getElementAt($index())); }, css: { active: timeOffset == 0 }, text: name"></td>
+                        <td data-bind="click: function(data, event) { $root.actualSelection.busStop($root.actualSelection.departureTime().route.busStops.getElementAt($index())); }, css: { active: timeOffset == 0 }, text: name"></td>
                     </tr>
                 </table>
             </td>
@@ -67,19 +67,7 @@
 </div>
 
 <script>
-    function ServerTime()
-    {
-        var self = this;
-
-        var serverTime = Number(@Model.ServerTimeMilliseconds);
-
-        var timeDifference = serverTime - new Date().getTime();
-
-        self.now = function()
-        {
-            return new Date(new Date().getTime() + timeDifference);
-        };
-    }
+    
 
     function getPositionBetweenTwoPoints(startPoint, endPoint, currentTimeOffset)
     {
@@ -93,10 +81,9 @@
 
     window.onload = function()
     {
-        serverTime = new ServerTime();
         markerIcons = new MarkerIcons();
 
-        context = new Context(@Html.Raw(Json.Encode(@Model.BusStops)), @Html.Raw(Json.Encode(@Model.BusLines)));
+        context = new Context(@Html.Raw(Json.Encode(@Model.BusStops)), @Html.Raw(Json.Encode(@Model.BusLines)), @Model.ServerTimeMilliseconds);
         ko.applyBindings(context);
 
         map.addListener('click', function(e)

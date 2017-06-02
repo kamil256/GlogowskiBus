@@ -1,56 +1,16 @@
-﻿function BusStops(busStops)
+﻿function BusStops(busStopsArray)
 {
     var self = this;
 
-    var elements = [];
-    for (var i = 0; i < busStops.length; i++)
-        elements.push(busStops[i]);
+    var elements = new Collection(busStopsArray);
 
-    self.length = elements.length;
-
-    self.count = elements.length;
-
-    self.getElementAt = function(index)
-    {
-        return elements[index];
-    };
-
-    self.getFirst = function()
-    {
-        if (elements.length > 0)
-            return elements[0];
-        return null;
-    };
-
-    self.getLast = function()
-    {
-        if (elements.length > 0)
-            return elements[elements.length - 1];
-        return null;
-    };
-
-    self.getSingle = function(condition)
-    {
-        if (condition)
-            for (var i = 0; i < elements.length; i++)
-                if (condition(elements[i]))
-                    return elements[i];
-        return null;
-    };
-
-    self.get = function(condition)
-    {
-        var result = [];
-        for (var i = 0; i < elements.length; i++)
-            if (condition(elements[i]))
-                result.push(elements[i]);
-        return result;
-    };
-
-    self.getAll = function()
-    {
-        return elements;
-    };
+    self.count = elements.count;
+    self.getElementAt = elements.getElementAt;
+    self.getFirst = elements.getFirst;
+    self.getLast = elements.getLast;
+    self.getSingle = elements.getSingle;
+    self.get = elements.get;
+    self.getAll = elements.getAll;
 }
 
 function BusStop(name, latitude, longitude)

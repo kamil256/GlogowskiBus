@@ -1,45 +1,67 @@
-﻿function Context(busStopsFromModel, busLinesFromModel)
+﻿function Context(busStopsFromModel, busLinesFromModel, serverTimeMilliseconds)
 {
-    var context = this;
-
-    context.daysOfWeek = ['Dzień roboczy', 'Sobota', 'Niedziela'];
-
-    context.getDayOfWeek = function(day)
+    function ServerTime(serverTimeMilliseconds)
     {
-        switch (day)
+        var self = this;
+
+        var serverTime = Number(serverTimeMilliseconds);
+
+        var timeDifference = serverTime - new Date().getTime();
+
+        self.now = function()
         {
-            case 0:
-                return context.daysOfWeek[2];
-                break;
-            case 1: case 2: case 3: case 4: case 5:
-                return context.daysOfWeek[0];
-                break;
-            case 6:
-                return context.daysOfWeek[1];
-        }
-        return null;
+            return new Date(new Date().getTime() + timeDifference);
+        };
+
+        self.daysOfWeek = ['Dzień roboczy', 'Sobota', 'Niedziela'];
+
+        self.getDayOfWeek = function()
+        {
+            switch (self.now().getDay())
+            {
+                case 0:
+                    return self.daysOfWeek[2];
+                    break;
+                case 1: case 2: case 3: case 4: case 5:
+                    return self.daysOfWeek[0];
+                    break;
+                case 6:
+                    return self.daysOfWeek[1];
+            }
+            return null;
+        };
+
+        self.dayOfWeekYesterday = function()
+        {
+            return self.getDayOfWeek((self.now().getDay() - 1) % 7);
+        };
+
+        self.dayOfWeekToday = function()
+        {
+            return self.getDayOfWeek(self.now().getDay());
+        };
+
+        self.dayOfWeekTomorrow = function()
+        {
+            return self.getDayOfWeek((self.now().getDay() + 1) % 7);
+        };
     }
 
-    context.dayOfWeekYesterday = function()
-    {
-        return context.getDayOfWeek((serverTime.now().getDay() - 1) % 7);
-    };
+    var context = this;
 
-    context.dayOfWeekToday = function()
-    {
-        return context.getDayOfWeek(serverTime.now().getDay());
-    };
+    context.serverTime = new ServerTime(serverTimeMilliseconds);
 
-    context.dayOfWeekTomorrow = function()
-    {
-        return context.getDayOfWeek((serverTime.now().getDay() + 1) % 7);
-    };
+    
+
+    
+
+    
 
     var busStops = [];
     for (var i = 0; i < busStopsFromModel.length; i++)
         busStops.push(new BusStop(busStopsFromModel[i].Name, busStopsFromModel[i].Latitude, busStopsFromModel[i].Longitude));
-
     context.busStops = new BusStops(busStops);
+
     context.busLines = new BusLines(busLinesFromModel);
     context.routes = new Routes();
     context.points = new Points();
@@ -66,7 +88,7 @@
 
         self.departureTime = ko.observable();
 
-        self.selectedDayOfWeek = ko.observable(context.dayOfWeekToday());
+        self.selectedDayOfWeek = ko.observable(context.serverTime.dayOfWeekToday());
 
         self.busStops = ko.computed(function()
         {
@@ -147,7 +169,7 @@
             if (newDepartureTime != null)
                 newDepartureTime.route.selectBusStop(self.busStop());
             else
-                self.selectedDayOfWeek(context.dayOfWeekToday());
+                self.selectedDayOfWeek(context.serverTime.dayOfWeekToday());
 
             if (newDepartureTime != null && self.busStop() != null && !newDepartureTime.route.busLine.containsBusStop(self.busStop()))
                 self.busStop(null);
@@ -165,7 +187,6 @@
     context.actualSelection = new ActualSelection();
 
     
-
     function Point(pointFromModel)
     {
         var self = this;
@@ -186,7 +207,7 @@
         for (var i = 0; i < context.routes.length; i++)
             points = points.concat(context.routes[i].points);
 
-        
+
         for (var i = 0; i < points.length; i++)
             if (points[i].busStop != null)
                 points[i].busStop.points.push(points[i]);
@@ -227,13 +248,13 @@
 
         self.isOnTour = function(now)
         {
-            var currentMinutesSinceMidnight = 60 * serverTime.now().getHours() + serverTime.now().getMinutes();
+            var currentMinutesSinceMidnight = 60 * context.serverTime.now().getHours() + context.serverTime.now().getMinutes();
             var departureMinutesSinceMidnight = 60 * self.hours + self.minutes;
             var arrivalMinutesSinceMidnight = departureMinutesSinceMidnight + Math.floor(self.route.points[self.route.points.length - 1].timeOffset / 60000);
 
-            if (self.dayOfWeek == context.dayOfWeekToday() && currentMinutesSinceMidnight >= departureMinutesSinceMidnight && currentMinutesSinceMidnight < arrivalMinutesSinceMidnight)
+            if (self.dayOfWeek == context.serverTime.dayOfWeekToday() && currentMinutesSinceMidnight >= departureMinutesSinceMidnight && currentMinutesSinceMidnight < arrivalMinutesSinceMidnight)
                 return true;
-            else if (self.dayOfWeek == context.dayOfWeekYesterday() && currentMinutesSinceMidnight >= departureMinutesSinceMidnight - 24 * 60 && currentMinutesSinceMidnight < arrivalMinutesSinceMidnight - 24 * 60)
+            else if (self.dayOfWeek == context.serverTime.dayOfWeekYesterday() && currentMinutesSinceMidnight >= departureMinutesSinceMidnight - 24 * 60 && currentMinutesSinceMidnight < arrivalMinutesSinceMidnight - 24 * 60)
                 return true;
             else
                 return false;
@@ -268,14 +289,14 @@
                 var minutes = departureTime.minutes + busStopPoint.timeOffset / 60000;
                 var hours = departureTime.hours + Math.floor(minutes / 60);
                 var dayOfWeek = departureTime.dayOfWeek;
-                
+
                 if (hours > 23)
                 {
                     //if ((dayOfWeek == context.daysOfWeek[0] && serverTime.now().getDay() == 5) || dayOfWeek != context.daysOfWeek[0])
                     //{
                     //    dayOfWeek = context.daysOfWeek[(context.daysOfWeek.indexOf(dayOfWeek) + 1) % 3]
                     //}
-                    dayOfWeek = context.dayOfWeekTomorrow();
+                    dayOfWeek = context.serverTime.dayOfWeekTomorrow();
                 }
                 hours %= 24;
                 minutes %= 60;
@@ -296,7 +317,7 @@
 
             if (context.actualSelection.busStop())
             {
-                var currentMinutesSinceMidnight = 60 * serverTime.now().getHours() + serverTime.now().getMinutes();
+                var currentMinutesSinceMidnight = 60 * context.serverTime.now().getHours() + context.serverTime.now().getMinutes();
 
                 for (var i = 0; i < busLine.routes.length; i++)
                 {
@@ -388,19 +409,19 @@
         {
             if (routeFromModel.DepartureTimes[i].WorkingDay)
             {
-                var departureTime = new DepartureTime(routeFromModel.DepartureTimes[i].Hours, routeFromModel.DepartureTimes[i].Minutes, context.daysOfWeek[0]);
+                var departureTime = new DepartureTime(routeFromModel.DepartureTimes[i].Hours, routeFromModel.DepartureTimes[i].Minutes, context.serverTime.daysOfWeek[0]);
                 departureTime.route = self;
                 self.departureTimes.push(departureTime);
             }
             if (routeFromModel.DepartureTimes[i].Saturday)
             {
-                var departureTime = new DepartureTime(routeFromModel.DepartureTimes[i].Hours, routeFromModel.DepartureTimes[i].Minutes, context.daysOfWeek[1]);
+                var departureTime = new DepartureTime(routeFromModel.DepartureTimes[i].Hours, routeFromModel.DepartureTimes[i].Minutes, context.serverTime.daysOfWeek[1]);
                 departureTime.route = self;
                 self.departureTimes.push(departureTime);
             }
             if (routeFromModel.DepartureTimes[i].Sunday)
             {
-                var departureTime = new DepartureTime(routeFromModel.DepartureTimes[i].Hours, routeFromModel.DepartureTimes[i].Minutes, context.daysOfWeek[2]);
+                var departureTime = new DepartureTime(routeFromModel.DepartureTimes[i].Hours, routeFromModel.DepartureTimes[i].Minutes, context.serverTime.daysOfWeek[2]);
                 departureTime.route = self;
                 self.departureTimes.push(departureTime);
             }
@@ -496,17 +517,17 @@
 
         self.getDepartureTimesForYesterday = function()
         {
-            return self.getDepartureTimesForDayOfWeek(context.dayOfWeekYesterday());
+            return self.getDepartureTimesForDayOfWeek(context.serverTime.dayOfWeekYesterday());
         };
 
         self.getDepartureTimesForToday = function()
         {
-            return self.getDepartureTimesForDayOfWeek(context.dayOfWeekToday());
+            return self.getDepartureTimesForDayOfWeek(context.serverTime.dayOfWeekToday());
         };
 
         self.getDepartureTimesForTomorrow = function()
         {
-            return self.getDepartureTimesForDayOfWeek(context.dayOfWeekTomorrow());
+            return self.getDepartureTimesForDayOfWeek(context.serverTime.dayOfWeekTomorrow());
         };
     }
 
@@ -556,7 +577,7 @@
                 if (busStop.points[i].route.busLine === self)
                     return true;
             return false;
-        };        
+        };
     }
 
     function BusLines(busLinesFromModel)
@@ -572,6 +593,7 @@
         for (var i = 0; i < busLines.length; i++)
             self[i] = busLines[i];
     }
+    
 
     function Bus(departureTime)
     {
@@ -631,7 +653,7 @@
 
         var update = function()
         {
-            var now = serverTime.now();
+            var now = context.serverTime.now();
             var currentMillisecondsSinceMidnight = 60 * 60 * 1000 * now.getHours() + 60 * 1000 * now.getMinutes() + 1000 * now.getSeconds() + now.getMilliseconds();
             if (currentMillisecondsSinceMidnight < departureMillisecondsSinceMidnight)
                 departureMillisecondsSinceMidnight -= 24 * 60 * 60 * 1000;
@@ -687,7 +709,7 @@
 
         var tick = function()
         {
-            if (serverTime.now().getSeconds() === 0)
+            if (context.serverTime.now().getSeconds() === 0)
                 update();
             setTimeout(tick, 1000);
         }
@@ -695,7 +717,7 @@
         var update = function()
         {
             for (var i = 0; i < context.departureTimes.length; i++)
-                if (context.departureTimes[i].isOnTour(serverTime.now()))
+                if (context.departureTimes[i].isOnTour(context.serverTime.now()))
                     self.add(context.departureTimes[i]);
         };
 
