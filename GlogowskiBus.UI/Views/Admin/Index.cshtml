@@ -1,0 +1,48 @@
+﻿@model GlogowskiBus.UI.Models.HomeBusPositionsViewModel
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="busStopsList" data-bind="visible: selectedTab() == tabs[0]">
+</div>
+
+<div id="busLinesList" data-bind="visible: selectedTab() == tabs[1]">
+    <button class="btn btn-default">Nowa linia</button>
+    <div data-bind="foreach: busLines.toArray()">
+        <p>
+            LINIA <span data-bind="text: busNumber"></span>
+            <button class="btn btn-xs btn-default">Edytuj</button>
+            <button class="btn btn-xs btn-default">Usuń</button>
+            <button class="btn btn-xs btn-default">Nowa trasa</button>
+        </p>
+        <!-- ko foreach: $data.routes.toArray() -->
+        <div data-bind="click: function() { $root.selectedRoute($data); return true; }, css: { active: $root.selectedRoute() == $data }">
+            <div>
+                <input data-bind="checked: $root.selectedRoute() == $data, checkedValue: true" type="radio" />
+            </div>
+            <div>
+                <p>
+                    TRASA
+                    <button class="btn btn-xs btn-default">Edytuj</button>
+                    <button class="btn btn-xs btn-default">Usuń</button>
+                </p>
+                <p data-bind="text: busStops.getFirst().name + ' - ' + busStops.getLast().name"></p>
+                <p data-bind="text: indexMark + ' - ' + details, visible: indexMark && details"></p>
+            </div>
+        </div>
+        <!-- /ko -->
+    </div>
+</div>
+
+<script>
+window.onload = function()
+{
+    markerIcons = new MarkerIcons();
+    serverTime = new ServerTime(@Model.ServerTimeMilliseconds);
+
+    adminIndexContext = new AdminIndexContext(@Html.Raw(Json.Encode(@Model.BusStops)), @Html.Raw(Json.Encode(@Model.BusLines)));
+    ko.applyBindings(adminIndexContext);
+}
+</script>

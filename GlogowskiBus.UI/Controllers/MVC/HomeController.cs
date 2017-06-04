@@ -9,7 +9,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace GlogowskiBus.UI.Controllers
+namespace GlogowskiBus.UI.Controllers.MVC
 {
     public class HomeController : Controller
     {
