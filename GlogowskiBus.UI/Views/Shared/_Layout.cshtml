@@ -6,13 +6,6 @@
     <title>@ViewBag.Title</title>
     <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <style>
-        #map {
-            float: initial;
-            height: 100%;
-            width: 100%;
-        }
-    </style>
 </head>
 <body>
     <div id="map"></div>
@@ -26,24 +19,6 @@
             @RenderBody()
         </div>
     </aside>
-
-    @*<aside>
-        <div class="tab leftTab" data-bind="click: function() { selectedTab(tabs[0]); }, css: { active: selectedTab() == tabs[0] }">
-            <span data-bind="text: tabs[0]"></span>
-            <div class="mask">
-            </div>
-        </div>
-        
-        <div class="tab rightTab" data-bind="click: function() { selectedTab(tabs[1]); }, css: { active: selectedTab() == tabs[1] }">
-            <span data-bind="text: tabs[1]"></span>
-            <div class="mask">
-            </div>
-        </div>
-        
-        <div class="content">
-            @RenderBody()
-        </div>
-    </aside>*@
 
     <footer>
         <div class="logoDescription">
