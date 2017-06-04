@@ -25,14 +25,14 @@
     </nav>*@
 
     <aside>
-        <div class="tab leftTab" data-bind="click: function(data, event) { tab('ROZKŁAD JAZDY'); }, css: { active: tab() == 'ROZKŁAD JAZDY' }">
-            ROZKŁAD JAZDY
+        <div class="tab leftTab" data-bind="click: function() { selectedTab(tabs[0]); }, css: { active: selectedTab() == tabs[0] }">
+            <span data-bind="text: tabs[0]"></span>
             <div class="mask">
             </div>
         </div>
         
-        <div class="tab rightTab" data-bind="click: function(data, event) { tab('ZNAJDŹ POŁĄCZENIE'); }, css: { active: tab() == 'ZNAJDŹ POŁĄCZENIE' }">
-            ZNAJDŹ POŁĄCZENIE
+        <div class="tab rightTab" data-bind="click: function() { selectedTab(tabs[1]); }, css: { active: selectedTab() == tabs[1] }">
+            <span data-bind="text: tabs[1]"></span>
             <div class="mask">
             </div>
         </div>
@@ -62,11 +62,14 @@
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD44zRKQDHDs7dMdwhXP7a8XjJzwuuFNJA&callback=initMap" async defer></script>
-    <script src="~/Scripts/MarkerIcons.js"></script>
     <script src="~/Scripts/Maps.js"></script>
+    <script src="~/Scripts/MarkerIcons.js"></script>
+    <script src="~/Scripts/ServerTime.js"></script>
     <script src="~/Scripts/Common.js"></script>
     <script src="~/Scripts/BusStops.js"></script>
+    <script src="~/Scripts/BusLines.js"></script>
     <script src="~/Scripts/Buses.js"></script>
+    <script src="~/Scripts/TimeTableContext.js"></script>
     <script src="~/Scripts/knockout-3.4.2.js"></script>
 </body>
 </html>

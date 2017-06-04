@@ -1,16 +1,19 @@
-﻿function BusStops(busStopsArray)
+﻿function BusStops()
 {
     var self = this;
 
-    var elements = new Collection(busStopsArray);
+    var busStops = new Collection();
 
-    self.count = elements.count;
-    self.getElementAt = elements.getElementAt;
-    self.getFirst = elements.getFirst;
-    self.getLast = elements.getLast;
-    self.getSingle = elements.getSingle;
-    self.get = elements.get;
-    self.getAll = elements.getAll;
+    self.count = busStops.count;
+    self.add = busStops.add;
+    self.addMany = busStops.addMany;
+    self.getAt = busStops.getAt;
+    self.getFirst = busStops.getFirst;
+    self.getLast = busStops.getLast;
+    self.getSingle = busStops.getSingle;
+    self.get = busStops.get;
+    self.toArray = busStops.toArray;
+    self.sort = busStops.sort;
 }
 
 function BusStop(name, latitude, longitude)
@@ -20,8 +23,7 @@ function BusStop(name, latitude, longitude)
     self.name = name;
     self.latitude = latitude;
     self.longitude = longitude;
-
-    self.points = [];
+    self.points = new Collection();
 
     var marker = new google.maps.Marker(
     {
@@ -37,11 +39,12 @@ function BusStop(name, latitude, longitude)
         zIndex: 0
     });
 
-    self.click = null;
+    self.selectBusStopEvent = null;
+
     marker.addListener('click', function()
     {
-        if (self.click)
-            self.click(self);
+        if (self.selectBusStopEvent)
+            self.selectBusStopEvent(self);
     });
 
     self.select = function()

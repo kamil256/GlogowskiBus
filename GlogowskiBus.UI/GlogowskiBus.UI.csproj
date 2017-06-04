@@ -152,6 +152,9 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Buses.js" />
+    <Content Include="Scripts\ServerTime.js" />
+    <Content Include="Scripts\TimeTableContext.js" />
+    <Content Include="Scripts\BusLines.js" />
     <Content Include="Scripts\BusStops.js" />
     <Content Include="Scripts\Common.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />

@@ -1,52 +1,85 @@
-﻿function Collection(elementsParam)
+﻿function Collection()
 {
     var self = this;
 
-    var elements = [];
-    for (var i = 0; i < elementsParam.length; i++)
-        elements.push(elementsParam[i]);
+    var items = [];
 
-    this.count = elements.length;
-
-    this.getElementAt = function(index)
+    this.count = function()
     {
-        return elements[index];
+        return items.length;
+    };
+
+    this.add = function(item)
+    {
+        if (items.indexOf(item) == -1)
+            items.push(item);
+    };
+
+    this.remove = function(item)
+    {
+        items.splice(items.indexOf(item), 1);
+    };
+
+    this.addMany = function(itemsArray)
+    {
+        for (var i = 0; i < itemsArray.length; i++)
+            this.add(itemsArray[i]);
+    };
+
+    this.getAt = function(index)
+    {
+        return items[index];
     };
 
     this.getFirst = function()
     {
-        if (elements.length > 0)
-            return elements[0];
+        if (items.length > 0)
+            return items[0];
         return null;
     };
 
     this.getLast = function()
     {
-        if (elements.length > 0)
-            return elements[elements.length - 1];
+        if (items.length > 0)
+            return items[items.length - 1];
         return null;
     };
 
     self.getSingle = function(condition)
     {
         if (condition)
-            for (var i = 0; i < elements.length; i++)
-                if (condition(elements[i]))
-                    return elements[i];
+            for (var i = 0; i < items.length; i++)
+                if (condition(items[i]))
+                    return items[i];
         return null;
     };
 
     this.get = function(condition)
     {
-        var result = [];
-        for (var i = 0; i < elements.length; i++)
-            if (condition(elements[i]))
-                result.push(elements[i]);
+        var result = new Collection();
+        for (var i = 0; i < items.length; i++)
+            if (condition(items[i]))
+                result.add(items[i]);
         return result;
     };
 
-    this.getAll = function()
+    this.toArray = function()
     {
-        return elements;
+        return items;
     };
+
+    this.sort = function(compareFunction)
+    {
+        items.sort(compareFunction);
+    };
+}
+
+function getPositionBetweenTwoPoints(startPoint, endPoint, currentTimeOffset)
+{
+    var latitudeDifference = endPoint.latitude - startPoint.latitude;
+    var longitudeDifference = endPoint.longitude - startPoint.longitude;
+    var timeRatio = (currentTimeOffset - startPoint.timeOffset) / (endPoint.timeOffset - startPoint.timeOffset);
+    var newPointLatitude = startPoint.latitude + latitudeDifference * timeRatio;
+    var newPointLongitude = startPoint.longitude + longitudeDifference * timeRatio;
+    return new google.maps.LatLng(newPointLatitude, newPointLongitude);
 }
