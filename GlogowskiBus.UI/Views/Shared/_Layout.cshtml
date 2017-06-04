@@ -17,14 +17,17 @@
 <body>
     <div id="map"></div>
 
-    @*<nav>
-        <ul>
-            <li><a href='@Url.Action("Index")'>GłogowskiBus</a></li>
-            <li><a href="#">ZALOGUJ</a></li><li><a href="#" data-bind="click: function() { view('TimeTable'); }">ROZKŁAD JAZDY</a></li><li><a href="#">WYSZUKAJ POŁĄCZENIE</a></li><li><a class='@(ViewBag.Title == "Autobusy i przystanki" ? "active" : null)' href='#@*' data-bind="click: function() { view('Navigation'); }">AUTOBUSY I PRZYSTANKI</a></li>
-        </ul>
-    </nav>*@
-
     <aside>
+        <ul class="tabs" data-bind="css: { oneTab: tabs.length == 1, twoTabs: tabs.length == 2, threeTabs: tabs.length == 3 }, foreach: tabs">
+            <li class="tab" data-bind="click: function() { $root.selectedTab($data); }, css: { active: $root.selectedTab() == $data }, text: $data"></li>
+        </ul>
+
+        <div class="content">
+            @RenderBody()
+        </div>
+    </aside>
+
+    @*<aside>
         <div class="tab leftTab" data-bind="click: function() { selectedTab(tabs[0]); }, css: { active: selectedTab() == tabs[0] }">
             <span data-bind="text: tabs[0]"></span>
             <div class="mask">
@@ -40,7 +43,7 @@
         <div class="content">
             @RenderBody()
         </div>
-    </aside>
+    </aside>*@
 
     <footer>
         <div class="logoDescription">

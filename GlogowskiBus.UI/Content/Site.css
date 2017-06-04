@@ -65,74 +65,77 @@ nav > ul > li:first-child > a {
 }
 
 aside {
+    border-radius: 3px;
     bottom: 80px;
-    box-shadow: 0 0 10px #000;
+    box-shadow: 0 0 10px 2px #000;
     position: fixed;
     right: 10px;
     top: 10px;
     width: 500px;
 }
 
-aside > .tab {
+aside > .tabs{
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
+    list-style-type: none;
+    margin: 0;
+    overflow: auto;
+    padding: 0;
+}
+
+aside > .tabs > .tab {
+    float: left;
     font-weight: bold;
+    line-height: 50px;
     height: 50px;
-    line-height: 40px;
-    position: absolute;
     text-align: center;
-    top: 0;
-    width: 50%;
 }
 
-aside > .leftTab {
-    left: 0;
-}
-
-aside > .rightTab {
-    right: 0;
-}
-
-aside > .tab.active {
-    background-color: white;
-    box-shadow: 0 0 10px black;
-    color: black;
-    cursor: default;
-}
-
-aside > .tab:not(.active) {
+aside > .tabs > .tab:not(.active) {
     background-color: rgba(0, 0, 0, 0.4);
+    box-shadow: inset 0 0 10px 3px #777 ;
     color: #555;
     cursor: pointer;
 }
 
-aside > .tab.active > .mask {
+aside > .tabs > .tab.active {
     background-color: white;
-    bottom: 0;
-    height: 20px;
-    left: 0;
-    position: absolute;
-    width: 100%;
-    z-index: 1;
+    color: black;
+    cursor: default;
 }
 
-aside > .tab:not(.active) > .mask {
-    display: none;
+aside > .tabs > .tab:first-child {
+    border-top-left-radius: 3px;
+}
+
+aside > .tabs > .tab:last-child {
+    border-top-right-radius: 3px;
+}
+
+aside > .tabs.oneTab > .tab {
+    width: 100%;
+}
+
+aside > .tabs.twoTabs > .tab {
+    width: 50%;
+}
+
+aside > .tabs.threeTabs > .tab {
+    width: 33%;
+}
+
+aside > .tabs.threeTabs > .tab:last-child {
+    width: 34%;
 }
 
 aside > .content {
-    box-shadow: 0 0 10px black;
-    width: 100%;
-    height: 10px;
     background-color: white;
-    height: 200px;
-    height: calc(100% - 40px);
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px;
+    height: calc(100% - 50px);
     overflow: auto;
-    position: absolute;
-    top: 40px;
     padding: 15px;
+    width: 100%;
 }
 
 aside p {
