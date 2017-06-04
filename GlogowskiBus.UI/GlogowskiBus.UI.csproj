@@ -178,13 +178,13 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\NinjectResolver.cs" />
-    <Compile Include="Models\BusLine.cs" />
-    <Compile Include="Models\BusStop.cs" />
-    <Compile Include="Models\DepartureTime.cs" />
+    <Compile Include="Models\BusLineDTO.cs" />
+    <Compile Include="Models\BusStopDTO.cs" />
+    <Compile Include="Models\DepartureTimeDTO.cs" />
     <Compile Include="Models\HomeBusPositionsViewModel.cs" />
     <Compile Include="Models\HomeIndexViewModel.cs" />
-    <Compile Include="Models\Route.cs" />
-    <Compile Include="Models\Point.cs" />
+    <Compile Include="Models\RouteDTO.cs" />
+    <Compile Include="Models\PointDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

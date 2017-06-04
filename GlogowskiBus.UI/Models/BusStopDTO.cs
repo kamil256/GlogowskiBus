@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace GlogowskiBus.UI.Models
 {
-    public class BusStop
+    public class BusStopDTO
     {
-        public List<string> BusNumbers { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }

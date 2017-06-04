@@ -29,6 +29,7 @@ namespace GlogowskiBus.UnitTests
         {
             new DAL.Entities.Route()
             {
+                RouteId = 1,
                 Details = "Route details",
                 BusLine = fakeBusLines[0],
                 IndexMark = "R"
@@ -39,12 +40,14 @@ namespace GlogowskiBus.UnitTests
         {
             new DAL.Entities.BusStop()
             {
+                BusStopId = 1,
                 Name = "Bus stop 1",
                 Latitude = 1.2,
                 Longitude = 2.3
             },
             new DAL.Entities.BusStop()
             {
+                BusStopId = 2,
                 Name = "Bus stop 2",
                 Latitude = 5.6,
                 Longitude = 6.7
@@ -55,12 +58,14 @@ namespace GlogowskiBus.UnitTests
         {
             new DAL.Entities.Point
             {
+                PointId = 1,
                 TimeOffset = 0,
                 Route = fakeRoutes[0],
                 BusStop = fakeBusStops[0]
             },
             new DAL.Entities.Point
             {
+                PointId = 2,
                 Latitude = 3.4,
                 Longitude = 4.5,
                 TimeOffset = 1000,
@@ -69,6 +74,7 @@ namespace GlogowskiBus.UnitTests
             },
             new DAL.Entities.Point
             {
+                PointId = 3,
                 TimeOffset = 2000,
                 Route = fakeRoutes[0],
                 BusStop = fakeBusStops[1]
@@ -79,6 +85,7 @@ namespace GlogowskiBus.UnitTests
         {
             new DAL.Entities.DepartureTime()
             {
+                DepartureTimeId = 1,
                 Hours = 12,
                 Minutes = 30,
                 WorkingDay = true,
@@ -116,58 +123,71 @@ namespace GlogowskiBus.UnitTests
 
             // Assert
             Assert.AreEqual(2, busStops.Count());
-            Assert.AreEqual(1, busStops[0].BusNumbers.Count);
-            Assert.AreEqual("1", busStops[0].BusNumbers[0]);
+            Assert.AreEqual(1, busStops[0].Id);
             Assert.AreEqual("Bus stop 1", busStops[0].Name);
             Assert.AreEqual(1.2, busStops[0].Latitude);
             Assert.AreEqual(2.3, busStops[0].Longitude);
-            Assert.AreEqual(1, busStops[1].BusNumbers.Count);
-            Assert.AreEqual("1", busStops[1].BusNumbers[0]);
+            Assert.AreEqual(2, busStops[1].Id);
             Assert.AreEqual("Bus stop 2", busStops[1].Name);
             Assert.AreEqual(5.6, busStops[1].Latitude);
             Assert.AreEqual(6.7, busStops[1].Longitude);
         }
 
         [Test]
-        public void GetBusStop_WhenBusStopDoesNotExist_ReturnsNull()
+        public void GetAllBusLines_WhenCalled_ReturnsAllBusLines()
         {
             // Arrange
-            IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
-            busStopRepository.Get().Returns(fakeBusStops);
+            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
+            busLineRepository.Get().Returns(fakeBusLines);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
-            unitOfWork.BusStopRepository.Returns(busStopRepository);
+            unitOfWork.BusLineRepository.Returns(busLineRepository);
 
             BusService busService = new BusService(unitOfWork);
 
             // Act
-            BLL.Concrete.BusStop busStop = busService.GetBusStop(1.5, 2.33);
+            List<BLL.Concrete.BusLine> busLines = busService.GetAllBusLines();
 
             // Assert
-            Assert.IsNull(busStop);
-        }
+            busLineRepository.Received().Get();
 
-        [Test]
-        public void GetBusStop_WhenBusStopExists_ReturnsBusStop()
-        {
-            // Arrange
-            IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
-            busStopRepository.Get().Returns(fakeBusStops);
+            Assert.AreEqual(1, busLines.Count);
+            Assert.AreEqual(1, busLines[0].Id);
+            Assert.AreEqual("1", busLines[0].BusNumber);
 
-            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
-            unitOfWork.BusStopRepository.Returns(busStopRepository);
+            Assert.AreEqual(1, busLines[0].Routes.Count);
+            Assert.AreEqual(1, busLines[0].Routes[0].Id);
+            Assert.AreEqual("Route details", busLines[0].Routes[0].Details);
+            Assert.AreEqual("R", busLines[0].Routes[0].IndexMark);
 
-            BusService busService = new BusService(unitOfWork);
+            Assert.AreEqual(3, busLines[0].Routes[0].Points.Count);
 
-            // Act
-            BLL.Concrete.BusStop busStop = busService.GetBusStop(1.2, 2.3);
+            Assert.AreEqual(1, busLines[0].Routes[0].Points[0].Id);
+            Assert.AreEqual(1.2, busLines[0].Routes[0].Points[0].Latitude);
+            Assert.AreEqual(2.3, busLines[0].Routes[0].Points[0].Longitude);
+            Assert.AreEqual(true, busLines[0].Routes[0].Points[0].IsBusStop);
+            Assert.AreEqual(0, busLines[0].Routes[0].Points[0].TimeOffset);
 
-            // Assert
-            Assert.AreEqual(1, busStop.BusNumbers.Count());
-            Assert.AreEqual("1", busStop.BusNumbers[0]);
-            Assert.AreEqual("Bus stop 1", busStop.Name);
-            Assert.AreEqual(1.2, busStop.Latitude);
-            Assert.AreEqual(2.3, busStop.Longitude);
+            Assert.AreEqual(2, busLines[0].Routes[0].Points[1].Id);
+            Assert.AreEqual(3.4, busLines[0].Routes[0].Points[1].Latitude);
+            Assert.AreEqual(4.5, busLines[0].Routes[0].Points[1].Longitude);
+            Assert.AreEqual(false, busLines[0].Routes[0].Points[1].IsBusStop);
+            Assert.AreEqual(1000, busLines[0].Routes[0].Points[1].TimeOffset);
+
+            Assert.AreEqual(3, busLines[0].Routes[0].Points[2].Id);
+            Assert.AreEqual(5.6, busLines[0].Routes[0].Points[2].Latitude);
+            Assert.AreEqual(6.7, busLines[0].Routes[0].Points[2].Longitude);
+            Assert.AreEqual(true, busLines[0].Routes[0].Points[2].IsBusStop);
+            Assert.AreEqual(2000, busLines[0].Routes[0].Points[2].TimeOffset);
+
+            Assert.AreEqual(1, busLines[0].Routes[0].DepartureTimes.Count);
+
+            Assert.AreEqual(1, busLines[0].Routes[0].DepartureTimes[0].Id);
+            Assert.AreEqual(12, busLines[0].Routes[0].DepartureTimes[0].Hours);
+            Assert.AreEqual(30, busLines[0].Routes[0].DepartureTimes[0].Minutes);
+            Assert.AreEqual(true, busLines[0].Routes[0].DepartureTimes[0].WorkingDay);
+            Assert.AreEqual(false, busLines[0].Routes[0].DepartureTimes[0].Saturday);
+            Assert.AreEqual(false, busLines[0].Routes[0].DepartureTimes[0].Sunday);
         }
 
         [Test]
@@ -627,55 +647,6 @@ namespace GlogowskiBus.UnitTests
             unitOfWork.Received().Save();
         }
 
-        [Test]
-        public void GetAllBusLines_WhenCalled_ReturnsAllBusLines()
-        {
-            // Arrange
-            IRepository<DAL.Entities.BusLine, int> busLineRepository = Substitute.For<IRepository<DAL.Entities.BusLine, int>>();
-            busLineRepository.Get().Returns(fakeBusLines);
-
-            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
-            unitOfWork.BusLineRepository.Returns(busLineRepository);
-
-            BusService busService = new BusService(unitOfWork);
-
-            // Act
-            List<BLL.Concrete.BusLine> busLines = busService.GetAllBusLines();
-
-            // Assert
-            busLineRepository.Received().Get();
-
-            Assert.AreEqual(1, busLines.Count);
-            Assert.AreEqual("1", busLines[0].BusNumber);
-
-            Assert.AreEqual(1, busLines[0].Routes.Count);
-            Assert.AreEqual("Route details", busLines[0].Routes[0].Details);
-            Assert.AreEqual("R", busLines[0].Routes[0].IndexMark);
-
-            Assert.AreEqual(3, busLines[0].Routes[0].Points.Count);
-
-            Assert.AreEqual(1.2, busLines[0].Routes[0].Points[0].Latitude);
-            Assert.AreEqual(2.3, busLines[0].Routes[0].Points[0].Longitude);
-            Assert.AreEqual(true, busLines[0].Routes[0].Points[0].IsBusStop);
-            Assert.AreEqual(0, busLines[0].Routes[0].Points[0].TimeOffset);
-
-            Assert.AreEqual(3.4, busLines[0].Routes[0].Points[1].Latitude);
-            Assert.AreEqual(4.5, busLines[0].Routes[0].Points[1].Longitude);
-            Assert.AreEqual(false, busLines[0].Routes[0].Points[1].IsBusStop);
-            Assert.AreEqual(1000, busLines[0].Routes[0].Points[1].TimeOffset);
-
-            Assert.AreEqual(5.6, busLines[0].Routes[0].Points[2].Latitude);
-            Assert.AreEqual(6.7, busLines[0].Routes[0].Points[2].Longitude);
-            Assert.AreEqual(true, busLines[0].Routes[0].Points[2].IsBusStop);
-            Assert.AreEqual(2000, busLines[0].Routes[0].Points[2].TimeOffset);
-
-            Assert.AreEqual(1, busLines[0].Routes[0].DepartureTimes.Count);
-
-            Assert.AreEqual(12, busLines[0].Routes[0].DepartureTimes[0].Hours);
-            Assert.AreEqual(30, busLines[0].Routes[0].DepartureTimes[0].Minutes);
-            Assert.AreEqual(true, busLines[0].Routes[0].DepartureTimes[0].WorkingDay);
-            Assert.AreEqual(false, busLines[0].Routes[0].DepartureTimes[0].Saturday);
-            Assert.AreEqual(false, busLines[0].Routes[0].DepartureTimes[0].Sunday);
-        }
+        
     }
 }

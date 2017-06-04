@@ -5,9 +5,10 @@ using System.Web;
 
 namespace GlogowskiBus.UI.Models
 {
-    public class BusLine
+    public class BusLineDTO
     {
+        public int Id { get; set; }
         public string BusNumber { get; set; }
-        public List<Route> Routes { get; set; }
+        public List<RouteDTO> Routes { get; set; }
     }
 }

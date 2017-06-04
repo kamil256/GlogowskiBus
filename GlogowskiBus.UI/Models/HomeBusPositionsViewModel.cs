@@ -9,7 +9,7 @@ namespace GlogowskiBus.UI.Models
     public class HomeBusPositionsViewModel
     {
         public long ServerTimeMilliseconds { get; set; }
-        public List<BusLine> BusLines { get; set; }
-        public IEnumerable<BusStop> BusStops { get; set; }
+        public List<BusLineDTO> BusLines { get; set; }
+        public IEnumerable<BusStopDTO> BusStops { get; set; }
     }
 }

@@ -12,20 +12,19 @@ using System.Web.Mvc;
 
 namespace GlogowskiBus.UnitTests
 {
+    [TestFixture]
     class AdminControllerTests
     {
         private static List<BLL.Concrete.BusStop> fakeBusStops = new List<BLL.Concrete.BusStop>()
         {
             new BLL.Concrete.BusStop()
             {
-                BusNumbers = new List<string>() { "1" },
                 Name = "Bus stop 1",
                 Latitude = 1.2,
                 Longitude = 2.3
             },
             new BLL.Concrete.BusStop()
             {
-                BusNumbers = new List<string>() { "1" },
                 Name = "Bus stop 2",
                 Latitude = 5.6,
                 Longitude = 6.7
@@ -98,14 +97,10 @@ namespace GlogowskiBus.UnitTests
             // Assert
             Assert.AreEqual(2, model.BusStops.Count());
 
-            Assert.AreEqual(1, model.BusStops.ElementAt(0).BusNumbers.Count());
-            Assert.AreEqual("1", model.BusStops.ElementAt(0).BusNumbers[0]);
             Assert.AreEqual(1.2, model.BusStops.ElementAt(0).Latitude, 1);
             Assert.AreEqual(2.3, model.BusStops.ElementAt(0).Longitude);
             Assert.AreEqual("Bus stop 1", model.BusStops.ElementAt(0).Name);
 
-            Assert.AreEqual(1, model.BusStops.ElementAt(1).BusNumbers.Count());
-            Assert.AreEqual("1", model.BusStops.ElementAt(1).BusNumbers[0]);
             Assert.AreEqual(5.6, model.BusStops.ElementAt(1).Latitude);
             Assert.AreEqual(6.7, model.BusStops.ElementAt(1).Longitude);
             Assert.AreEqual("Bus stop 2", model.BusStops.ElementAt(1).Name);
@@ -138,14 +133,10 @@ namespace GlogowskiBus.UnitTests
 
             Assert.AreEqual(2, model.BusStops.Count());
 
-            Assert.AreEqual(1, model.BusStops.ElementAt(0).BusNumbers.Count());
-            Assert.AreEqual("1", model.BusStops.ElementAt(0).BusNumbers[0]);
             Assert.AreEqual(1.2, model.BusStops.ElementAt(0).Latitude);
             Assert.AreEqual(2.3, model.BusStops.ElementAt(0).Longitude);
             Assert.AreEqual("Bus stop 1", model.BusStops.ElementAt(0).Name);
 
-            Assert.AreEqual(1, model.BusStops.ElementAt(1).BusNumbers.Count());
-            Assert.AreEqual("1", model.BusStops.ElementAt(1).BusNumbers[0]);
             Assert.AreEqual(5.6, model.BusStops.ElementAt(1).Latitude);
             Assert.AreEqual(6.7, model.BusStops.ElementAt(1).Longitude);
             Assert.AreEqual("Bus stop 2", model.BusStops.ElementAt(1).Name);
@@ -187,14 +178,10 @@ namespace GlogowskiBus.UnitTests
 
             Assert.AreEqual(2, model.BusStops.Count());
 
-            Assert.AreEqual(1, model.BusStops.ElementAt(0).BusNumbers.Count());
-            Assert.AreEqual("1", model.BusStops.ElementAt(0).BusNumbers[0]);
             Assert.AreEqual(1.2, model.BusStops.ElementAt(0).Latitude);
             Assert.AreEqual(2.3, model.BusStops.ElementAt(0).Longitude);
             Assert.AreEqual("Bus stop 1", model.BusStops.ElementAt(0).Name);
 
-            Assert.AreEqual(1, model.BusStops.ElementAt(1).BusNumbers.Count());
-            Assert.AreEqual("1", model.BusStops.ElementAt(1).BusNumbers[0]);
             Assert.AreEqual(5.6, model.BusStops.ElementAt(1).Latitude);
             Assert.AreEqual(6.7, model.BusStops.ElementAt(1).Longitude);
             Assert.AreEqual("Bus stop 2", model.BusStops.ElementAt(1).Name);

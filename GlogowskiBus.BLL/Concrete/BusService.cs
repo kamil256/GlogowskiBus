@@ -23,16 +23,11 @@ namespace GlogowskiBus.BLL.Concrete
         {
             return unitOfWork.BusStopRepository.Get().Select(x => new BusStop()
             {
+                Id = x.BusStopId,
                 Name = x.Name,
                 Latitude = x.Latitude,
-                Longitude = x.Longitude,
-                BusNumbers = x.Points.Select(y => y.Route.BusLine.BusNumber).Distinct().ToList()
+                Longitude = x.Longitude
             }).ToList();
-        }
-
-        public BusStop GetBusStop(double latitude, double longitude)
-        {
-            return GetAllBusStops().FirstOrDefault(x => x.Latitude == latitude && x.Longitude == longitude);
         }
 
         public void CreateRoute(string busNumber, string details, string indexMark, List<Point> routePoints)
@@ -107,13 +102,17 @@ namespace GlogowskiBus.BLL.Concrete
         {
             return unitOfWork.BusLineRepository.Get().Select(x => new BusLine()
             {
+                Id = x.BusLineId,
                 BusNumber = x.BusNumber,
                 Routes = x.Routes.Select(y => new Route()
                 {
+                    Id = y.RouteId,
                     Details = y.Details,
                     IndexMark = y.IndexMark,
                     Points = y.Points.OrderBy(z => z.TimeOffset).Select(z => new Point()
                     {
+                        Id = z.PointId,
+                        BusStopId = z.BusStopId,
                         Latitude = z.BusStop == null ? z.Latitude : z.BusStop.Latitude,
                         Longitude = z.BusStop == null ? z.Longitude : z.BusStop.Longitude,
                         IsBusStop = z.BusStop != null,
@@ -121,6 +120,7 @@ namespace GlogowskiBus.BLL.Concrete
                     }).ToList(),
                     DepartureTimes = y.DepartureTimes.Select(z => new DepartureTime()
                     {
+                        Id = z.DepartureTimeId,
                         Hours = z.Hours,
                         Minutes = z.Minutes,
                         WorkingDay = z.WorkingDay,

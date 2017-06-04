@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace GlogowskiBus.UI.Models
 {
-    public class Route
+    public class RouteDTO
     {
+        public int Id { get; set; }
         public string Details { get; set; }
         public string IndexMark { get; set; }
-        public List<Point> Points { get; set; }
-        public List<DepartureTime> DepartureTimes { get; set; }
+        public List<PointDTO> Points { get; set; }
+        public List<DepartureTimeDTO> DepartureTimes { get; set; }
     }
 }

@@ -7,6 +7,7 @@ namespace GlogowskiBus.BLL.Concrete
 {
     public class DepartureTime
     {
+        public int Id { get; set; }
         public int Hours { get; set; }
         public int Minutes { get; set; }
         public bool WorkingDay { get; set; }

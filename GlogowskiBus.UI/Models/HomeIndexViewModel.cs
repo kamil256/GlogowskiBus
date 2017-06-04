@@ -8,8 +8,8 @@ namespace GlogowskiBus.UI.Models
 {
     public class HomeIndexViewModel
     {
-        public IEnumerable<BusStop> BusStops { get; set; }
-        public IList<Point> Points { get; set; }
+        public IEnumerable<BusStopDTO> BusStops { get; set; }
+        public IList<PointDTO> Points { get; set; }
 
         [Required, StringLength(100)]
         public string BusNumber { get; set; }

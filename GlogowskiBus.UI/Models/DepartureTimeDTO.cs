@@ -5,8 +5,9 @@ using System.Web;
 
 namespace GlogowskiBus.UI.Models
 {
-    public class DepartureTime
+    public class DepartureTimeDTO
     {
+        public int Id { get; set; }
         public int Hours { get; set; }
         public int Minutes { get; set; }
         public bool WorkingDay { get; set; }

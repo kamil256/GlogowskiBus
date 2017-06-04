@@ -17,31 +17,19 @@ namespace GlogowskiBus.DAL.Concrete
             this.context = context;
         }
 
-        public virtual IEnumerable<TEntity> Get(IEnumerable<Expression<Func<TEntity, bool>>> filters = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, int skip = 0, int take = 0, string includeProperties = "")
+        public virtual IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null)
         {
             IQueryable<TEntity> query = context.Set<TEntity>();
-            if (filters != null)
-                foreach (var filter in filters)
-                    if (filter != null)
-                        query = query.Where(filter);
-            if (orderBy != null)
-                query = orderBy(query);
-            if (skip != 0)
-                query = query.Skip(skip);
-            if (take != 0)
-                query = query.Take(take);
-            foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                query = query.Include(includeProperty);
+            if (filter != null)
+                query = query.Where(filter);
             return query;
         }
 
-        public int Count(params Expression<Func<TEntity, bool>>[] filters)
+        public int Count(Expression<Func<TEntity, bool>> filter = null)
         {
             IQueryable<TEntity> query = context.Set<TEntity>();
-            if (filters != null)
-                foreach (var filter in filters)
-                    if (filter != null)
-                        query = query.Where(filter);
+            if (filter != null)
+                query = query.Where(filter);
             return query.Count();
         }
 

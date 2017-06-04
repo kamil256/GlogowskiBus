@@ -5,8 +5,10 @@ using System.Web;
 
 namespace GlogowskiBus.UI.Models
 {
-    public class Point
+    public class PointDTO
     {
+        public int Id { get; set; }
+        public int? BusStopId { get; set; }
         public bool IsBusStop { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
