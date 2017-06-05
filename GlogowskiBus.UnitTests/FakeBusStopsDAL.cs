@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GlogowskiBus.UnitTests
 {
-    public static class FakeBusStops
+    public static class FakeBusStopsDAL
     {
         private static readonly IList<DAL.Entities.BusStop> fakeBusStops = new List<DAL.Entities.BusStop>()
         {

@@ -50,6 +50,7 @@
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
       <Private>True</Private>
@@ -80,8 +81,10 @@
   <ItemGroup>
     <Compile Include="AdminControllerTests.cs" />
     <Compile Include="BusServiceTests.cs" />
+    <Compile Include="BusStopControllerTests.cs" />
     <Compile Include="BusStopServiceTests.cs" />
-    <Compile Include="FakeBusStops.cs" />
+    <Compile Include="FakeBusStopsBLL.cs" />
+    <Compile Include="FakeBusStopsDAL.cs" />
     <Compile Include="HomeControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

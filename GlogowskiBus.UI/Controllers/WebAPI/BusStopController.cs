@@ -27,7 +27,13 @@ namespace GlogowskiBus.UI.Controllers.WebAPI
 
         public IList<BusStopDTO> GetBusStops()
         {
-            throw new NotImplementedException();
+            return busStopService.Get().Select(x => new BusStopDTO()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Latitude = x.Latitude,
+                Longitude = x.Longitude
+            }).ToList();
         }
 
         [ResponseType(typeof(BusStopDTO))]
