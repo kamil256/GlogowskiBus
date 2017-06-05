@@ -201,6 +201,7 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
+            busStopRepository.GetById(Arg.Any<int>()).Returns(x => FakeBusStops.GetById((int)x[0]));
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusStopRepository.Returns(busStopRepository);
@@ -227,10 +228,47 @@ namespace GlogowskiBus.UnitTests
         }
 
         [Test]
+        public void Update_WhenBusStopIdDoesNotExist_ThrowsException()
+        {
+            // Arrange
+            IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
+            busStopRepository.GetById(Arg.Any<int>()).Returns(x => FakeBusStops.GetById((int)x[0]));
+
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusStopRepository.Returns(busStopRepository);
+
+            BusStopService busStopService = new BusStopService(unitOfWork);
+
+            BusStop existingBusStop = new BusStop()
+            {
+                Id = 3,
+                Name = "New bus stop name",
+                Latitude = 1.2,
+                Longitude = 2.3
+            };
+
+            try
+            {
+                // Act
+                busStopService.Update(existingBusStop);
+            }
+            catch (Exception e)
+            {
+                // Assert
+                Assert.AreEqual("Bus stop does not exist!", e.Message);
+                busStopRepository.DidNotReceive().Update(Arg.Any<DAL.Entities.BusStop>());
+                unitOfWork.DidNotReceive().Save();
+                Assert.Pass();
+            }
+            Assert.Fail("Exception should be thrown!");
+        }
+
+        [Test]
         public void Update_WhenBusStopNameIsEmptyString_ThrowsException()
         {
             // Arrange
             IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
+            busStopRepository.GetById(Arg.Any<int>()).Returns(x => FakeBusStops.GetById((int)x[0]));
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusStopRepository.Returns(busStopRepository);
@@ -266,6 +304,7 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
+            busStopRepository.GetById(Arg.Any<int>()).Returns(x => FakeBusStops.GetById((int)x[0]));
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusStopRepository.Returns(busStopRepository);
@@ -301,6 +340,7 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
+            busStopRepository.GetById(Arg.Any<int>()).Returns(x => FakeBusStops.GetById((int)x[0]));
             busStopRepository.Count(Arg.Any<Expression<Func<DAL.Entities.BusStop, bool>>>()).Returns(x => FakeBusStops.Count((Expression<Func<DAL.Entities.BusStop, bool>>)x[0]));
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();

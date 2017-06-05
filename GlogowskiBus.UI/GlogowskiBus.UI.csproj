@@ -174,6 +174,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\MVC\AdminController.cs" />
     <Compile Include="Controllers\MVC\HomeController.cs" />
+    <Compile Include="Controllers\WebAPI\BusStopController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -208,7 +209,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Controllers\WebAPI\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GlogowskiBus.BLL\GlogowskiBus.BLL.csproj">

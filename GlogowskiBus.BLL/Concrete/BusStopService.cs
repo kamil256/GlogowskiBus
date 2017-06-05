@@ -59,6 +59,8 @@ namespace GlogowskiBus.BLL.Concrete
 
         public void Update(BusStop busStop)
         {
+            if (unitOfWork.BusStopRepository.GetById(busStop.Id) == null)
+                throw new Exception("Bus stop does not exist!");
             if (string.IsNullOrWhiteSpace(busStop.Name))
                 throw new Exception("Bus stop name must not be empty!");
             if (unitOfWork.BusStopRepository.Count(x => x.BusStopId != busStop.Id && x.Latitude == busStop.Latitude && x.Longitude == busStop.Longitude) != 0)

@@ -43,6 +43,7 @@ namespace GlogowskiBus.UI.Infrastructure
         {
             kernel.Bind<IUnitOfWork>().To<UnitOfWork>().InRequestScope();
             kernel.Bind<IBusService>().To<BusService>().InRequestScope();
+            kernel.Bind<IBusStopService>().To<BusStopService>().InRequestScope();
         }
     }
 }
