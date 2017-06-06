@@ -12,7 +12,7 @@ namespace GlogowskiBus.DAL.Abstract
         IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null);
         int Count(Expression<Func<TEntity, bool>> filter = null);
         TEntity GetById(TKey id);
-        void Insert(TEntity entity);
+        TEntity Insert(TEntity entity);
         void Update(TEntity entity);
         void Delete(int id);
         void Delete(TEntity entity);

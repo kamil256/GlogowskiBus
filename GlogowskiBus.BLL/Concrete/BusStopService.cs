@@ -42,19 +42,26 @@ namespace GlogowskiBus.BLL.Concrete
             return null;
         }
 
-        public void Insert(BusStop busStop)
+        public BusStop Insert(BusStop busStop)
         {
             if (string.IsNullOrWhiteSpace(busStop.Name))
                 throw new Exception("Bus stop name must not be empty!");
             if (unitOfWork.BusStopRepository.Count(x => x.Latitude == busStop.Latitude && x.Longitude == busStop.Longitude) != 0)
                 throw new Exception("Bus stop with those coordinates already exists!");
-            unitOfWork.BusStopRepository.Insert(new DAL.Entities.BusStop()
+            DAL.Entities.BusStop newBusStop = unitOfWork.BusStopRepository.Insert(new DAL.Entities.BusStop()
             {
                 Name = busStop.Name,
                 Latitude = busStop.Latitude,
                 Longitude = busStop.Longitude
             });
             unitOfWork.Save();
+            return new BLL.Concrete.BusStop()
+            {
+                Id = newBusStop.BusStopId,
+                Name = newBusStop.Name,
+                Latitude = newBusStop.Latitude,
+                Longitude = newBusStop.Longitude
+            };
         }
 
         public void Update(BusStop busStop)

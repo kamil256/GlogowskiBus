@@ -37,16 +37,48 @@ namespace GlogowskiBus.UI.Controllers.WebAPI
         }
 
         [ResponseType(typeof(BusStopDTO))]
-        public async Task<IHttpActionResult> GetBusStop(int id)
+        public IHttpActionResult GetBusStop(int id)
         {
-            throw new NotImplementedException();
-            //BusStop busStop = await db.BusStops.FindAsync(id);
-            //if (busStop == null)
-            //{
-            //    return NotFound();
-            //}
+            BusStop busStop = busStopService.GetById(id);
+            if (busStop == null)
+            {
+                return NotFound();
+            }
 
-            //return Ok(busStop);
+            return Ok(new BusStopDTO()
+            {
+                Id = busStop.Id,
+                Name = busStop.Name,
+                Latitude = busStop.Latitude,
+                Longitude = busStop.Longitude
+            });
+        }
+
+        [ResponseType(typeof(BusStopDTO))]
+        public IHttpActionResult PostBusStop(BusStopDTO busStop)
+        {
+            BusStop newBusStop = null;
+            try
+            {
+                newBusStop = busStopService.Insert(new BusStop()
+                {
+                    Name = busStop.Name,
+                    Latitude = busStop.Latitude,
+                    Longitude = busStop.Longitude
+                });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return CreatedAtRoute("DefaultApi", new { id = busStop.Id }, new BusStopDTO()
+            {
+                Id = newBusStop.Id,
+                Name = newBusStop.Name,
+                Latitude = newBusStop.Latitude,
+                Longitude = newBusStop.Longitude
+            });
         }
 
         [ResponseType(typeof(void))]
@@ -81,21 +113,6 @@ namespace GlogowskiBus.UI.Controllers.WebAPI
             //}
 
             //return StatusCode(HttpStatusCode.NoContent);
-            throw new NotImplementedException();
-        }
-
-        [ResponseType(typeof(BusStopDTO))]
-        public async Task<IHttpActionResult> PostBusStop(BusStopDTO busStop)
-        {
-            //if (!ModelState.IsValid)
-            //{
-            //    return BadRequest(ModelState);
-            //}
-
-            //db.BusStops.Add(busStop);
-            //await db.SaveChangesAsync();
-
-            //return CreatedAtRoute("DefaultApi", new { id = busStop.Id }, busStop);
             throw new NotImplementedException();
         }
 

@@ -38,9 +38,9 @@ namespace GlogowskiBus.DAL.Concrete
             return context.Set<TEntity>().Find(id);
         }
 
-        public virtual void Insert(TEntity entity)
+        public virtual TEntity Insert(TEntity entity)
         {
-            context.Set<TEntity>().Add(entity);
+            return context.Set<TEntity>().Add(entity);
         }
 
         public virtual void Update(TEntity entity)

@@ -44,7 +44,29 @@ namespace GlogowskiBus.UnitTests
         }
 
         [Test]
-        public void GetById_WhenCalled_ReturnsBusStop()
+        public void GetById_WhenCalledWithExistingId_ReturnsBusStop()
+        {
+            // Arrange
+            IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
+            busStopRepository.GetById(Arg.Any<int>()).Returns(x => FakeBusStopsDAL.Get().First(y => y.BusStopId == (int)x[0]));
+
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusStopRepository.Returns(busStopRepository);
+
+            BusStopService busStopService = new BusStopService(unitOfWork);
+
+            // Act
+            BLL.Concrete.BusStop busStop = busStopService.GetById(1);
+
+            // Assert
+            Assert.AreEqual(1, busStop.Id);
+            Assert.AreEqual("Bus stop 1", busStop.Name);
+            Assert.AreEqual(1.2, busStop.Latitude);
+            Assert.AreEqual(2.3, busStop.Longitude);
+        }
+
+        [Test]
+        public void GetById_WhenBusStopIdDoesNotExist_ReturnsNull()
         {
             // Arrange
             IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
@@ -56,13 +78,10 @@ namespace GlogowskiBus.UnitTests
             BusStopService busStopService = new BusStopService(unitOfWork);
 
             // Act
-            BLL.Concrete.BusStop busStops = busStopService.GetById(1);
+            BLL.Concrete.BusStop busStop = busStopService.GetById(3);
 
             // Assert
-            Assert.AreEqual(1, busStops.Id);
-            Assert.AreEqual("Bus stop 1", busStops.Name);
-            Assert.AreEqual(1.2, busStops.Latitude);
-            Assert.AreEqual(2.3, busStops.Longitude);
+            Assert.IsNull(busStop);
         }
 
         [Test]
@@ -70,6 +89,13 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
+            busStopRepository.Insert(Arg.Any<DAL.Entities.BusStop>()).Returns(new DAL.Entities.BusStop()
+            {
+                BusStopId = 3,
+                Name = "New bus stop",
+                Latitude = 5.6,
+                Longitude = 6.7
+            });
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusStopRepository.Returns(busStopRepository);
@@ -78,19 +104,20 @@ namespace GlogowskiBus.UnitTests
 
             BusStop newBusStop = new BusStop()
             {
-                Name = "Bus stop 3",
+                Name = "New bus stop",
                 Latitude = 5.6,
                 Longitude = 6.7
             };
 
             // Act
-            busStopService.Insert(newBusStop);
+            BusStop busStop = busStopService.Insert(newBusStop);
 
             // Assert
-            busStopRepository.Received().Insert(Arg.Is<DAL.Entities.BusStop>(x => x.Name == "Bus stop 3" &&
-                                                                                  x.Latitude == 5.6 &&
-                                                                                  x.Longitude == 6.7));
             unitOfWork.Received().Save();
+            Assert.AreEqual(3, busStop.Id);
+            Assert.AreEqual("New bus stop", busStop.Name);
+            Assert.AreEqual(5.6, busStop.Latitude);
+            Assert.AreEqual(6.7, busStop.Longitude);
         }
 
         [Test]
