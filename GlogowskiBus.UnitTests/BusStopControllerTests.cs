@@ -298,5 +298,36 @@ namespace GlogowskiBus.UnitTests
                                                                   x.Longitude == busStop.Longitude));
             Assert.AreEqual("Bus stop with those coordinates already exists!", result.Message);
         }
+
+        [Test]
+        public void DeleteBusStop_WhenCalled_ReturnsOkResult()
+        {
+            // Arrange
+            IBusStopService busStopService = Substitute.For<IBusStopService>();
+            busStopService.GetById(Arg.Is<int>(1)).Returns(FakeBusStopsBLL.Get()[0]);
+
+            // Act
+
+            OkResult result = new BusStopController(busStopService).DeleteBusStop(1) as OkResult;
+
+            // Assert
+            busStopService.Received().Delete(1);
+            Assert.IsNotNull(result);
+        }
+
+        [Test]
+        public void DeleteBusStop_WhenBusStopIdDoesNotExist_ReturnsNotFoundResult()
+        {
+            // Arrange
+            IBusStopService busStopService = Substitute.For<IBusStopService>();
+            busStopService.When(x => x.Delete(Arg.Is<int>(3))).Throw(new Exception("Bus stop does not exist!"));
+
+            // Act
+            NotFoundResult result = new BusStopController(busStopService).DeleteBusStop(3) as NotFoundResult;
+
+            // Assert
+            busStopService.Received().Delete(3);
+            Assert.IsNotNull(result);
+        }
     }
 }

@@ -404,6 +404,7 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
+            busStopRepository.GetById(1).Returns(FakeBusStopsDAL.Get()[1]);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusStopRepository.Returns(busStopRepository);
@@ -415,6 +416,35 @@ namespace GlogowskiBus.UnitTests
 
             // Assert
             busStopRepository.Received().Delete(Arg.Is<int>(x => x == 1));
+        }
+
+        [Test]
+        public void Delete_WhenBusStopIdDoesNotExist_DeletesBusStop()
+        {
+            // Arrange
+            IRepository<DAL.Entities.BusStop, int> busStopRepository = Substitute.For<IRepository<DAL.Entities.BusStop, int>>();
+            busStopRepository.GetById(Arg.Any<int>()).Returns((DAL.Entities.BusStop)null);
+
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusStopRepository.Returns(busStopRepository);
+
+            BusStopService busStopService = new BusStopService(unitOfWork);
+
+            try
+            {
+                // Act
+                busStopService.Delete(1);
+            }
+            catch (Exception e)
+            {
+                // Assert
+                Assert.AreEqual("Bus stop does not exist!", e.Message);
+                busStopRepository.Received().GetById(1);
+                busStopRepository.DidNotReceive().Delete(Arg.Any<int>());
+                unitOfWork.DidNotReceive().Save();
+                Assert.Pass();
+            }
+            Assert.Fail("Exception should be thrown!");
         }
     }
 }

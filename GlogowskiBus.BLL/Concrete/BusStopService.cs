@@ -84,7 +84,10 @@ namespace GlogowskiBus.BLL.Concrete
 
         public void Delete(int id)
         {
+            if (unitOfWork.BusStopRepository.GetById(id) == null)
+                throw new Exception("Bus stop does not exist!");
             unitOfWork.BusStopRepository.Delete(id);
+            unitOfWork.Save();
         }
     }
 }

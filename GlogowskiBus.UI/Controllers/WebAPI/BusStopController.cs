@@ -105,20 +105,18 @@ namespace GlogowskiBus.UI.Controllers.WebAPI
             return Ok();
         }
 
-        [ResponseType(typeof(BusStopDTO))]
-        public async Task<IHttpActionResult> DeleteBusStop(int id)
+        [ResponseType(typeof(void))]
+        public IHttpActionResult DeleteBusStop(int id)
         {
-            //BusStop busStop = await db.BusStops.FindAsync(id);
-            //if (busStop == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //db.BusStops.Remove(busStop);
-            //await db.SaveChangesAsync();
-
-            //return Ok(busStop);
-            throw new NotImplementedException();
+            try
+            {
+                busStopService.Delete(id);
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+            return Ok();
         }
     }
 }
