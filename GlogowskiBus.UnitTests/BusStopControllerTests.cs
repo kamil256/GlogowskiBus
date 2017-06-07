@@ -7,6 +7,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -165,6 +166,136 @@ namespace GlogowskiBus.UnitTests
             BadRequestErrorMessageResult result = new BusStopController(busStopService).PostBusStop(newBusStop) as BadRequestErrorMessageResult;
 
             // Assert
+            Assert.AreEqual("Bus stop with those coordinates already exists!", result.Message);
+        }
+
+        [Test]
+        public void PutBusStop_WhenCalledWithCorrectBusStop_UpdatesBusStop()
+        {
+            // Arrange
+            IBusStopService busStopService = Substitute.For<IBusStopService>();
+
+            BusStopDTO busStop = new BusStopDTO()
+            {
+                Id = 1,
+                Name = "Bus stop 3",
+                Latitude = 5.6,
+                Longitude = 6.7
+            };
+
+            // Act
+
+            OkResult result = new BusStopController(busStopService).PutBusStop(busStop) as OkResult;
+
+            // Assert
+            busStopService.Received().Update(Arg.Is<BusStop>(x => x.Id == busStop.Id &&
+                                                                  x.Name == busStop.Name &&
+                                                                  x.Latitude == busStop.Latitude &&
+                                                                  x.Longitude == busStop.Longitude));
+            Assert.IsNotNull(result);
+        }
+
+        [Test]
+        public void PostBusStop_WhenBusStopIdDoesNotExist_ReturnsNotFoundResultResult()
+        {
+            // Arrange
+            IBusStopService busStopService = Substitute.For<IBusStopService>();
+            busStopService.When(x => x.Update(Arg.Any<BusStop>())).Throw(new Exception("Bus stop does not exist!"));
+
+            BusStopDTO busStop = new BusStopDTO()
+            {
+                Id = 3,
+                Name = "Bus stop 3",
+                Latitude = 5.6,
+                Longitude = 6.7
+            };
+
+            // Act
+            NotFoundResult result = new BusStopController(busStopService).PutBusStop(busStop) as NotFoundResult;
+
+            // Assert
+            busStopService.Received().Update(Arg.Is<BusStop>(x => x.Id == busStop.Id &&
+                                                                  x.Name == busStop.Name &&
+                                                                  x.Latitude == busStop.Latitude &&
+                                                                  x.Longitude == busStop.Longitude));
+            Assert.IsNotNull(result);
+        }
+
+        [Test]
+        public void PutBusStop_WhenBusStopNameIsEmptyString_ReturnsBadRequestResultWithMessage()
+        {
+            // Arrange
+            IBusStopService busStopService = Substitute.For<IBusStopService>();
+            busStopService.When(x => x.Update(Arg.Any<BusStop>())).Throw(new Exception("Bus stop name must not be empty!"));
+
+            BusStopDTO busStop = new BusStopDTO()
+            {
+                Id = 1,
+                Name = "",
+                Latitude = 5.6,
+                Longitude = 6.7
+            };
+
+            // Act
+            BadRequestErrorMessageResult result = new BusStopController(busStopService).PutBusStop(busStop) as BadRequestErrorMessageResult;
+
+            // Assert
+            busStopService.Received().Update(Arg.Is<BusStop>(x => x.Id == busStop.Id &&
+                                                                  x.Name == busStop.Name &&
+                                                                  x.Latitude == busStop.Latitude &&
+                                                                  x.Longitude == busStop.Longitude));
+            Assert.AreEqual("Bus stop name must not be empty!", result.Message);
+        }
+
+        [Test]
+        public void PutBusStop_WhenBusStopNameIsNull_ReturnsBadRequestResultWithMessage()
+        {
+            // Arrange
+            IBusStopService busStopService = Substitute.For<IBusStopService>();
+            busStopService.When(x => x.Update(Arg.Is<BusStop>(y => y.Name == null))).Throw(new Exception("Bus stop name must not be empty!"));
+
+            BusStopDTO busStop = new BusStopDTO()
+            {
+                Id = 1,
+                Name = null,
+                Latitude = 5.6,
+                Longitude = 6.7
+            };
+
+            // Act
+            BadRequestErrorMessageResult result = new BusStopController(busStopService).PutBusStop(busStop) as BadRequestErrorMessageResult;
+
+            // Assert
+            busStopService.Received().Update(Arg.Is<BusStop>(x => x.Id == busStop.Id &&
+                                                                  x.Name == busStop.Name &&
+                                                                  x.Latitude == busStop.Latitude &&
+                                                                  x.Longitude == busStop.Longitude));
+            Assert.AreEqual("Bus stop name must not be empty!", result.Message);
+        }
+
+        [Test]
+        public void PutBusStop_WhenBusStopCoordinatesAlreadyExistForDifferentBusStop_ReturnsBadRequestResultWithMessage()
+        {
+            // Arrange
+            IBusStopService busStopService = Substitute.For<IBusStopService>();
+            busStopService.When(x => x.Update(Arg.Any<BusStop>())).Throw(new Exception("Bus stop with those coordinates already exists!"));
+
+            BusStopDTO busStop = new BusStopDTO()
+            {
+                Id = 2,
+                Name = "New bus stop",
+                Latitude = 1.2,
+                Longitude = 2.3
+            };
+
+            // Act
+            BadRequestErrorMessageResult result = new BusStopController(busStopService).PutBusStop(busStop) as BadRequestErrorMessageResult;
+
+            // Assert
+            busStopService.Received().Update(Arg.Is<BusStop>(x => x.Id == busStop.Id &&
+                                                                  x.Name == busStop.Name &&
+                                                                  x.Latitude == busStop.Latitude &&
+                                                                  x.Longitude == busStop.Longitude));
             Assert.AreEqual("Bus stop with those coordinates already exists!", result.Message);
         }
     }

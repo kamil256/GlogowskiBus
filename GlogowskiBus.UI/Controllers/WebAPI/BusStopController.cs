@@ -82,38 +82,27 @@ namespace GlogowskiBus.UI.Controllers.WebAPI
         }
 
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutBusStop(BusStopDTO busStop)
+        public IHttpActionResult PutBusStop(BusStopDTO busStop)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return BadRequest(ModelState);
-            //}
+            try
+            {
+                busStopService.Update(new BusStop()
+                {
+                    Id = busStop.Id,
+                    Name = busStop.Name,
+                    Latitude = busStop.Latitude,
+                    Longitude = busStop.Longitude
+                });
+            }
+            catch (Exception e)
+            {
+                if (e.Message == "Bus stop does not exist!")
+                    return NotFound();
+                else
+                    return BadRequest(e.Message);
+            }
 
-            //if (id != busStop.Id)
-            //{
-            //    return BadRequest();
-            //}
-
-            //db.Entry(busStop).State = EntityState.Modified;
-
-            //try
-            //{
-            //    await db.SaveChangesAsync();
-            //}
-            //catch (DbUpdateConcurrencyException)
-            //{
-            //    if (!BusStopExists(id))
-            //    {
-            //        return NotFound();
-            //    }
-            //    else
-            //    {
-            //        throw;
-            //    }
-            //}
-
-            //return StatusCode(HttpStatusCode.NoContent);
-            throw new NotImplementedException();
+            return Ok();
         }
 
         [ResponseType(typeof(BusStopDTO))]
