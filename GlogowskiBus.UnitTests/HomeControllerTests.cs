@@ -16,15 +16,15 @@ namespace GlogowskiBus.UnitTests
     [TestFixture]
     class HomeControllerTests
     {
-        private static List<BLL.Concrete.BusStop> fakeBusStops = new List<BLL.Concrete.BusStop>()
+        private static List<GlogowskiBus.BLL.Concrete.BusStop> fakeBusStops = new List<GlogowskiBus.BLL.Concrete.BusStop>()
         {
-            new BLL.Concrete.BusStop()
+            new GlogowskiBus.BLL.Concrete.BusStop()
             {
                 Name = "Bus stop 1",
                 Latitude = 1.2,
                 Longitude = 2.3
             },
-            new BLL.Concrete.BusStop()
+            new GlogowskiBus.BLL.Concrete.BusStop()
             {
                 Name = "Bus stop 2",
                 Latitude = 5.6,
@@ -32,44 +32,44 @@ namespace GlogowskiBus.UnitTests
             }
         };
 
-        private static List<BLL.Concrete.BusLine> fakeBusLines = new List<BLL.Concrete.BusLine>()
+        private static List<GlogowskiBus.BLL.Concrete.BusLine> fakeBusLines = new List<GlogowskiBus.BLL.Concrete.BusLine>()
         {
-            new BLL.Concrete.BusLine
+            new GlogowskiBus.BLL.Concrete.BusLine
             {
                 BusNumber = "1",
-                Routes = new List<BLL.Concrete.Route>()
+                Routes = new List<GlogowskiBus.BLL.Concrete.Route>()
                 {
-                    new BLL.Concrete.Route()
+                    new GlogowskiBus.BLL.Concrete.Route()
                     {
                         Details = "Route details",
                         IndexMark = "R",
-                        Points = new List<BLL.Concrete.Point>()
+                        Points = new List<GlogowskiBus.BLL.Concrete.Point>()
                         {
-                            new BLL.Concrete.Point()
+                            new GlogowskiBus.BLL.Concrete.Point()
                             {
                                 Latitude = 1.2,
                                 Longitude = 2.3,
-                                IsBusStop = true,
+                                //IsBusStop = true,
                                 TimeOffset = 0
                             },
-                            new BLL.Concrete.Point()
+                            new GlogowskiBus.BLL.Concrete.Point()
                             {
                                 Latitude = 3.4,
                                 Longitude = 4.5,
-                                IsBusStop = false,
+                                //IsBusStop = false,
                                 TimeOffset = 1000
                             },
-                            new BLL.Concrete.Point()
+                            new GlogowskiBus.BLL.Concrete.Point()
                             {
                                 Latitude = 5.6,
                                 Longitude = 6.7,
-                                IsBusStop = true,
+                                //IsBusStop = true,
                                 TimeOffset = 2000
                             }
                         },
-                        DepartureTimes = new List<BLL.Concrete.DepartureTime>()
+                        DepartureTimes = new List<GlogowskiBus.BLL.Concrete.DepartureTime>()
                         {
-                            new BLL.Concrete.DepartureTime()
+                            new GlogowskiBus.BLL.Concrete.DepartureTime()
                             {
                                 Hours = 12,
                                 Minutes = 30,
@@ -112,17 +112,17 @@ namespace GlogowskiBus.UnitTests
 
             Assert.AreEqual(1.2, model.BusLines[0].Routes[0].Points[0].Latitude);
             Assert.AreEqual(2.3, model.BusLines[0].Routes[0].Points[0].Longitude);
-            Assert.AreEqual(true, model.BusLines[0].Routes[0].Points[0].IsBusStop);
+            //Assert.AreEqual(true, model.BusLines[0].Routes[0].Points[0].IsBusStop);
             Assert.AreEqual(0, model.BusLines[0].Routes[0].Points[0].TimeOffset);
 
             Assert.AreEqual(3.4, model.BusLines[0].Routes[0].Points[1].Latitude);
             Assert.AreEqual(4.5, model.BusLines[0].Routes[0].Points[1].Longitude);
-            Assert.AreEqual(false, model.BusLines[0].Routes[0].Points[1].IsBusStop);
+            //Assert.AreEqual(false, model.BusLines[0].Routes[0].Points[1].IsBusStop);
             Assert.AreEqual(1000, model.BusLines[0].Routes[0].Points[1].TimeOffset);
 
             Assert.AreEqual(5.6, model.BusLines[0].Routes[0].Points[2].Latitude);
             Assert.AreEqual(6.7, model.BusLines[0].Routes[0].Points[2].Longitude);
-            Assert.AreEqual(true, model.BusLines[0].Routes[0].Points[2].IsBusStop);
+            //Assert.AreEqual(true, model.BusLines[0].Routes[0].Points[2].IsBusStop);
             Assert.AreEqual(2000, model.BusLines[0].Routes[0].Points[2].TimeOffset);
 
             Assert.AreEqual(1, model.BusLines[0].Routes[0].DepartureTimes.Count);

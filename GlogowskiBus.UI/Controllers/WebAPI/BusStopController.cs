@@ -55,13 +55,41 @@ namespace GlogowskiBus.UI.Controllers.WebAPI
         }
 
         [ResponseType(typeof(BusStopDTO))]
-        public IHttpActionResult PostBusStop(BusStopDTO busStop)
+        public IHttpActionResult PostBusStop(BusStopDTO model)
         {
             BusStop newBusStop = null;
             try
             {
                 newBusStop = busStopService.Insert(new BusStop()
                 {
+                    Name = model.Name,
+                    Latitude = model.Latitude,
+                    Longitude = model.Longitude
+                });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return CreatedAtRoute("DefaultApi", new { id = newBusStop.Id }, new BusStopDTO()
+            {
+                Id = newBusStop.Id,
+                Name = newBusStop.Name,
+                Latitude = newBusStop.Latitude,
+                Longitude = newBusStop.Longitude
+            });
+        }
+
+        [ResponseType(typeof(BusStopDTO))]
+        public IHttpActionResult PutBusStop(BusStopDTO busStop)
+        {
+            BusStop updatedBusStop = null;
+            try
+            {
+                updatedBusStop = busStopService.Update(new BusStop()
+                {
+                    Id = busStop.Id,
                     Name = busStop.Name,
                     Latitude = busStop.Latitude,
                     Longitude = busStop.Longitude
@@ -72,51 +100,26 @@ namespace GlogowskiBus.UI.Controllers.WebAPI
                 return BadRequest(e.Message);
             }
 
-            return CreatedAtRoute("DefaultApi", new { id = busStop.Id }, new BusStopDTO()
-            {
-                Id = newBusStop.Id,
-                Name = newBusStop.Name,
-                Latitude = newBusStop.Latitude,
-                Longitude = newBusStop.Longitude
-            });
-        }
-
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutBusStop(BusStopDTO busStop)
-        {
-            try
-            {
-                busStopService.Update(new BusStop()
+            if (updatedBusStop == null)
+                return NotFound();
+            else
+                return Ok(new BusStopDTO()
                 {
-                    Id = busStop.Id,
-                    Name = busStop.Name,
-                    Latitude = busStop.Latitude,
-                    Longitude = busStop.Longitude
+                    Id = updatedBusStop.Id,
+                    Name = updatedBusStop.Name,
+                    Latitude = updatedBusStop.Latitude,
+                    Longitude = updatedBusStop.Longitude
                 });
-            }
-            catch (Exception e)
-            {
-                if (e.Message == "Bus stop does not exist!")
-                    return NotFound();
-                else
-                    return BadRequest(e.Message);
-            }
-
-            return Ok();
         }
 
         [ResponseType(typeof(void))]
         public IHttpActionResult DeleteBusStop(int id)
         {
-            try
-            {
-                busStopService.Delete(id);
-            }
-            catch (Exception)
-            {
+            int? deletedBusStopId = busStopService.Delete(id);
+            if (deletedBusStopId == null)
                 return NotFound();
-            }
-            return Ok();
+            else
+                return Ok();
         }
     }
 }

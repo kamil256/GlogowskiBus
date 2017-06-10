@@ -15,15 +15,15 @@ namespace GlogowskiBus.UnitTests
     [TestFixture]
     class AdminControllerTests
     {
-        private static List<BLL.Concrete.BusStop> fakeBusStops = new List<BLL.Concrete.BusStop>()
+        private static List<GlogowskiBus.BLL.Concrete.BusStop> fakeBusStops = new List<GlogowskiBus.BLL.Concrete.BusStop>()
         {
-            new BLL.Concrete.BusStop()
+            new GlogowskiBus.BLL.Concrete.BusStop()
             {
                 Name = "Bus stop 1",
                 Latitude = 1.2,
                 Longitude = 2.3
             },
-            new BLL.Concrete.BusStop()
+            new GlogowskiBus.BLL.Concrete.BusStop()
             {
                 Name = "Bus stop 2",
                 Latitude = 5.6,
@@ -31,44 +31,44 @@ namespace GlogowskiBus.UnitTests
             }
         };
 
-        private static List<BLL.Concrete.BusLine> fakeBusLines = new List<BLL.Concrete.BusLine>()
+        private static List<GlogowskiBus.BLL.Concrete.BusLine> fakeBusLines = new List<GlogowskiBus.BLL.Concrete.BusLine>()
         {
-            new BLL.Concrete.BusLine
+            new GlogowskiBus.BLL.Concrete.BusLine
             {
                 BusNumber = "1",
-                Routes = new List<BLL.Concrete.Route>()
+                Routes = new List<GlogowskiBus.BLL.Concrete.Route>()
                 {
-                    new BLL.Concrete.Route()
+                    new GlogowskiBus.BLL.Concrete.Route()
                     {
                         Details = "Route details",
                         IndexMark = "R",
-                        Points = new List<BLL.Concrete.Point>()
+                        Points = new List<GlogowskiBus.BLL.Concrete.Point>()
                         {
-                            new BLL.Concrete.Point()
+                            new GlogowskiBus.BLL.Concrete.Point()
                             {
                                 Latitude = 1.2,
                                 Longitude = 2.3,
-                                IsBusStop = true,
+                                //IsBusStop = true,
                                 TimeOffset = 0
                             },
-                            new BLL.Concrete.Point()
+                            new GlogowskiBus.BLL.Concrete.Point()
                             {
                                 Latitude = 3.4,
                                 Longitude = 4.5,
-                                IsBusStop = false,
+                                //IsBusStop = false,
                                 TimeOffset = 1000
                             },
-                            new BLL.Concrete.Point()
+                            new GlogowskiBus.BLL.Concrete.Point()
                             {
                                 Latitude = 5.6,
                                 Longitude = 6.7,
-                                IsBusStop = true,
+                                //IsBusStop = true,
                                 TimeOffset = 2000
                             }
                         },
-                        DepartureTimes = new List<BLL.Concrete.DepartureTime>()
+                        DepartureTimes = new List<GlogowskiBus.BLL.Concrete.DepartureTime>()
                         {
-                            new BLL.Concrete.DepartureTime()
+                            new GlogowskiBus.BLL.Concrete.DepartureTime()
                             {
                                 Hours = 12,
                                 Minutes = 30,
@@ -128,7 +128,7 @@ namespace GlogowskiBus.UnitTests
             ViewResult viewResult = controller.CreateRoute(model) as ViewResult;
 
             // Assert
-            busService.DidNotReceive().CreateRoute(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<List<BLL.Concrete.Point>>());
+            busService.DidNotReceive().CreateRoute(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<List<GlogowskiBus.BLL.Concrete.Point>>());
             Assert.AreEqual(1, controller.ModelState.Count);
 
             Assert.AreEqual(2, model.BusStops.Count());
@@ -156,7 +156,7 @@ namespace GlogowskiBus.UnitTests
             // Arrange
             IBusService busService = Substitute.For<IBusService>();
             busService.GetAllBusStops().Returns(fakeBusStops);
-            busService.When(x => x.CreateRoute(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<List<BLL.Concrete.Point>>())).Do(x => { throw new Exception("Exception message"); });
+            busService.When(x => x.CreateRoute(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<List<GlogowskiBus.BLL.Concrete.Point>>())).Do(x => { throw new Exception("Exception message"); });
             HomeIndexViewModel model = new HomeIndexViewModel
             {
                 BusNumber = "2",
@@ -173,7 +173,7 @@ namespace GlogowskiBus.UnitTests
             ViewResult viewResult = controller.CreateRoute(model) as ViewResult;
 
             // Assert
-            busService.Received().CreateRoute(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<List<BLL.Concrete.Point>>());
+            busService.Received().CreateRoute(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<List<GlogowskiBus.BLL.Concrete.Point>>());
             Assert.AreEqual(1, controller.ModelState.Count);
 
             Assert.AreEqual(2, model.BusStops.Count());
@@ -194,17 +194,17 @@ namespace GlogowskiBus.UnitTests
 
             Assert.AreEqual(1.2, model.Points[0].Latitude);
             Assert.AreEqual(4.5, model.Points[0].Longitude);
-            Assert.IsTrue(model.Points[0].IsBusStop);
+            //Assert.IsTrue(model.Points[0].IsBusStop);
             Assert.AreEqual(0, model.Points[0].TimeOffset);
 
             Assert.AreEqual(2.3, model.Points[1].Latitude);
             Assert.AreEqual(5.6, model.Points[1].Longitude);
-            Assert.IsFalse(model.Points[1].IsBusStop);
+            //Assert.IsFalse(model.Points[1].IsBusStop);
             Assert.AreEqual(1000, model.Points[1].TimeOffset);
 
             Assert.AreEqual(3.4, model.Points[2].Latitude);
             Assert.AreEqual(6.7, model.Points[2].Longitude);
-            Assert.IsTrue(model.Points[2].IsBusStop);
+            //Assert.IsTrue(model.Points[2].IsBusStop);
             Assert.AreEqual(2000, model.Points[2].TimeOffset);
 
             Assert.AreEqual("CreateRoute", viewResult.ViewName);
@@ -233,17 +233,17 @@ namespace GlogowskiBus.UnitTests
 
             // Assert
             Assert.AreEqual(0, controller.ModelState.Count);
-            busService.Received().CreateRoute("2", "Route details", "R", Arg.Is<List<BLL.Concrete.Point>>(x => x[0].Latitude == 1.2 &&
+            busService.Received().CreateRoute("2", "Route details", "R", Arg.Is<List<GlogowskiBus.BLL.Concrete.Point>>(x => x[0].Latitude == 1.2 &&
                                                                                                                x[0].Longitude == 4.5 &&
-                                                                                                               x[0].IsBusStop &&
+                                                                                                               //x[0].IsBusStop &&
                                                                                                                x[0].TimeOffset == 0 &&
                                                                                                                x[1].Latitude == 2.3 &&
                                                                                                                x[1].Longitude == 5.6 &&
-                                                                                                               !x[1].IsBusStop &&
+                                                                                                               //!x[1].IsBusStop &&
                                                                                                                x[1].TimeOffset == 1000 &&
                                                                                                                x[2].Latitude == 3.4 &&
                                                                                                                x[2].Longitude == 6.7 &&
-                                                                                                               x[2].IsBusStop &&
+                                                                                                               //x[2].IsBusStop &&
                                                                                                                x[2].TimeOffset == 2000 &&
                                                                                                                x.Count == 3));
             Assert.AreEqual("Index", redirectResult.RouteValues["action"]);

@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstract\IEntity.cs" />
     <Compile Include="Abstract\IRepository.cs" />
     <Compile Include="Abstract\IUnitOfWork.cs" />
     <Compile Include="Concrete\GenericRepository.cs" />
@@ -59,42 +60,12 @@
     <Compile Include="Entities\Point.cs" />
     <Compile Include="Entities\DepartureTime.cs" />
     <Compile Include="Entities\Route.cs" />
-    <Compile Include="Migrations\201705031522061_Initial migration..cs" />
-    <Compile Include="Migrations\201705031522061_Initial migration..Designer.cs">
-      <DependentUpon>201705031522061_Initial migration..cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201705031540074_Make BusStopId nullable in Point entity..cs" />
-    <Compile Include="Migrations\201705031540074_Make BusStopId nullable in Point entity..Designer.cs">
-      <DependentUpon>201705031540074_Make BusStopId nullable in Point entity..cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201705062256421_Add latitude and longitude to BusStop entity..cs" />
-    <Compile Include="Migrations\201705062256421_Add latitude and longitude to BusStop entity..Designer.cs">
-      <DependentUpon>201705062256421_Add latitude and longitude to BusStop entity..cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201705311851071_Add index mark to route.cs" />
-    <Compile Include="Migrations\201705311851071_Add index mark to route.Designer.cs">
-      <DependentUpon>201705311851071_Add index mark to route.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201705031522061_Initial migration..resx">
-      <DependentUpon>201705031522061_Initial migration..cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201705031540074_Make BusStopId nullable in Point entity..resx">
-      <DependentUpon>201705031540074_Make BusStopId nullable in Point entity..cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201705062256421_Add latitude and longitude to BusStop entity..resx">
-      <DependentUpon>201705062256421_Add latitude and longitude to BusStop entity..cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201705311851071_Add index mark to route.resx">
-      <DependentUpon>201705311851071_Add index mark to route.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

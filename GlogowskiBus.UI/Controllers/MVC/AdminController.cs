@@ -32,7 +32,7 @@ namespace GlogowskiBus.UI.Controllers.MVC
                     {
                         Latitude = z.Latitude,
                         Longitude = z.Longitude,
-                        IsBusStop = z.IsBusStop,
+                        //IsBusStop = z.IsBusStop,
                         TimeOffset = z.TimeOffset
                     }).ToList(),
                     DepartureTimes = y.DepartureTimes.Select(z => new Models.DepartureTimeDTO()
@@ -86,7 +86,7 @@ namespace GlogowskiBus.UI.Controllers.MVC
                     {
                         Latitude = model.Latitudes[i],
                         Longitude = model.Longitudes[i],
-                        IsBusStop = model.IsBusStops[i],
+                        //IsBusStop = model.IsBusStops[i],
                         TimeOffset = model.TimeOffsets[i]
                     });
                 }
@@ -100,7 +100,7 @@ namespace GlogowskiBus.UI.Controllers.MVC
                     {
                         Latitude = x.Latitude,
                         Longitude = x.Longitude,
-                        IsBusStop = x.IsBusStop,
+                        //IsBusStop = x.IsBusStop,
                         TimeOffset = x.TimeOffset
                     }).ToList());
                     return RedirectToAction("Index", "Home");

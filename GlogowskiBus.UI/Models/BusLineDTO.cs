@@ -9,6 +9,7 @@ namespace GlogowskiBus.UI.Models
     {
         public int Id { get; set; }
         public string BusNumber { get; set; }
-        public List<RouteDTO> Routes { get; set; }
+
+        public IList<RouteDTO> Routes { get; set; }
     }
 }

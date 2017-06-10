@@ -23,7 +23,7 @@ namespace GlogowskiBus.BLL.Concrete
         {
             return unitOfWork.BusStopRepository.Get().Select(x => new BusStop()
             {
-                Id = x.BusStopId,
+                Id = x.Id,
                 Name = x.Name,
                 Latitude = x.Latitude,
                 Longitude = x.Longitude
@@ -35,11 +35,11 @@ namespace GlogowskiBus.BLL.Concrete
             if (routePoints.Count < 2)
                 throw new Exception("Route cannot contain less than two points!");
             
-            if (!routePoints.First().IsBusStop)
-                throw new Exception("First point must be the bus stop!");
+            //if (!routePoints.First().IsBusStop)
+            //    throw new Exception("First point must be the bus stop!");
 
-            if (!routePoints.Last().IsBusStop)
-                throw new Exception("Last point must be the bus stop!");
+            //if (!routePoints.Last().IsBusStop)
+            //    throw new Exception("Last point must be the bus stop!");
 
             if (routePoints.First().TimeOffset != 0)
                 throw new Exception("First point's time offset must be zero!");
@@ -69,7 +69,7 @@ namespace GlogowskiBus.BLL.Concrete
             for (int i = 0; i < routePoints.Count; i++)
             {
                 DAL.Entities.BusStop busStop = null;
-                if (routePoints[i].IsBusStop)
+                if (routePoints[i].BusStopId != null)//.IsBusStop)
                 {
                     busStop = unitOfWork.BusStopRepository.Get().FirstOrDefault(x => x.Latitude == routePoints[i].Latitude &&
                                                                                      x.Longitude == routePoints[i].Longitude);
@@ -102,25 +102,25 @@ namespace GlogowskiBus.BLL.Concrete
         {
             return unitOfWork.BusLineRepository.Get().Select(x => new BusLine()
             {
-                Id = x.BusLineId,
+                Id = x.Id,
                 BusNumber = x.BusNumber,
                 Routes = x.Routes.Select(y => new Route()
                 {
-                    Id = y.RouteId,
+                    Id = y.Id,
                     Details = y.Details,
                     IndexMark = y.IndexMark,
                     Points = y.Points.OrderBy(z => z.TimeOffset).Select(z => new Point()
                     {
-                        Id = z.PointId,
+                        Id = z.Id,
                         BusStopId = z.BusStopId,
                         Latitude = z.BusStop == null ? z.Latitude : z.BusStop.Latitude,
                         Longitude = z.BusStop == null ? z.Longitude : z.BusStop.Longitude,
-                        IsBusStop = z.BusStop != null,
+                        //IsBusStop = z.BusStop != null,
                         TimeOffset = z.TimeOffset
                     }).ToList(),
                     DepartureTimes = y.DepartureTimes.Select(z => new DepartureTime()
                     {
-                        Id = z.DepartureTimeId,
+                        Id = z.Id,
                         Hours = z.Hours,
                         Minutes = z.Minutes,
                         WorkingDay = z.WorkingDay,

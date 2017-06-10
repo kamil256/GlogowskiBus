@@ -9,10 +9,10 @@ namespace GlogowskiBus.BLL.Concrete
     public class Point
     {
         public int Id { get; set; }
-        public int? BusStopId { get; set; }
-        public bool IsBusStop { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public int TimeOffset { get; set; }
+
+        public int? BusStopId { get; set; }
     }
 }

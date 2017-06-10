@@ -9,11 +9,11 @@ namespace GlogowskiBus.DAL.Abstract
 {
     public interface IUnitOfWork
     {
-        IRepository<BusLine, int> BusLineRepository { get; }
-        IRepository<Route, int> RouteRepository { get; }
-        IRepository<Point, int> PointRepository { get; }
-        IRepository<BusStop, int> BusStopRepository { get; }
-        IRepository<DepartureTime, int> ScheduleRepository { get; }
+        IRepository<BusLine> BusLineRepository { get; }
+        IRepository<Route> RouteRepository { get; }
+        IRepository<Point> PointRepository { get; }
+        IRepository<BusStop> BusStopRepository { get; }
+        IRepository<DepartureTime> ScheduleRepository { get; }
         void Save();
     }
 }

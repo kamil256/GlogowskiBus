@@ -9,9 +9,10 @@ namespace GlogowskiBus.BLL.Concrete
     public class Route
     {
         public int Id { get; set; }
-        public string Details { get; set; }
         public string IndexMark { get; set; }
-        public List<Point> Points { get; set; }
-        public List<DepartureTime> DepartureTimes { get; set; }
+        public string Details { get; set; }
+
+        public IList<DepartureTime> DepartureTimes { get; set; }
+        public IList<Point> Points { get; set; }
     }
 }

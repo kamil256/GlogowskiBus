@@ -8,7 +8,7 @@ using System.Web;
 
 namespace GlogowskiBus.DAL.Concrete
 {
-    public class GenericRepository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntity : class
+    public class GenericRepository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         private readonly GlogowskiBusContext context;
 
@@ -33,7 +33,7 @@ namespace GlogowskiBus.DAL.Concrete
             return query.Count();
         }
 
-        public virtual TEntity GetById(TKey id)
+        public virtual TEntity GetById(int id)
         {
             return context.Set<TEntity>().Find(id);
         }
@@ -49,16 +49,16 @@ namespace GlogowskiBus.DAL.Concrete
             context.Entry(entity).State = EntityState.Modified;
         }
 
-        public virtual void Delete(int id)
+        public virtual TEntity Delete(int id)
         {
-            Delete(context.Set<TEntity>().Find(id));
+            return Delete(context.Set<TEntity>().Find(id));
         }
 
-        public virtual void Delete(TEntity entity)
+        public virtual TEntity Delete(TEntity entity)
         {
             if (context.Entry(entity).State == EntityState.Deleted)
                 context.Set<TEntity>().Attach(entity);
-            context.Set<TEntity>().Remove(entity);
+            return context.Set<TEntity>().Remove(entity);
         }
     }
 }

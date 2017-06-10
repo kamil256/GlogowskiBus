@@ -12,58 +12,58 @@ namespace GlogowskiBus.DAL.Concrete
     {
         private readonly GlogowskiBusContext context = new GlogowskiBusContext();
 
-        private IRepository<BusLine, int> busLineRepository;
-        private IRepository<Route, int> routeRepository;
-        private IRepository<Point, int> pointRepository;
-        private IRepository<BusStop, int> busStopRepository;
-        private IRepository<DepartureTime, int> scheduleRepository;
+        private IRepository<BusLine> busLineRepository;
+        private IRepository<Route> routeRepository;
+        private IRepository<Point> pointRepository;
+        private IRepository<BusStop> busStopRepository;
+        private IRepository<DepartureTime> scheduleRepository;
 
-        public IRepository<BusLine, int> BusLineRepository
+        public IRepository<BusLine> BusLineRepository
         {
             get
             {
                 if (busLineRepository == null)
-                    busLineRepository = new GenericRepository<BusLine, int>(context);
+                    busLineRepository = new GenericRepository<BusLine>(context);
                 return busLineRepository;
             }
         }
 
-        public IRepository<Route, int> RouteRepository
+        public IRepository<Route> RouteRepository
         {
             get
             {
                 if (routeRepository == null)
-                    routeRepository = new GenericRepository<Route, int>(context);
+                    routeRepository = new GenericRepository<Route>(context);
                 return routeRepository;
             }
         }
 
-        public IRepository<Point, int> PointRepository
+        public IRepository<Point> PointRepository
         {
             get
             {
                 if (pointRepository == null)
-                    pointRepository = new GenericRepository<Point, int>(context);
+                    pointRepository = new GenericRepository<Point>(context);
                 return pointRepository;
             }
         }
 
-        public IRepository<BusStop, int> BusStopRepository
+        public IRepository<BusStop> BusStopRepository
         {
             get
             {
                 if (busStopRepository == null)
-                    busStopRepository = new GenericRepository<BusStop, int>(context);
+                    busStopRepository = new GenericRepository<BusStop>(context);
                 return busStopRepository;
             }
         }
 
-        public IRepository<DepartureTime, int> ScheduleRepository
+        public IRepository<DepartureTime> ScheduleRepository
         {
             get
             {
                 if (scheduleRepository == null)
-                    scheduleRepository = new GenericRepository<DepartureTime, int>(context);
+                    scheduleRepository = new GenericRepository<DepartureTime>(context);
                 return scheduleRepository;
             }
         }

@@ -12,7 +12,7 @@ namespace GlogowskiBus.BLL.Abstract
         IList<BusStop> Get();
         BusStop GetById(int id);
         BusStop Insert(BusStop busStop);
-        void Update(BusStop busStop);
-        void Delete(int id);
+        BusStop Update(BusStop busStop);
+        int? Delete(int id);
     }
 }
