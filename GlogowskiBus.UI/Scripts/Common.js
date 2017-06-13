@@ -1,7 +1,5 @@
 ﻿function Collection()
 {
-    var self = this;
-
     var items = [];
 
     this.count = function()
@@ -45,7 +43,7 @@
         return null;
     };
 
-    self.getSingle = function(condition)
+    this.getSingle = function(condition)
     {
         if (condition)
             for (var i = 0; i < items.length; i++)
@@ -82,4 +80,28 @@ function getPositionBetweenTwoPoints(startPoint, endPoint, currentTimeOffset)
     var newPointLatitude = startPoint.latitude + latitudeDifference * timeRatio;
     var newPointLongitude = startPoint.longitude + longitudeDifference * timeRatio;
     return new google.maps.LatLng(newPointLatitude, newPointLongitude);
+}
+
+function sendAjaxRequest(url, method, data, onSuccess)
+{
+    $.ajax(url,
+    {
+        type: method,
+        data: data,
+        statusCode:
+        {
+            200: function(response)
+            {
+                onSuccess(response);
+            },
+            400: function(message)
+            {
+                alert('Bad request: ' + message);
+            },
+            404: function()
+            {
+                alert('Not found!');
+            }
+        }
+    });
 }

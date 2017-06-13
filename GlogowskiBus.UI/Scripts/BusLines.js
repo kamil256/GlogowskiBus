@@ -86,7 +86,7 @@ function Route(busLine, details, indexMark, departureTimesModel, pointsModel, bu
     for (var i = 0; i < pointsModel.length; i++)
         self.points.add(new Point(self, pointsModel[i].Latitude, pointsModel[i].Longitude, pointsModel[i].TimeOffset, busStops));
 
-    self.busStops = new BusStops();
+    self.busStops = new Collection();//BusStops();
     for (var i = 0; i < self.points.count(); i++)
         if (self.points.getAt(i).busStop != null)
             self.busStops.add(self.points.getAt(i).busStop);

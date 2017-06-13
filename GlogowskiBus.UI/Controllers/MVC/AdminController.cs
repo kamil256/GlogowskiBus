@@ -120,5 +120,11 @@ namespace GlogowskiBus.UI.Controllers.MVC
 
             return View("CreateRoute", model);
         }
+
+        public ViewResult CreateOrEditBusLine(int? busLineId)
+        {
+
+            return View(busLineId ?? null);
+        }
     }
 }

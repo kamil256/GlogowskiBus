@@ -45,45 +45,45 @@ window.onload = function()
     adminIndexContext = new AdminIndexContext(@Html.Raw(Json.Encode(@Model.BusStops)), @Html.Raw(Json.Encode(@Model.BusLines)));
     ko.applyBindings(adminIndexContext);
 
-    function sendAjaxRequest(url, method, data, onSuccess)
-    {
-        //layoutViewModel.secondsToAutomaticLogOut(600);
-        $.ajax(url,
-        {
-            type: method,
-            data: data,
-            success: function(response)
-            {
-                console.log(response);
-                //if (response.Success)
-                //    displayNewSuccessMessage(response.Success);
-                //if (response.Fail)
-                //    displayNewFailMessage(response.Fail);
-                //onSuccess(response);
-            },
-            error: function()
-            {
-                alert('Error');
-                //displayNewFailMessage("Problem with connection. Try again, and if the problem persists contact your system administrator.");
-            }//,
-            //beforeSend: showProgressIndicator,
-            //complete: hideProgressIndicator
-        });
-    }
+    //function sendAjaxRequest(url, method, data, onSuccess)
+    //{
+    //    //layoutViewModel.secondsToAutomaticLogOut(600);
+    //    $.ajax(url,
+    //    {
+    //        type: method,
+    //        data: data,
+    //        success: function(response)
+    //        {
+    //            console.log(response);
+    //            //if (response.Success)
+    //            //    displayNewSuccessMessage(response.Success);
+    //            //if (response.Fail)
+    //            //    displayNewFailMessage(response.Fail);
+    //            //onSuccess(response);
+    //        },
+    //        error: function(response)
+    //        {
+    //            console.log(response);
+    //            //displayNewFailMessage("Problem with connection. Try again, and if the problem persists contact your system administrator.");
+    //        }//,
+    //        //beforeSend: showProgressIndicator,
+    //        //complete: hideProgressIndicator
+    //    });
+    //}
 
-    sendAjaxRequest('/api/BusLine', 'POST', 
-    {
-        Id: 1,
-        BusNumber: "A",
-        Routes:
-        [
-            {
-                Id: 2,
-                Details: 'det',
-                IndexMark: 'i'
-            }
-        ]
+    //sendAjaxRequest('/api/BusLine', 'POST', 
+    //{
+    //    Id: 1,
+    //    BusNumber: "A",
+    //    Routes:
+    //    [
+    //        {
+    //            Id: 2,
+    //            Details: 'det',
+    //            IndexMark: 'i'
+    //        }
+    //    ]
 
-    });
+    //});
 }
 </script>
