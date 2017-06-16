@@ -10,12 +10,15 @@
     this.add = function(item)
     {
         if (items.indexOf(item) == -1)
-        {
             items.push(item);
-            console.log('ok');
+    };
+
+    this.addAt = function(index, item)
+    {
+        if (items.indexOf(item) == -1)
+        {
+            items.splice(index, 0, item);
         }
-        else
-            console.log('not ok');
     };
 
     this.remove = function(item)

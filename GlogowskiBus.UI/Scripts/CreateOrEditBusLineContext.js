@@ -52,7 +52,8 @@
                 BusStop: null
             });
         }
-        self.busLine().routes.add(new Route(self.busLine(), '', '', [], points/*Model*/, self.busStops));
+        self.busLine().routes.add(new Route(self.busLine(), '', '', [], points/*Model*/, self.busStops, true));
+        self.selectedRoute(self.busLine().routes.getLast());
     };
 
     self.selectedRoute.subscribe(function(newRoute)

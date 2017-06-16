@@ -12,7 +12,7 @@
             <input data-bind="value: busLine().busNumber" />
         </p>
         <!-- ko foreach: busLine().routes.toArray() -->
-            <div data-bind="click: function() { $root.selectedRoute($data); console.log('sdfsdf'); return true; }, css: { active: $root.selectedRoute() == $data }">
+            <div data-bind="click: function() { $root.selectedRoute($data); return true; }, css: { active: $root.selectedRoute() == $data }">
                 <div>
                     <input data-bind="checked: $root.selectedRoute() == $data, checkedValue: true" type="radio" />
                 </div>
@@ -30,7 +30,7 @@
                 </div>
             </div>
         <!-- /ko -->
-        <input data-bind="click: function() { directions(new GoogleMapsDirections()); }" type="button" value="Nowa trasa" />
+        <input data-bind="click: function() { selectedRoute(null); directions(new GoogleMapsDirections()); }" type="button" value="Nowa trasa" />
     <!-- /ko -->
     <!-- ko if: directions() -->
         <input data-bind="click: function() { addNewRoute(directions().getPoints()); directions().dispose(); directions(null); }" type="button" value="Zakończ" />

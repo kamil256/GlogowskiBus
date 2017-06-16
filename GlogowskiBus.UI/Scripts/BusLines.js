@@ -59,7 +59,7 @@ function BusLine(busNumber, routesModel, busStops)
 //    self.sort = routes.sort;
 //}
 
-function Route(busLine, details, indexMark, departureTimesModel, pointsModel, busStops)
+function Route(busLine, details, indexMark, departureTimesModel, pointsModel, busStops, editable)
 {
     var self = this;
 
@@ -77,79 +77,50 @@ function Route(busLine, details, indexMark, departureTimesModel, pointsModel, bu
         if (departureTimesModel[i].Sunday)
             self.departureTimes.add(new DepartureTime(self, departureTimesModel[i].Hours, departureTimesModel[i].Minutes, serverTime.daysOfWeek[2]));
     }
-    self.departureTimes.sort(function(departureTime1, departureTime2)
-    {
-        return departureTime1.getMinutesSinceMidnight() - departureTime2.getMinutesSinceMidnight();
-    });
 
     self.points = new Collection();//Points();
     for (var i = 0; i < pointsModel.length; i++)
         self.points.add(new Point(self, pointsModel[i].Latitude, pointsModel[i].Longitude, pointsModel[i].TimeOffset, busStops));
 
-    self.busStops = new Collection();//BusStops();
-    for (var i = 0; i < self.points.count(); i++)
-        if (self.points.getAt(i).busStop != null)
-            self.busStops.add(self.points.getAt(i).busStop);
-
     self.selectBusStopEvent = null;
 
     var busStopMarkers = [];
-    for (var i = 0; i < self.busStops.count(); i++)
-    {
-        var busStopMarker = new google.maps.Marker(
-        {
-            icon: markerIcons.redBusStopOnRoute,
-            map: null,
-            optimized: false,
-            position:
-            {
-                lat: self.busStops.getAt(i).latitude,
-                lng: self.busStops.getAt(i).longitude
-            },
-            title: self.busStops.getAt(i).name,
-            zIndex: 2
-        });
+    var pointMarkers = [];
+    var polylines = [];
 
-        busStopMarker.addListener('click', function(e)
-        {
-            if (self.selectBusStopEvent)
-                self.selectBusStopEvent(self.busStops.getAt(busStopMarkers.indexOf(this)));
-        });
-
-        busStopMarkers.push(busStopMarker);
-    }
-
-    var path = [];
-    for (var i = 0; i < self.points.count() ; i++)
-        path.push(new google.maps.LatLng(self.points.getAt(i).latitude, self.points.getAt(i).longitude));
-
-    var polyline = new google.maps.Polyline(
-    {
-        map: null,
-        path: path,
-        strokeColor: '#CC181E',
-        strokeOpacity: 1,
-        strokeWeight: 4
-    });
+    var visible = false;
 
     self.select = function()
     {
-        for (var i = 0; i < busStopMarkers.length; i++)
-            if (busStopMarkers[i].getMap() == null)
-                busStopMarkers[i].setMap(map);
+        visible = true;
+        update();
+        //for (var i = 0; i < busStopMarkers.length; i++)
+        //    if (busStopMarkers[i].getMap() == null)
+        //        busStopMarkers[i].setMap(map);
 
-        if (polyline.getMap() == null)
-            polyline.setMap(map);
+        //if (editable)
+        //    for (var i = 0; i < pointMarkers.length; i++)
+        //        if (pointMarkers[i].getMap() == null)
+        //            pointMarkers[i].setMap(map);
+
+        //if (polyline.getMap() == null)
+        //    polyline.setMap(map);
     };
 
     self.deselect = function()
     {
-        for (var i = 0; i < busStopMarkers.length; i++)
-            if (busStopMarkers[i].getMap() != null)
-                busStopMarkers[i].setMap(null);
+        visible = false;
+        update();
+        //for (var i = 0; i < busStopMarkers.length; i++)
+        //    if (busStopMarkers[i].getMap() != null)
+        //        busStopMarkers[i].setMap(null);
 
-        if (polyline.getMap() != null)
-            polyline.setMap(null);
+        //for (var i = 0; i < pointMarkers.length; i++)
+        //    if (pointMarkers[i].getMap() != null)
+        //        pointMarkers[i].setMap(null);
+
+        //if (polyline.getMap() != null)
+        //    polyline.setMap(null);
     };
 
     self.selectBusStop = function(busStop)
@@ -160,6 +131,142 @@ function Route(busLine, details, indexMark, departureTimesModel, pointsModel, bu
             else
                 busStopMarkers[i].setIcon(markerIcons.redBusStopOnRoute);
     };
+
+    
+
+    var update = function()
+    {
+        self.departureTimes.sort(function(departureTime1, departureTime2)
+        {
+            return departureTime1.getMinutesSinceMidnight() - departureTime2.getMinutesSinceMidnight();
+        });
+
+        self.busStops = new Collection();
+        for (var i = 0; i < self.points.count(); i++)
+            if (self.points.getAt(i).busStop != null)
+                self.busStops.add(self.points.getAt(i).busStop);
+
+        for (var i = 0; i < busStopMarkers.length; i++)
+            busStopMarkers[i].setMap(null);
+        busStopMarkers = [];
+        for (var i = 0; i < self.busStops.count() ; i++)
+        {
+            var busStopMarker = new google.maps.Marker(
+            {
+                icon: markerIcons.redBusStopOnRoute,
+                map: visible ? map : null,//null,
+                optimized: false,
+                position:
+                {
+                    lat: self.busStops.getAt(i).latitude,
+                    lng: self.busStops.getAt(i).longitude
+                },
+                title: self.busStops.getAt(i).name,
+                zIndex: 2
+            });
+
+            busStopMarker.addListener('click', function(e)
+            {
+                if (self.selectBusStopEvent)
+                    self.selectBusStopEvent(self.busStops.getAt(busStopMarkers.indexOf(this)));
+            });
+
+            busStopMarkers.push(busStopMarker);
+        }
+
+        for (var i = 0; i < pointMarkers.length; i++)
+            pointMarkers[i].setMap(null);
+        pointMarkers = [];
+        for (var i = 0; i < self.points.count(); i++)
+        {
+            var pointMarker = new google.maps.Marker(
+            {
+                draggable: true,
+                //icon: markerIcons.redBusStopOnRoute,
+                map: visible && editable ? map : null,//null,
+                optimized: false,
+                position:
+                {
+                    lat: self.points.getAt(i).latitude,
+                    lng: self.points.getAt(i).longitude
+                },
+                zIndex: 3
+            });
+
+            pointMarker.addListener('click', function(e)
+            {
+                for (var i = 0; i < pointMarkers.length; i++)
+                    if (this == pointMarkers[i])
+                    {
+                        self.points.remove(self.points.getAt(i));
+                        update();
+                        //Route.update();
+                        break;
+                    }
+            });
+
+            pointMarker.addListener('dragend', function(e)
+            {
+                for (var i = 0; i < pointMarkers.length; i++)
+                    if (this == pointMarkers[i])
+                    {
+                        self.points.getAt(i).latitude = pointMarkers[i].position.lat();
+                        self.points.getAt(i).longitude = pointMarkers[i].position.lng();
+                        self.points.getAt(i).busStop = null;
+
+                        var mousePositionPixels = overlay.getProjection().fromLatLngToContainerPixel(e.latLng);
+                        for (var j = 0; j < busStops.count(); j++)
+                        {
+                            var busStopPositionPixels = overlay.getProjection().fromLatLngToContainerPixel(new google.maps.LatLng(busStops.getAt(j).latitude, busStops.getAt(j).longitude));
+                            if (Math.abs(mousePositionPixels.x - busStopPositionPixels.x) <= 9 &&
+                                Math.abs(mousePositionPixels.y - busStopPositionPixels.y) <= 9)
+                            {
+                                self.points.getAt(i).latitude = busStops.getAt(j).latitude;
+                                self.points.getAt(i).longitude = busStops.getAt(j).longitude;
+                                self.points.getAt(i).busStop = busStops.getAt(j);
+                            }
+                        }
+
+                        //Route.update();
+
+                        update();
+                        break;
+                    }
+            });
+
+            pointMarkers.push(pointMarker);
+        }
+
+        for (var i = 0; i < polylines.length; i++)
+            polylines[i].setMap(null);
+        polylines = [];
+        for (var i = 0; i < self.points.count() - 1; i++)
+        {
+            var polyline = new google.maps.Polyline(
+            {
+                map: visible ? map : null,//null,
+                path: [new google.maps.LatLng(self.points.getAt(i).latitude, self.points.getAt(i).longitude), new google.maps.LatLng(self.points.getAt(i + 1).latitude, self.points.getAt(i + 1).longitude)],
+                strokeColor: '#CC181E',
+                strokeOpacity: 1,
+                strokeWeight: 4
+            });
+
+            polyline.addListener('click', function(e)
+            {
+                for (var j = 0; j < polylines.length; j++)
+                    if (this == polylines[j])
+                    {
+                        self.points.addAt(j + 1, new Point(self, e.latLng.lat(), e.latLng.lng(), 0, busStops));
+                        update();
+                        break;
+                    }
+            });
+
+            polylines.push(polyline);
+        }
+    };
+
+    update();
 }
 
 //function DepartureTimes()
