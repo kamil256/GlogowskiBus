@@ -154,6 +154,7 @@
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Buses.js" />
     <Content Include="Scripts\CreateOrEditBusLineContext.js" />
+    <Content Include="Scripts\GoogleMapsDirections.js" />
     <Content Include="Scripts\ServerTime.js" />
     <Content Include="Scripts\TimeTableContext.js" />
     <Content Include="Scripts\BusLines.js" />

@@ -6,28 +6,35 @@
 }
 
 <div data-bind="visible: selectedTab() == tabs[0]">
-    <p>
-        NUMER AUTOBUSU
-        <input data-bind="value: busLine.busNumber" />
-    </p>
-    <!-- ko foreach: busLine.routes.toArray() -->
-    <div data-bind="click: function() { $root.selectedRoute($data); return true; }, css: { active: $root.selectedRoute() == $data }">
-        <div>
-            <input data-bind="checked: $root.selectedRoute() == $data, checkedValue: true" type="radio" />
-        </div>
-        <div>
-            <p>
-                TRASA
-                <button class="btn btn-xs btn-default">Edytuj</button>
-                <button class="btn btn-xs btn-default">Usuń</button>
-            </p>
-            <!-- ko if: busStops.count() -->
-            <p data-bind="text: busStops.getFirst().name + ' - ' + busStops.getLast().name"></p>
-            <!-- /ko -->
-            @*<p data-bind="text: indexMark + ' - ' + details, visible: indexMark && details"></p>*@
+    <!-- ko if: busLine() && !directions() -->
+        <p>
+            NUMER AUTOBUSU
+            <input data-bind="value: busLine().busNumber" />
+        </p>
+        <!-- ko foreach: busLine().routes.toArray() -->
+            <div data-bind="click: function() { $root.selectedRoute($data); console.log('sdfsdf'); return true; }, css: { active: $root.selectedRoute() == $data }">
+                <div>
+                    <input data-bind="checked: $root.selectedRoute() == $data, checkedValue: true" type="radio" />
+                </div>
+                <div>
+                    <p>
+                        TRASA
+                        <button class="btn btn-xs btn-default">Edytuj</button>
+                        <button class="btn btn-xs btn-default">Usuń</button>
+                    </p>
+                    <!-- ko if: busStops.count() -->
+                        <p data-bind="text: busStops.getFirst().name + ' - ' + busStops.getLast().name"></p>
+                    <!-- /ko -->
+                    @*<p data-bind="text: indexMark + ' - ' + details, visible: indexMark && details"></p>*@
 
-        </div>
-    </div>
+                </div>
+            </div>
+        <!-- /ko -->
+        <input data-bind="click: function() { directions(new GoogleMapsDirections()); }" type="button" value="Nowa trasa" />
+    <!-- /ko -->
+    <!-- ko if: directions() -->
+        <input data-bind="click: function() { addNewRoute(directions().getPoints()); directions().dispose(); directions(null); }" type="button" value="Zakończ" />
+        <input data-bind="click: function() { directions().dispose(); directions(null); }" type="button" value="Anuluj" />
     <!-- /ko -->
 </div>
 

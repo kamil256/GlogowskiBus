@@ -221,6 +221,7 @@ function Point(route, latitude, longitude, timeOffset, busStops)
     self.longitude = longitude;
     self.timeOffset = timeOffset;
 
+    // Todo: wrong chechong of busstop!!!
     self.busStop = busStops.getSingle(function(busStop) { return busStop.latitude.toFixed(6) == self.latitude.toFixed(6) && busStop.longitude.toFixed(6) == self.longitude.toFixed(6); });
     if (self.busStop)
     {

@@ -10,7 +10,12 @@
     this.add = function(item)
     {
         if (items.indexOf(item) == -1)
+        {
             items.push(item);
+            console.log('ok');
+        }
+        else
+            console.log('not ok');
     };
 
     this.remove = function(item)
