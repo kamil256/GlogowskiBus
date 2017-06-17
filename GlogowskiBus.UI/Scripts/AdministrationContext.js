@@ -132,6 +132,7 @@
     self.addBusStopCancelBtnClick = function()
     {
         self.selectedBusStop().dispose();
+        self.selectedBusStop(null);
 
         self.selectedView(self.views[0]);
     };
