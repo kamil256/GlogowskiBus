@@ -21,7 +21,7 @@
     </div>
     <button class="btn btn-default" data-bind="click: function() { busStopsListAddBtnClick(); }">DODAJ</button>
     <button class="btn btn-default" data-bind="enable: selectedBusStop">EDYTUJ</button>
-    <button class="btn btn-default" data-bind="enable: selectedBusStop">USUŃ</button>
+    <button class="btn btn-default" data-bind="click: function() { busStopsListDeleteBtnClick(); }, enable: selectedBusStop">USUŃ</button>
 </div>
 
 <div id="busLinesList" data-bind="visible: selectedView().name == 'List' && selectedView().selectedTab() == 'LINIE'">
@@ -71,6 +71,29 @@
     <button class="btn btn-default" data-bind="click: function() { addBusStopAddBtnClick(); }">DODAJ</button>
     <button class="btn btn-default" data-bind="click: function() { addBusStopCancelBtnClick(); }">ANULUJ</button>
 </div>
+
+<!-- ko if: selectedView().name == 'DeleteBusStop' && selectedView().selectedTab() == 'USUWANIE PRZYSTANKU' -->
+    <div id="deleteBusStop">
+        <p>NAZWA</p>
+        <input class="form-control" data-bind="value: selectedBusStop() && selectedBusStop().name" />
+
+        <p>POZYCJA</p>
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    <input class="form-control" data-bind="value: selectedBusStop() && selectedBusStop().latitude" />
+                </td>
+                <td>
+                    <input class="form-control" data-bind="value: selectedBusStop() && selectedBusStop().longitude" />
+                </td>
+            </tr>
+        </table>
+        <p data-bind="text: 'Linie: ' + busLinesNumbersListForBusStop(selectedBusStop())"></p>
+
+        <button class="btn btn-default" data-bind="click: function() { deleteBusStopDeleteBtnClick(); }">USUŃ</button>
+        <button class="btn btn-default" data-bind="click: function() { deleteBusStopCancelBtnClick(); }">ANULUJ</button>
+    </div>
+<!-- /ko -->
 
 <script>
 window.onload = function()

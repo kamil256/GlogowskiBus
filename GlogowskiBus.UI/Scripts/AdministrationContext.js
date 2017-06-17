@@ -13,7 +13,9 @@
 
     self.views = [
         new View('List', ['PRZYSTANKI', 'LINIE']),
-        new View('AddBusStop', ['DODAWANIE PRZYSTANKU'])
+        new View('AddBusStop', ['DODAWANIE PRZYSTANKU']),
+        new View('EditBusStop', ['EDYTOWANIE PRZYSTANKU']),
+        new View('DeleteBusStop', ['USUWANIE PRZYSTANKU'])
     ];
 
     self.selectedView = ko.observable(self.views[0]);
@@ -109,6 +111,12 @@
         self.selectedBusStop(new BusStop(null, 'Nowy przystanek', 0, 0));
     };
 
+    self.busStopsListDeleteBtnClick = function()
+    {
+        if (self.selectedBusStop())
+            self.selectedView(self.views[3]);
+    };
+
     self.addBusStopAddBtnClick = function()
     {
         sendAjaxRequest('/api/BusStop', "POST",
@@ -134,6 +142,23 @@
         self.selectedBusStop().dispose();
         self.selectedBusStop(null);
 
+        self.selectedView(self.views[0]);
+    };
+
+    self.deleteBusStopDeleteBtnClick = function()
+    {
+        sendAjaxRequest('/api/BusStop/' + self.selectedBusStop().id, "DELETE", null, function(response)
+        {
+            self.busStops.remove(self.selectedBusStop());
+            self.selectedBusStop().dispose();
+            self.selectedBusStop(null);
+
+            self.selectedView(self.views[0]);
+        });
+    };
+
+    self.deleteBusStopCancelBtnClick = function()
+    {
         self.selectedView(self.views[0]);
     };
 }
