@@ -11,8 +11,8 @@
     <div id="map"></div>
 
     <aside>
-        <ul class="tabs" data-bind="css: { oneTab: tabs.length == 1, twoTabs: tabs.length == 2, threeTabs: tabs.length == 3 }, foreach: tabs">
-            <li class="tab" data-bind="click: function() { $root.selectedTab($data); }, css: { active: $root.selectedTab() == $data }, text: $data"></li>
+        <ul class="tabs" data-bind="css: { oneTab: selectedView().tabs.length == 1, twoTabs: selectedView().tabs.length == 2, threeTabs: selectedView().tabs.length == 3 }, foreach: selectedView().tabs">
+            <li class="tab" data-bind="click: function() { $root.selectedView().selectedTab($data); }, css: { active: $root.selectedView().selectedTab() == $data }, text: $data"></li>
         </ul>
 
         <div class="content">

@@ -90,7 +90,6 @@
 
     self.dispose = function()
     {
-        console.log(self.getPoints());
         originMarker.setMap(null);
         display.setMap(null);
         google.maps.event.removeListener(mapClickListener);

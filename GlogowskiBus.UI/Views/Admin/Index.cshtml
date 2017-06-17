@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div id="busStopsList" data-bind="visible: selectedTab() == tabs[0]">
+<div id="busStopsList" data-bind="visible: selectedView().name == 'List' && selectedView().selectedTab() == 'PRZYSTANKI'">
     <div class="itemsList" data-bind="foreach: busStops.toArray()">
         <div data-bind="click: function() { $root.selectedBusStop($data); return true; }, css: { active: $root.selectedBusStop() == $data }">
             <div>
@@ -19,12 +19,12 @@
             </div>
         </div>
     </div>
-    <button class="btn btn-default">DODAJ</button>
+    <button class="btn btn-default" data-bind="click: function() { busStopsListAddBtnClick(); }">DODAJ</button>
     <button class="btn btn-default" data-bind="enable: selectedBusStop">EDYTUJ</button>
     <button class="btn btn-default" data-bind="enable: selectedBusStop">USUŃ</button>
 </div>
 
-<div id="busLinesList" data-bind="visible: selectedTab() == tabs[1]">
+<div id="busLinesList" data-bind="visible: selectedView().name == 'List' && selectedView().selectedTab() == 'LINIE'">
     <button class="btn btn-default">Nowa linia</button>
     <div data-bind="foreach: busLines.toArray()">
         <p>
@@ -50,6 +50,26 @@
             </div>
         </div>
     </div>
+</div>
+
+<div id="addBusStop" data-bind="visible: selectedView().name == 'AddBusStop' && selectedView().selectedTab() == 'DODAWANIE PRZYSTANKU'">
+    <p>NAZWA</p>
+    <input class="form-control" data-bind="value: selectedBusStop() && selectedBusStop().name" />
+
+    <p>POZYCJA</p>
+    <table style="width: 100%">
+        <tr>
+            <td>
+                <input class="form-control" data-bind="value: selectedBusStop() && selectedBusStop().latitude" />
+            </td>
+            <td>
+                <input class="form-control" data-bind="value: selectedBusStop() && selectedBusStop().longitude" />
+            </td>
+        </tr>
+    </table>
+
+    <button class="btn btn-default" data-bind="click: function() { addBusStopAddBtnClick(); }">DODAJ</button>
+    <button class="btn btn-default">ANULUJ</button>
 </div>
 
 <script>

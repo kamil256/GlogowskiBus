@@ -39,4 +39,9 @@
     {
         marker.setIcon(markerIcons.redBusStop);
     };
+
+    self.dispose = function()
+    {
+        marker.setMap(null);
+    };
 }

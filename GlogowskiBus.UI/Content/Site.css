@@ -1,9 +1,9 @@
 ﻿/* Set width on the form input elements since they're 100% wide by default */
-input,
+/*input,
 select,
 textarea {
     max-width: 280px;
-}
+}*/
 
 html, body {
     box-sizing: border-box;
@@ -138,9 +138,9 @@ aside .textButton {
     font-weight: normal;
 }
 
-aside select {
+/*aside select {
     max-width: initial;
-}
+}*/
 
 aside select:focus {
     /*outline-color: rgba(204, 24, 30, 1) !important;*/
@@ -314,6 +314,12 @@ aside #timeTable .departureTimes td:not(:first-child) div.active {
 #busLinesList > .itemsList > div > div:nth-child(2) > p {
     color: inherit;
     margin-bottom: 3px;
+}
+
+/***** Add bus stop in /Admin/Index view *****/
+
+#addBusStop input {
+    margin-bottom: 20px;
 }
 
 /***** Footer ****/

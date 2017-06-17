@@ -102,6 +102,10 @@ function sendAjaxRequest(url, method, data, onSuccess)
             {
                 onSuccess(response);
             },
+            201: function(response)
+            {
+                onSuccess(response);
+            },
             400: function(message)
             {
                 alert('Bad request: ' + message);

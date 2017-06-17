@@ -2,6 +2,22 @@
 {
     var self = this;
 
+    function View(name, tabs)
+    {
+        var self = this;
+
+        self.name = name;
+        self.tabs = tabs;
+        self.selectedTab = ko.observable(self.tabs[0])
+    }
+
+    self.views = [
+        new View('List', ['PRZYSTANKI', 'LINIE']),
+        new View('AddBusStop', ['DODAWANIE PRZYSTANKU'])
+    ];
+
+    self.selectedView = ko.observable(self.views[0]);
+
     self.busStops = new Collection();
     for (var i = 0; i < busStopsFromModel.length; i++)
         self.busStops.add(new BusStop(busStopsFromModel[i].Id, busStopsFromModel[i].Name, busStopsFromModel[i].Latitude, busStopsFromModel[i].Longitude));
@@ -20,42 +36,50 @@
     for (var i = 0; i < self.busLines.count(); i++)
         self.routes.addMany(self.busLines.getAt(i).routes.toArray());
 
-    self.tabs = ['PRZYSTANKI', 'LINIE'];
-
-    self.selectedTab = ko.observable(self.tabs[0]);
-
     self.selectedBusStop = ko.observable();
-
-    for (var i = 0; i < self.busStops.count(); i++)
-        self.busStops.getAt(i).selectBusStopEvent = function(busStop)
+    var selectBusStopEvent = function(busStop)
+    {
+        switch (self.selectedView().name)
         {
-            self.selectedBusStop(busStop);
-        };
+            case 'List':
+                self.selectedBusStop(busStop);
+                break;
+        }
+    };
+    for (var i = 0; i < self.busStops.count() ; i++)
+        self.busStops.getAt(i).selectBusStopEvent = selectBusStopEvent;
 
     self.selectedBusStop.subscribe(function(newBusStop)
     {
         for (var i = 0; i < self.busStops.count() ; i++)
-            if (self.busStops.getAt(i) != newBusStop)
-                self.busStops.getAt(i).deselect();
-            else
-                self.busStops.getAt(i).select();
+            self.busStops.getAt(i).deselect();
+        if (newBusStop)
+            newBusStop.select();
     });
 
     self.selectedRoute = ko.observable();
 
     self.selectedRoute.subscribe(function(newRoute)
     {
-        for (var i = 0; i < self.routes.count() ; i++)
-            if (newRoute && self.routes.getAt(i) == newRoute)
-                self.routes.getAt(i).select();
-            else
-                self.routes.getAt(i).deselect();
+        for (var i = 0; i < self.routes.count(); i++)
+            self.routes.getAt(i).deselect();
+        if (newRoute)
+            newRoute.select();
     });
 
     map.addListener('click', function()
     {
-        self.selectedBusStop(null);
-        self.selectedRoute(null);
+        switch (self.selectedView().name)
+        {
+            case 'List':
+                self.selectedBusStop(null);
+                self.selectedRoute(null);
+                break;
+            case 'AddBusStop':
+                self.selectedBusStop().dispose();
+                self.selectedBusStop(new BusStop(null, self.selectedBusStop().name, e.latLng.lat(), e.latLng.lng()));
+                break;
+        }
     });
 
     self.busLinesNumbersListForBusStop = function(busStop)
@@ -77,5 +101,31 @@
             return busLinesNumbers.join(', ');
         else
             return '-';
+    };
+
+    self.busStopsListAddBtnClick = function()
+    {
+        self.selectedView(self.views[1]);
+        self.selectedBusStop(new BusStop(null, 'Nowy przystanek', 0, 0));
+    };
+
+    self.addBusStopAddBtnClick = function()
+    {
+        sendAjaxRequest('/api/BusStop', "POST",
+        {
+            Name: self.selectedBusStop().name,
+            Latitude: self.selectedBusStop().latitude,
+            Longitude: self.selectedBusStop().longitude
+        }, function(response)
+        {
+            self.selectedBusStop().dispose();
+            self.selectedBusStop(null);
+
+            var newBusStop = new BusStop(response.Id, response.Name, response.Latitude, response.Longitude);
+            newBusStop.selectBusStopEvent = selectBusStopEvent;
+            self.busStops.add(newBusStop);
+
+            self.selectedView(self.views[0]);
+        });
     };
 }
