@@ -26,6 +26,12 @@
 
     self.selectedBusStop = ko.observable();
 
+    for (var i = 0; i < self.busStops.count(); i++)
+        self.busStops.getAt(i).selectBusStopEvent = function(busStop)
+        {
+            self.selectedBusStop(busStop);
+        };
+
     self.selectedRoute = ko.observable();
 
     map.addListener('click', function()
