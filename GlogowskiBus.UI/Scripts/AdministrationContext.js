@@ -86,8 +86,8 @@
     {
         var busLinesNumbers = [];
         for (var i = 0; i < busStop.points.count() ; i++)
-            if (busLinesNumbers.indexOf(busStop.points.getAt(i).busNumber) == -1)
-                busLinesNumbers.push(busStop.points.getAt(i).busNumber);
+            if (busLinesNumbers.indexOf(busStop.points.getAt(i).route.busLine.busNumber) == -1)
+                busLinesNumbers.push(busStop.points.getAt(i).route.busLine.busNumber);
         busLinesNumbers.sort(function(a, b)
         {
             if (a > b)
