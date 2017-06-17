@@ -24,6 +24,8 @@
 
     self.selectedTab = ko.observable(self.tabs[0]);
 
+    self.selectedBusStop = ko.observable();
+
     self.selectedRoute = ko.observable();
 
     map.addListener('click', function()
