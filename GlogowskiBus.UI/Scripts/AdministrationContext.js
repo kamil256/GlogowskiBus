@@ -126,34 +126,34 @@
             Longitude: self.selectedBusStop().longitude
         }, function(response)
         {
+            self.selectedView(self.views[0]);
+
             self.selectedBusStop().dispose();
 
             var newBusStop = new BusStop(response.Id, response.Name, response.Latitude, response.Longitude);
             newBusStop.selectBusStopEvent = selectBusStopEvent;
             self.busStops.add(newBusStop);
             self.selectedBusStop(newBusStop);
-
-            self.selectedView(self.views[0]);
         });
     };
 
     self.addBusStopCancelBtnClick = function()
     {
+        self.selectedView(self.views[0]);
+
         self.selectedBusStop().dispose();
         self.selectedBusStop(null);
-
-        self.selectedView(self.views[0]);
     };
 
     self.deleteBusStopDeleteBtnClick = function()
     {
         sendAjaxRequest('/api/BusStop/' + self.selectedBusStop().id, "DELETE", null, function(response)
         {
+            self.selectedView(self.views[0]);
+
             self.busStops.remove(self.selectedBusStop());
             self.selectedBusStop().dispose();
             self.selectedBusStop(null);
-
-            self.selectedView(self.views[0]);
         });
     };
 

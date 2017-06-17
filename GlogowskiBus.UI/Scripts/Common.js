@@ -1,10 +1,10 @@
 ﻿function Collection()
 {
-    var items = [];
+    var items = ko.observableArray([]);
 
     this.count = function()
     {
-        return items.length;
+        return items().length;
     };
 
     this.add = function(item)
@@ -28,44 +28,44 @@
 
     this.addMany = function(itemsArray)
     {
-        for (var i = 0; i < itemsArray.length; i++)
-            this.add(itemsArray[i]);
+        for (var i = 0; i < itemsArray().length; i++)
+            this.add(itemsArray()[i]);
     };
 
     this.getAt = function(index)
     {
-        return items[index];
+        return items()[index];
     };
 
     this.getFirst = function()
     {
-        if (items.length > 0)
-            return items[0];
+        if (items().length > 0)
+            return items()[0];
         return null;
     };
 
     this.getLast = function()
     {
-        if (items.length > 0)
-            return items[items.length - 1];
+        if (items().length > 0)
+            return items()[items().length - 1];
         return null;
     };
 
     this.getSingle = function(condition)
     {
         if (condition)
-            for (var i = 0; i < items.length; i++)
-                if (condition(items[i]))
-                    return items[i];
+            for (var i = 0; i < items().length; i++)
+                if (condition(items()[i]))
+                    return items()[i];
         return null;
     };
 
     this.get = function(condition)
     {
         var result = new Collection();
-        for (var i = 0; i < items.length; i++)
-            if (condition(items[i]))
-                result.add(items[i]);
+        for (var i = 0; i < items().length; i++)
+            if (condition(items()[i]))
+                result.add(items()[i]);
         return result;
     };
 
