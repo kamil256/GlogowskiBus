@@ -66,21 +66,25 @@ namespace GlogowskiBus.BLL.Concrete
 
         public BusStop Update(BusStop busStop)
         {
-            if (unitOfWork.BusStopRepository.GetById(busStop.Id) == null)
+            DAL.Entities.BusStop existingBusStop = unitOfWork.BusStopRepository.GetById(busStop.Id);
+            if (existingBusStop == null)
                 return null;
             if (string.IsNullOrWhiteSpace(busStop.Name))
                 throw new Exception("Bus stop name must not be empty!");
             if (unitOfWork.BusStopRepository.Count(x => x.Id != busStop.Id && x.Latitude == busStop.Latitude && x.Longitude == busStop.Longitude) != 0)
                 throw new Exception("Bus stop with those coordinates already exists!");
-            unitOfWork.BusStopRepository.Update(new DAL.Entities.BusStop()
-            {
-                Id = busStop.Id,
-                Name = busStop.Name,
-                Latitude = busStop.Latitude,
-                Longitude = busStop.Longitude
-            });
+            existingBusStop.Name = busStop.Name;
+            existingBusStop.Latitude = busStop.Latitude;
+            existingBusStop.Longitude = busStop.Longitude;
+            unitOfWork.BusStopRepository.Update(existingBusStop);
             unitOfWork.Save();
-            return busStop;
+            return new BLL.Concrete.BusStop()
+            {
+                Id = existingBusStop.Id,
+                Name = existingBusStop.Name,
+                Latitude = existingBusStop.Latitude,
+                Longitude = existingBusStop.Longitude
+            };
         }
 
         public int? Delete(int id)

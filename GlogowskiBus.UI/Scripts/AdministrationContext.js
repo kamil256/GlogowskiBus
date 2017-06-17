@@ -78,8 +78,9 @@
                 self.selectedRoute(null);
                 break;
             case 'AddBusStop':
+            case 'EditBusStop':
                 self.selectedBusStop().dispose();
-                self.selectedBusStop(new BusStop(null, self.selectedBusStop().name, e.latLng.lat(), e.latLng.lng()));
+                self.selectedBusStop(new BusStop(self.selectedBusStop().id, self.selectedBusStop().name, e.latLng.lat(), e.latLng.lng()));
                 break;
         }
     });
@@ -109,6 +110,15 @@
     {
         self.selectedView(self.views[1]);
         self.selectedBusStop(new BusStop(null, 'Nowy przystanek', 0, 0));
+    };
+
+    self.busStopsListEditBtnClick = function()
+    {
+        if (self.selectedBusStop())
+        {
+            self.selectedView(self.views[2]);
+            self.selectedBusStop(new BusStop(self.selectedBusStop().id, self.selectedBusStop().name, self.selectedBusStop().latitude, self.selectedBusStop().longitude));
+        }
     };
 
     self.busStopsListDeleteBtnClick = function()
@@ -143,6 +153,37 @@
 
         self.selectedBusStop().dispose();
         self.selectedBusStop(null);
+    };
+
+    self.editBusStopEditBtnClick = function()
+    {
+        sendAjaxRequest('/api/BusStop', "PUT",
+        {
+            Id: self.selectedBusStop().id,
+            Name: self.selectedBusStop().name,
+            Latitude: self.selectedBusStop().latitude,
+            Longitude: self.selectedBusStop().longitude
+        }, function(response)
+        {
+            self.selectedView(self.views[0]);
+
+            self.selectedBusStop().dispose();
+
+            var existingBusStop = self.busStops.getSingle(function(busStop) { return busStop.id == response.Id; });
+            existingBusStop.name = response.Name;
+            existingBusStop.latitude = response.Latitude;
+            existingBusStop.longitude = response.Longitude;
+
+            self.selectedBusStop(existingBusStop);
+        });
+    };
+
+    self.editBusStopCancelBtnClick = function()
+    {
+        self.selectedView(self.views[0]);
+
+        self.selectedBusStop().dispose();
+        self.selectedBusStop(self.busStops.getSingle(function(busStop) { return busStop.id == self.selectedBusStop().id; }));
     };
 
     self.deleteBusStopDeleteBtnClick = function()

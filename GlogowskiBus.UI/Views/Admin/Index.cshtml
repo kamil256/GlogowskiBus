@@ -20,7 +20,7 @@
         </div>
     </div>
     <button class="btn btn-default" data-bind="click: function() { busStopsListAddBtnClick(); }">DODAJ</button>
-    <button class="btn btn-default" data-bind="enable: selectedBusStop">EDYTUJ</button>
+    <button class="btn btn-default" data-bind="click: function() { busStopsListEditBtnClick(); }, enable: selectedBusStop">EDYTUJ</button>
     <button class="btn btn-default" data-bind="click: function() { busStopsListDeleteBtnClick(); }, enable: selectedBusStop">USUŃ</button>
 </div>
 
@@ -52,39 +52,65 @@
     </div>
 </div>
 
-<div id="addBusStop" data-bind="visible: selectedView().name == 'AddBusStop' && selectedView().selectedTab() == 'DODAWANIE PRZYSTANKU'">
-    <p>NAZWA</p>
-    <input class="form-control" data-bind="value: selectedBusStop() && selectedBusStop().name" />
-
-    <p>POZYCJA</p>
-    <table style="width: 100%">
-        <tr>
-            <td>
-                <input class="form-control" data-bind="value: selectedBusStop() && selectedBusStop().latitude" />
-            </td>
-            <td>
-                <input class="form-control" data-bind="value: selectedBusStop() && selectedBusStop().longitude" />
-            </td>
-        </tr>
-    </table>
-
-    <button class="btn btn-default" data-bind="click: function() { addBusStopAddBtnClick(); }">DODAJ</button>
-    <button class="btn btn-default" data-bind="click: function() { addBusStopCancelBtnClick(); }">ANULUJ</button>
-</div>
-
-<!-- ko if: selectedView().name == 'DeleteBusStop' && selectedView().selectedTab() == 'USUWANIE PRZYSTANKU' -->
-    <div id="deleteBusStop">
+<!-- ko if: selectedView().name == 'AddBusStop' && selectedView().selectedTab() == 'DODAWANIE PRZYSTANKU' -->
+    <div id="addBusStop">
         <p>NAZWA</p>
-        <input class="form-control" data-bind="value: selectedBusStop() && selectedBusStop().name" />
+        <input class="form-control" data-bind="value: selectedBusStop().name" />
 
         <p>POZYCJA</p>
         <table style="width: 100%">
             <tr>
                 <td>
-                    <input class="form-control" data-bind="value: selectedBusStop() && selectedBusStop().latitude" />
+                    <input class="form-control" data-bind="value: selectedBusStop().latitude" />
                 </td>
                 <td>
-                    <input class="form-control" data-bind="value: selectedBusStop() && selectedBusStop().longitude" />
+                    <input class="form-control" data-bind="value: selectedBusStop().longitude" />
+                </td>
+            </tr>
+        </table>
+
+        <button class="btn btn-default" data-bind="click: function() { addBusStopAddBtnClick(); }">DODAJ</button>
+        <button class="btn btn-default" data-bind="click: function() { addBusStopCancelBtnClick(); }">ANULUJ</button>
+    </div>
+<!-- /ko -->
+
+<!-- ko if: selectedView().name == 'EditBusStop' && selectedView().selectedTab() == 'EDYTOWANIE PRZYSTANKU' -->
+    <div id="editBusStop">
+        <p data-bind="text: 'PRZYSTANEK #' + selectedBusStop().id"></p>
+    
+        <p>NAZWA</p>
+        <input class="form-control" data-bind="value: selectedBusStop().name" />
+
+        <p>POZYCJA</p>
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    <input class="form-control" data-bind="value: selectedBusStop().latitude" />
+                </td>
+                <td>
+                    <input class="form-control" data-bind="value: selectedBusStop().longitude" />
+                </td>
+            </tr>
+        </table>
+
+        <button class="btn btn-default" data-bind="click: function() { editBusStopEditBtnClick(); }">EDYTUJ</button>
+        <button class="btn btn-default" data-bind="click: function() { editBusStopCancelBtnClick(); }">ANULUJ</button>
+    </div>
+<!-- /ko -->
+
+<!-- ko if: selectedView().name == 'DeleteBusStop' && selectedView().selectedTab() == 'USUWANIE PRZYSTANKU' -->
+    <div id="deleteBusStop">
+        <p>NAZWA</p>
+        <input class="form-control" data-bind="value: selectedBusStop().name" />
+
+        <p>POZYCJA</p>
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    <input class="form-control" data-bind="value: selectedBusStop().latitude" />
+                </td>
+                <td>
+                    <input class="form-control" data-bind="value: selectedBusStop().longitude" />
                 </td>
             </tr>
         </table>
