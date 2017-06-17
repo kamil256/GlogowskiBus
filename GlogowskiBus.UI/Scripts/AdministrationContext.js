@@ -32,6 +32,15 @@
             self.selectedBusStop(busStop);
         };
 
+    self.selectedBusStop.subscribe(function(newBusStop)
+    {
+        for (var i = 0; i < self.busStops.count() ; i++)
+            if (self.busStops.getAt(i) != newBusStop)
+                self.busStops.getAt(i).deselect();
+            else
+                self.busStops.getAt(i).select();
+    });
+
     self.selectedRoute = ko.observable();
 
     map.addListener('click', function()
