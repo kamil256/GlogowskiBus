@@ -41,4 +41,25 @@
             else
                 self.routes.getAt(i).deselect();
     });
+
+    self.busLinesNumbersListForBusStop = function(busStop)
+    {
+        var busLinesNumbers = [];
+        for (var i = 0; i < busStop.points.count() ; i++)
+            if (busLinesNumbers.indexOf(busStop.points.getAt(i).busNumber) == -1)
+                busLinesNumbers.push(busStop.points.getAt(i).busNumber);
+        busLinesNumbers.sort(function(a, b)
+        {
+            if (a > b)
+                return 1;
+            else if (a < b)
+                return -1;
+            else
+                return 0;
+        });
+        if (busLinesNumbers.length > 0)
+            return busLinesNumbers.join(', ');
+        else
+            return '-';
+    };
 }

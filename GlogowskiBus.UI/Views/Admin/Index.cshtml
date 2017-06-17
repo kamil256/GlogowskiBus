@@ -13,13 +13,10 @@
                 <input data-bind="checked: $root.selectedBusStop() == $data, checkedValue: true" type="radio" />
             </div>
             <div>
-                <p>
-                    <span data-bind="text: 'PRZYSTANEK #Id'"></span>
-                </p>
+                <p data-bind="text: 'PRZYSTANEK #ID'"></p>
                 <p data-bind="text: 'Nazwa: ' + name"></p>
                 <p data-bind="text: 'Pozycja: ' + latitude + ', ' + longitude"></p>
-                @*<button class="btn btn-xs btn-default">EDYTUJ</button>
-                <button class="btn btn-xs btn-default">USUŃ</button>*@
+                <p data-bind="text: 'Linie: ' + $root.busLinesNumbersListForBusStop($data)"></p>
             </div>
         </div>
     </div>
