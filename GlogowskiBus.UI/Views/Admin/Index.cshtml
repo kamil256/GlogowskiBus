@@ -6,7 +6,6 @@
 }
 
 <div id="busStopsList" data-bind="visible: selectedTab() == tabs[0]">
-    
     <div class="itemsList" data-bind="foreach: busStops.toArray()">
         <div data-bind="click: function() { $root.selectedBusStop($data); return true; }, css: { active: $root.selectedBusStop() == $data }">
             <div>
@@ -21,8 +20,8 @@
         </div>
     </div>
     <button class="btn btn-default">DODAJ</button>
-    <button class="btn btn-default">EDYTUJ</button>
-    <button class="btn btn-default">USUŃ</button>
+    <button class="btn btn-default" data-bind="enable: selectedBusStop">EDYTUJ</button>
+    <button class="btn btn-default" data-bind="enable: selectedBusStop">USUŃ</button>
 </div>
 
 <div id="busLinesList" data-bind="visible: selectedTab() == tabs[1]">
