@@ -43,18 +43,19 @@
 
     self.selectedRoute = ko.observable();
 
-    map.addListener('click', function()
-    {
-        self.selectedRoute(null);
-    });
-
     self.selectedRoute.subscribe(function(newRoute)
     {
-        for (var i = 0; i < self.routes.count(); i++)
+        for (var i = 0; i < self.routes.count() ; i++)
             if (newRoute && self.routes.getAt(i) == newRoute)
                 self.routes.getAt(i).select();
             else
                 self.routes.getAt(i).deselect();
+    });
+
+    map.addListener('click', function()
+    {
+        self.selectedBusStop(null);
+        self.selectedRoute(null);
     });
 
     self.busLinesNumbersListForBusStop = function(busStop)
