@@ -1,25 +1,8 @@
-﻿function BusStops()
+﻿function BusStop(id, name, latitude, longitude)
 {
     var self = this;
 
-    var busStops = new Collection();
-
-    self.count = busStops.count;
-    self.add = busStops.add;
-    self.addMany = busStops.addMany;
-    self.getAt = busStops.getAt;
-    self.getFirst = busStops.getFirst;
-    self.getLast = busStops.getLast;
-    self.getSingle = busStops.getSingle;
-    self.get = busStops.get;
-    self.toArray = busStops.toArray;
-    self.sort = busStops.sort;
-}
-
-function BusStop(name, latitude, longitude)
-{
-    var self = this;
-
+    self.id = id;
     self.name = name;
     self.latitude = latitude;
     self.longitude = longitude;

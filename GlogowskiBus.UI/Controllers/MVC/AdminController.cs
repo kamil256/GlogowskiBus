@@ -23,13 +23,16 @@ namespace GlogowskiBus.UI.Controllers.MVC
             model.ServerTimeMilliseconds = (long)(DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
             model.BusLines = busService.GetAllBusLines().Select(x => new Models.BusLineDTO()
             {
+                Id = x.Id,
                 BusNumber = x.BusNumber,
                 Routes = x.Routes.Select(y => new Models.RouteDTO()
                 {
+                    Id = y.Id,
                     Details = y.Details,
                     IndexMark = y.IndexMark,
                     Points = y.Points.Select(z => new Models.PointDTO()
                     {
+                        Id = z.Id,
                         Latitude = z.Latitude,
                         Longitude = z.Longitude,
                         //IsBusStop = z.IsBusStop,
@@ -37,6 +40,7 @@ namespace GlogowskiBus.UI.Controllers.MVC
                     }).ToList(),
                     DepartureTimes = y.DepartureTimes.Select(z => new Models.DepartureTimeDTO()
                     {
+                        Id = z.Id,
                         Hours = z.Hours,
                         Minutes = z.Minutes,
                         WorkingDay = z.WorkingDay,
@@ -48,6 +52,7 @@ namespace GlogowskiBus.UI.Controllers.MVC
 
             model.BusStops = busService.GetAllBusStops().Select(x => new Models.BusStopDTO()
             {
+                Id = x.Id,
                 Latitude = x.Latitude,
                 Longitude = x.Longitude,
                 Name = x.Name,

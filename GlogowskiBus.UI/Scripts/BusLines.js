@@ -1,30 +1,13 @@
-﻿//function BusLines()
-//{
-//    var self = this;
-
-//    var busLines = new Collection();
-
-//    self.count = busLines.count;
-//    self.add = busLines.add;
-//    self.addMany = busLines.addMany;
-//    self.getAt = busLines.getAt;
-//    self.getFirst = busLines.getFirst;
-//    self.getLast = busLines.getLast;
-//    self.getSingle = busLines.getSingle;
-//    self.get = busLines.get;
-//    self.toArray = busLines.toArray;
-//    self.sort = busLines.sort;
-//}
-
-function BusLine(busNumber, routesModel, busStops)
+﻿function BusLine(id, busNumber, routesModel, busStops)
 {
     var self = this;
 
+    self.id = id;
     self.busNumber = busNumber;
 
     self.routes = new Collection();//Routes();
     for (var i = 0; i < routesModel.length; i++)
-        self.routes.add(new Route(self, routesModel[i].Details, routesModel[i].IndexMark, routesModel[i].DepartureTimes, routesModel[i].Points, busStops));
+        self.routes.add(new Route(self, routesModel[i].id, routesModel[i].Details, routesModel[i].IndexMark, routesModel[i].DepartureTimes, routesModel[i].Points, busStops));
 
     self.departureTimes = new Collection();
     for (var i = 0; i < self.routes.count(); i++)
@@ -41,29 +24,12 @@ function BusLine(busNumber, routesModel, busStops)
     self.hidden = ko.observable(false);
 }
 
-//function Routes()
-//{
-//    var self = this;
-
-//    var routes = new Collection();
-
-//    self.count = routes.count;
-//    self.add = routes.add;
-//    self.addMany = routes.addMany;
-//    self.getAt = routes.getAt;
-//    self.getFirst = routes.getFirst;
-//    self.getLast = routes.getLast;
-//    self.getSingle = routes.getSingle;
-//    self.get = routes.get;
-//    self.toArray = routes.toArray;
-//    self.sort = routes.sort;
-//}
-
-function Route(busLine, details, indexMark, departureTimesModel, pointsModel, busStops, editable)
+function Route(busLine, id, details, indexMark, departureTimesModel, pointsModel, busStops, editable)
 {
     var self = this;
 
     self.busLine = busLine;
+    self.id = id;
     self.details = details;
     self.indexMark = indexMark;
 
@@ -71,16 +37,16 @@ function Route(busLine, details, indexMark, departureTimesModel, pointsModel, bu
     for (var i = 0; i < departureTimesModel.length; i++)
     {
         if (departureTimesModel[i].WorkingDay)
-            self.departureTimes.add(new DepartureTime(self, departureTimesModel[i].Hours, departureTimesModel[i].Minutes, serverTime.daysOfWeek[0]));
+            self.departureTimes.add(new DepartureTime(self, departureTimesModel[i].Id, departureTimesModel[i].Hours, departureTimesModel[i].Minutes, serverTime.daysOfWeek[0]));
         if (departureTimesModel[i].Saturday)
-            self.departureTimes.add(new DepartureTime(self, departureTimesModel[i].Hours, departureTimesModel[i].Minutes, serverTime.daysOfWeek[1]));
+            self.departureTimes.add(new DepartureTime(self, departureTimesModel[i].Id, departureTimesModel[i].Hours, departureTimesModel[i].Minutes, serverTime.daysOfWeek[1]));
         if (departureTimesModel[i].Sunday)
-            self.departureTimes.add(new DepartureTime(self, departureTimesModel[i].Hours, departureTimesModel[i].Minutes, serverTime.daysOfWeek[2]));
+            self.departureTimes.add(new DepartureTime(self, departureTimesModel[i].Id, departureTimesModel[i].Hours, departureTimesModel[i].Minutes, serverTime.daysOfWeek[2]));
     }
 
     self.points = new Collection();//Points();
     for (var i = 0; i < pointsModel.length; i++)
-        self.points.add(new Point(self, pointsModel[i].Latitude, pointsModel[i].Longitude, pointsModel[i].TimeOffset, busStops));
+        self.points.add(new Point(self, pointsModel[i].Id, pointsModel[i].Latitude, pointsModel[i].Longitude, pointsModel[i].TimeOffset, busStops));
 
     self.selectBusStopEvent = null;
 
@@ -256,7 +222,7 @@ function Route(busLine, details, indexMark, departureTimesModel, pointsModel, bu
                 for (var j = 0; j < polylines.length; j++)
                     if (this == polylines[j])
                     {
-                        self.points.addAt(j + 1, new Point(self, e.latLng.lat(), e.latLng.lng(), 0, busStops));
+                        self.points.addAt(j + 1, new Point(self, 0, e.latLng.lat(), e.latLng.lng(), 0, busStops));
                         update();
                         break;
                     }
@@ -269,31 +235,12 @@ function Route(busLine, details, indexMark, departureTimesModel, pointsModel, bu
     update();
 }
 
-//function DepartureTimes()
-//{
-//    var self = this;
-
-//    var departureTimes = new Collection();
-
-//    self.count = departureTimes.count;
-//    self.add = departureTimes.add;
-//    self.addMany = departureTimes.addMany;
-//    self.getAt = departureTimes.getAt;
-//    self.getFirst = departureTimes.getFirst;
-//    self.getLast = departureTimes.getLast;
-//    self.getSingle = departureTimes.getSingle;
-//    self.get = departureTimes.get;
-//    self.toArray = departureTimes.toArray;
-//    self.sort = departureTimes.sort;
-
-    
-//}
-
-function DepartureTime(route, hours, minutes, dayOfWeek)
+function DepartureTime(route, id, hours, minutes, dayOfWeek)
 {
     var self = this;
 
     self.route = route;
+    self.id = id;
     self.hours = hours;
     self.minutes = minutes;
     self.dayOfWeek = dayOfWeek;
@@ -319,11 +266,12 @@ function DepartureTime(route, hours, minutes, dayOfWeek)
 }
 
 
-function Point(route, latitude, longitude, timeOffset, busStops)
+function Point(route, id, latitude, longitude, timeOffset, busStops)
 {
     var self = this;
 
     self.route = route;
+    self.id = id;
     self.latitude = latitude;
     self.longitude = longitude;
     self.timeOffset = timeOffset;
@@ -337,23 +285,3 @@ function Point(route, latitude, longitude, timeOffset, busStops)
         self.busStop.points.add(self);
     }
 }
-
-//function Points()
-//{
-//    var self = this;
-
-//    var points = new Collection();
-
-//    self.count = points.count;
-//    self.add = points.add;
-//    self.addMany = points.addMany;
-//    self.getAt = points.getAt;
-//    self.getFirst = points.getFirst;
-//    self.getLast = points.getLast;
-//    self.getSingle = points.getSingle;
-//    self.get = points.get;
-//    self.toArray = points.toArray;
-//    self.sort = points.sort;
-//}
-
-

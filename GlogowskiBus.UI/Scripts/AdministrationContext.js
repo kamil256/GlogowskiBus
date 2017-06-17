@@ -4,17 +4,17 @@
 
     self.busStops = new Collection();
     for (var i = 0; i < busStopsFromModel.length; i++)
-        self.busStops.add(new BusStop(busStopsFromModel[i].Name, busStopsFromModel[i].Latitude, busStopsFromModel[i].Longitude));
+        self.busStops.add(new BusStop(busStopsFromModel[i].Id, busStopsFromModel[i].Name, busStopsFromModel[i].Latitude, busStopsFromModel[i].Longitude));
 
     self.busLines = new Collection();
     for (var i = 0; i < busLinesFromModel.length; i++)
-        self.busLines.add(new BusLine(busLinesFromModel[i].BusNumber, busLinesFromModel[i].Routes, self.busStops));
+        self.busLines.add(new BusLine(busLinesFromModel[i].Id, busLinesFromModel[i].BusNumber, busLinesFromModel[i].Routes, self.busStops));
     for (var i = 0; i < busLinesFromModel.length; i++)
-        self.busLines.add(new BusLine(busLinesFromModel[i].BusNumber, busLinesFromModel[i].Routes, self.busStops));
+        self.busLines.add(new BusLine(busLinesFromModel[i].Id, busLinesFromModel[i].BusNumber, busLinesFromModel[i].Routes, self.busStops));
     for (var i = 0; i < busLinesFromModel.length; i++)
-        self.busLines.add(new BusLine(busLinesFromModel[i].BusNumber, busLinesFromModel[i].Routes, self.busStops));
+        self.busLines.add(new BusLine(busLinesFromModel[i].Id, busLinesFromModel[i].BusNumber, busLinesFromModel[i].Routes, self.busStops));
     for (var i = 0; i < busLinesFromModel.length; i++)
-        self.busLines.add(new BusLine(busLinesFromModel[i].BusNumber, busLinesFromModel[i].Routes, self.busStops));
+        self.busLines.add(new BusLine(busLinesFromModel[i].Id, busLinesFromModel[i].BusNumber, busLinesFromModel[i].Routes, self.busStops));
 
     self.routes = new Collection();
     for (var i = 0; i < self.busLines.count(); i++)
