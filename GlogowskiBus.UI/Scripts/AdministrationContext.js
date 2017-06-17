@@ -67,7 +67,7 @@
             newRoute.select();
     });
 
-    map.addListener('click', function()
+    map.addListener('click', function(e)
     {
         switch (self.selectedView().name)
         {
@@ -119,11 +119,11 @@
         }, function(response)
         {
             self.selectedBusStop().dispose();
-            self.selectedBusStop(null);
 
             var newBusStop = new BusStop(response.Id, response.Name, response.Latitude, response.Longitude);
             newBusStop.selectBusStopEvent = selectBusStopEvent;
             self.busStops.add(newBusStop);
+            self.selectedBusStop(newBusStop);
 
             self.selectedView(self.views[0]);
         });
