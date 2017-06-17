@@ -128,4 +128,11 @@
             self.selectedView(self.views[0]);
         });
     };
+
+    self.addBusStopCancelBtnClick = function()
+    {
+        self.selectedBusStop().dispose();
+
+        self.selectedView(self.views[0]);
+    };
 }
