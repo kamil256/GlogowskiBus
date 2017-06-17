@@ -42,8 +42,8 @@ window.onload = function()
     markerIcons = new MarkerIcons();
     serverTime = new ServerTime(@Model.ServerTimeMilliseconds);
 
-    adminIndexContext = new AdminIndexContext(@Html.Raw(Json.Encode(@Model.BusStops)), @Html.Raw(Json.Encode(@Model.BusLines)));
-    ko.applyBindings(adminIndexContext);
+    administrationContext = new AdministrationContext(@Html.Raw(Json.Encode(@Model.BusStops)), @Html.Raw(Json.Encode(@Model.BusLines)));
+    ko.applyBindings(administrationContext);
 
     //function sendAjaxRequest(url, method, data, onSuccess)
     //{

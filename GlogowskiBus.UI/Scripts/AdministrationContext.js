@@ -1,4 +1,4 @@
-﻿function AdminIndexContext(busStopsFromModel, busLinesFromModel)
+﻿function AdministrationContext(busStopsFromModel, busLinesFromModel)
 {
     var self = this;
 
