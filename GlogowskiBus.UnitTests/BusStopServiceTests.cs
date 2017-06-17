@@ -29,7 +29,7 @@ namespace GlogowskiBus.UnitTests
             IList<BusStop> busStops = busStopService.Get();
 
             // Assert
-            Assert.AreEqual(2, busStops.Count());
+            Assert.AreEqual(3, busStops.Count());
 
             Assert.AreEqual(1, busStops[0].Id);
             Assert.AreEqual("Bus stop 1", busStops[0].Name);
@@ -40,6 +40,11 @@ namespace GlogowskiBus.UnitTests
             Assert.AreEqual("Bus stop 2", busStops[1].Name);
             Assert.AreEqual(3, busStops[1].Latitude);
             Assert.AreEqual(1, busStops[1].Longitude);
+
+            Assert.AreEqual(4, busStops[2].Id);
+            Assert.AreEqual("Bus stop 4", busStops[2].Name);
+            Assert.AreEqual(4, busStops[2].Latitude);
+            Assert.AreEqual(4, busStops[2].Longitude);
         }
 
         [Test]
@@ -105,14 +110,14 @@ namespace GlogowskiBus.UnitTests
             // Assert
             unitOfWork.Received().Save();
 
-            Assert.AreEqual(3, busStop.Id);
+            Assert.AreEqual(5, busStop.Id);
             Assert.AreEqual("Bus stop 3", busStop.Name);
             Assert.AreEqual(1, busStop.Latitude);
             Assert.AreEqual(2, busStop.Longitude);
 
-            Assert.AreEqual("Bus stop 3", busStopRepository.GetById(3).Name);
-            Assert.AreEqual(1, busStopRepository.GetById(3).Latitude);
-            Assert.AreEqual(2, busStopRepository.GetById(3).Longitude);
+            Assert.AreEqual("Bus stop 3", busStopRepository.GetById(5).Name);
+            Assert.AreEqual(1, busStopRepository.GetById(5).Latitude);
+            Assert.AreEqual(2, busStopRepository.GetById(5).Longitude);
         }
 
         [TestCase(null)]
@@ -336,12 +341,12 @@ namespace GlogowskiBus.UnitTests
             BusStopService busStopService = new BusStopService(unitOfWork);
 
             // Act
-            int? busStopId = busStopService.Delete(1);
+            int? busStopId = busStopService.Delete(4);
 
             // Assert
-            Assert.AreEqual(1, busStopId);
+            Assert.AreEqual(4, busStopId);
             unitOfWork.Received().Save();
-            Assert.IsNull(busStopRepository.GetById(1));
+            Assert.IsNull(busStopRepository.GetById(4));
         }
 
         [Test]
@@ -361,6 +366,35 @@ namespace GlogowskiBus.UnitTests
             // Assert
             Assert.IsNull(busStopId);
             unitOfWork.DidNotReceive().Save();
+        }
+
+        [Test]
+        public void Delete_WhenBusStopIsUsed_ThrowsException()
+        {
+            // Arrange
+            IRepository<GlogowskiBus.DAL.Entities.BusStop> busStopRepository = new FakeRepositories().BusStopRepository;
+
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusStopRepository.Returns(busStopRepository);
+
+            BusStopService busStopService = new BusStopService(unitOfWork);
+
+            int? busStopId = null;
+
+            try
+            {
+                // Act
+                busStopId = busStopService.Delete(1);
+            }
+            catch (Exception e)
+            {
+                // Assert
+                Assert.AreEqual("Cannot delete bus stop which is used by at least one bus line!", e.Message);
+                unitOfWork.DidNotReceive().Save();
+                Assert.IsNull(busStopId);
+                Assert.Pass();
+            }
+            Assert.Fail("Exception should be thrown!");
         }
     }
 }

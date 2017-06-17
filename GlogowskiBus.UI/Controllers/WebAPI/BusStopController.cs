@@ -115,7 +115,16 @@ namespace GlogowskiBus.UI.Controllers.WebAPI
         [ResponseType(typeof(void))]
         public IHttpActionResult DeleteBusStop(int id)
         {
-            int? deletedBusStopId = busStopService.Delete(id);
+            int? deletedBusStopId = null;
+            try
+            {
+                deletedBusStopId = busStopService.Delete(id);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
             if (deletedBusStopId == null)
                 return NotFound();
             else

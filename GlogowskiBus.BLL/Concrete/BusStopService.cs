@@ -86,13 +86,13 @@ namespace GlogowskiBus.BLL.Concrete
         public int? Delete(int id)
         {
             DAL.Entities.BusStop busStop = unitOfWork.BusStopRepository.GetById(id);
-            if (busStop != null)
-            {
-                unitOfWork.BusStopRepository.Delete(id);
-                unitOfWork.Save();
-                return id;
-            }
-            return null;
+            if (busStop == null)
+                return null;
+            if (busStop.Points.Count > 0)
+                throw new Exception("Cannot delete bus stop which is used by at least one bus line!");
+            unitOfWork.BusStopRepository.Delete(id);
+            unitOfWork.Save();
+            return id;
         }
     }
 }

@@ -34,6 +34,13 @@ namespace GlogowskiBus.UnitTests
                     Name = "Bus stop 2",
                     Latitude = 3,
                     Longitude = 1
+                },
+                new BusStop()
+                {
+                    Id = 4,
+                    Name = "Bus stop 4",
+                    Latitude = 4,
+                    Longitude = 4
                 }
             };
 
@@ -111,6 +118,7 @@ namespace GlogowskiBus.UnitTests
 
             busStops[0].Points = new List<Point> { points[0] };
             busStops[1].Points = new List<Point> { points[2] };
+            busStops[2].Points = new List<Point> { };
 
             points[0].RouteId = 1;
             points[0].Route = routes[0];

@@ -240,5 +240,19 @@ namespace GlogowskiBus.UnitTests
             // Assert
             Assert.IsNotNull(result);
         }
+
+        [Test]
+        public void DeleteBusStop_WhenServiceThrowsException_ReturnsBadRequestResultWithMessage()
+        {
+            // Arrange
+            IBusStopService busStopService = Substitute.For<IBusStopService>();
+            busStopService.When(x => x.Delete(Arg.Is<int>(1))).Throw(new Exception("Exception message"));
+
+            // Act
+            BadRequestErrorMessageResult result = new BusStopController(busStopService).DeleteBusStop(1) as BadRequestErrorMessageResult;
+
+            // Assert
+            Assert.AreEqual("Exception message", result.Message);
+        }
     }
 }
