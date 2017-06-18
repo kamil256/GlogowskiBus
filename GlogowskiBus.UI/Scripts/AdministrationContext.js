@@ -34,9 +34,13 @@
     for (var i = 0; i < busLinesFromModel.length; i++)
         self.busLines.add(new BusLine(busLinesFromModel[i].Id, busLinesFromModel[i].BusNumber, busLinesFromModel[i].Routes, self.busStops));
 
-    self.routes = new Collection();
-    for (var i = 0; i < self.busLines.count(); i++)
-        self.routes.addMany(self.busLines.getAt(i).routes.toArray());
+    self.routes = ko.computed(function()
+    {
+        var allRoutes = new Collection();
+        for (var i = 0; i < self.busLines.count(); i++)
+            allRoutes.addMany(self.busLines.getAt(i).routes.toArray());
+        return allRoutes;
+    });
 
     self.selectedBusStop = ko.observable();
     var selectBusStopEvent = function(busStop)
@@ -63,8 +67,8 @@
 
     self.selectedRoute.subscribe(function(newRoute)
     {
-        for (var i = 0; i < self.routes.count(); i++)
-            self.routes.getAt(i).deselect();
+        for (var i = 0; i < self.routes().count(); i++)
+            self.routes().getAt(i).deselect();
         if (newRoute)
             newRoute.select();
     });
@@ -80,11 +84,12 @@
             case 'AddBusStop':
             case 'EditBusStop':
                 self.selectedBusStop().dispose();
-                self.selectedBusStop(new BusStop(self.selectedBusStop().id, self.selectedBusStop().name, e.latLng.lat(), e.latLng.lng()));
+                self.selectedBusStop(new BusStop(self.selectedBusStop().id, self.selectedBusStop().name(), e.latLng.lat(), e.latLng.lng()));
                 break;
         }
     });
 
+    // todo: fix
     self.busLinesNumbersListForBusStop = function(busStop)
     {
         var busLinesNumbers = [];
@@ -108,16 +113,16 @@
 
     self.busStopsListAddBtnClick = function()
     {
-        self.selectedView(self.views[1]);
         self.selectedBusStop(new BusStop(null, 'Nowy przystanek', 0, 0));
+        self.selectedView(self.views[1]);
     };
 
     self.busStopsListEditBtnClick = function()
     {
         if (self.selectedBusStop())
         {
+            self.selectedBusStop(new BusStop(self.selectedBusStop().id, self.selectedBusStop().name(), self.selectedBusStop().latitude(), self.selectedBusStop().longitude()));
             self.selectedView(self.views[2]);
-            self.selectedBusStop(new BusStop(self.selectedBusStop().id, self.selectedBusStop().name, self.selectedBusStop().latitude, self.selectedBusStop().longitude));
         }
     };
 
@@ -131,9 +136,9 @@
     {
         sendAjaxRequest('/api/BusStop', "POST",
         {
-            Name: self.selectedBusStop().name,
-            Latitude: self.selectedBusStop().latitude,
-            Longitude: self.selectedBusStop().longitude
+            Name: self.selectedBusStop().name(),
+            Latitude: self.selectedBusStop().latitude(),
+            Longitude: self.selectedBusStop().longitude()
         }, function(response)
         {
             self.selectedView(self.views[0]);
@@ -160,9 +165,9 @@
         sendAjaxRequest('/api/BusStop', "PUT",
         {
             Id: self.selectedBusStop().id,
-            Name: self.selectedBusStop().name,
-            Latitude: self.selectedBusStop().latitude,
-            Longitude: self.selectedBusStop().longitude
+            Name: self.selectedBusStop().name(),
+            Latitude: self.selectedBusStop().latitude(),
+            Longitude: self.selectedBusStop().longitude()
         }, function(response)
         {
             self.selectedView(self.views[0]);
@@ -170,9 +175,9 @@
             self.selectedBusStop().dispose();
 
             var existingBusStop = self.busStops.getSingle(function(busStop) { return busStop.id == response.Id; });
-            existingBusStop.name = response.Name;
-            existingBusStop.latitude = response.Latitude;
-            existingBusStop.longitude = response.Longitude;
+            existingBusStop.name(response.Name);
+            existingBusStop.latitude(response.Latitude);
+            existingBusStop.longitude(response.Longitude);
 
             self.selectedBusStop(existingBusStop);
         });

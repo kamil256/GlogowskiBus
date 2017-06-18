@@ -36,7 +36,8 @@ namespace GlogowskiBus.UI.Controllers.MVC
                         Latitude = z.Latitude,
                         Longitude = z.Longitude,
                         //IsBusStop = z.IsBusStop,
-                        TimeOffset = z.TimeOffset
+                        TimeOffset = z.TimeOffset,
+                        BusStopId = z.BusStopId
                     }).ToList(),
                     DepartureTimes = y.DepartureTimes.Select(z => new Models.DepartureTimeDTO()
                     {

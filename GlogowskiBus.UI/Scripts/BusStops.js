@@ -3,9 +3,9 @@
     var self = this;
 
     self.id = id;
-    self.name = name;
-    self.latitude = latitude;
-    self.longitude = longitude;
+    self.name = ko.observable(name);
+    self.latitude = ko.observable(latitude);
+    self.longitude = ko.observable(longitude);
     self.points = new Collection();
 
     var marker = new google.maps.Marker(
@@ -15,10 +15,10 @@
         optimized: false,
         position:
         {
-            lat: latitude,
-            lng: longitude
+            lat: self.latitude(),
+            lng: self.longitude()
         },
-        title: name,
+        title: self.name(),
         zIndex: 0
     });
 
