@@ -1,4 +1,4 @@
-﻿function BusStop(id, name, latitude, longitude)
+﻿function BusStop(id, name, latitude, longitude, busLines)
 {
     var self = this;
 
@@ -6,7 +6,25 @@
     self.name = ko.observable(name);
     self.latitude = ko.observable(latitude);
     self.longitude = ko.observable(longitude);
-    self.points = new Collection();
+    self.getAllBusNumbers = function()
+    {
+        var allBusNumbers = [];
+        for (var i = 0; i < busLines.count() ; i++)
+            for (var j = 0; j < busLines.getAt(i).routes.count(); j++)
+                for (var k = 0; k < busLines.getAt(i).routes.getAt(j).points.count(); k++)
+                    if (busLines.getAt(i).routes.getAt(j).points.getAt(k).busStop == self && allBusNumbers.indexOf(busLines.getAt(i).busNumber()) == -1)
+                        allBusNumbers.push(busLines.getAt(i).busNumber());
+        allBusNumbers.sort(function(busNumber1, busNumber2)
+        {
+            if (busNumber1 > busNumber2)
+                return 1;
+            else if (busNumber1 < busNumber2)
+                return -1;
+            else
+                return 0;
+        });
+        return allBusNumbers;
+    };
 
     var marker = new google.maps.Marker(
     {

@@ -21,16 +21,11 @@
     self.selectedView = ko.observable(self.views[0]);
 
     self.busStops = new Collection();
-    for (var i = 0; i < busStopsFromModel.length; i++)
-        self.busStops.add(new BusStop(busStopsFromModel[i].Id, busStopsFromModel[i].Name, busStopsFromModel[i].Latitude, busStopsFromModel[i].Longitude));
-
     self.busLines = new Collection();
-    for (var i = 0; i < busLinesFromModel.length; i++)
-        self.busLines.add(new BusLine(busLinesFromModel[i].Id, busLinesFromModel[i].BusNumber, busLinesFromModel[i].Routes, self.busStops));
-    for (var i = 0; i < busLinesFromModel.length; i++)
-        self.busLines.add(new BusLine(busLinesFromModel[i].Id, busLinesFromModel[i].BusNumber, busLinesFromModel[i].Routes, self.busStops));
-    for (var i = 0; i < busLinesFromModel.length; i++)
-        self.busLines.add(new BusLine(busLinesFromModel[i].Id, busLinesFromModel[i].BusNumber, busLinesFromModel[i].Routes, self.busStops));
+
+    for (var i = 0; i < busStopsFromModel.length; i++)
+        self.busStops.add(new BusStop(busStopsFromModel[i].Id, busStopsFromModel[i].Name, busStopsFromModel[i].Latitude, busStopsFromModel[i].Longitude, self.busLines));
+
     for (var i = 0; i < busLinesFromModel.length; i++)
         self.busLines.add(new BusLine(busLinesFromModel[i].Id, busLinesFromModel[i].BusNumber, busLinesFromModel[i].Routes, self.busStops));
 
@@ -88,28 +83,6 @@
                 break;
         }
     });
-
-    // todo: fix
-    self.busLinesNumbersListForBusStop = function(busStop)
-    {
-        var busLinesNumbers = [];
-        for (var i = 0; i < busStop.points.count() ; i++)
-            if (busLinesNumbers.indexOf(busStop.points.getAt(i).route.busLine.busNumber) == -1)
-                busLinesNumbers.push(busStop.points.getAt(i).route.busLine.busNumber);
-        busLinesNumbers.sort(function(a, b)
-        {
-            if (a > b)
-                return 1;
-            else if (a < b)
-                return -1;
-            else
-                return 0;
-        });
-        if (busLinesNumbers.length > 0)
-            return busLinesNumbers.join(', ');
-        else
-            return '-';
-    };
 
     self.busStopsListAddBtnClick = function()
     {
