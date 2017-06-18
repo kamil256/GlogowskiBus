@@ -40,6 +40,16 @@
         zIndex: 0
     });
 
+    self.latitude.subscribe(function(newValue)
+    {
+        marker.setPosition(new google.maps.LatLng(newValue, self.longitude()));
+    });
+
+    self.longitude.subscribe(function(newValue)
+    {
+        marker.setPosition(new google.maps.LatLng(self.latitude(), newValue));
+    });
+
     self.selectBusStopEvent = null;
 
     marker.addListener('click', function()

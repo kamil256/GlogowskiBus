@@ -23,10 +23,25 @@
     self.busStops = new Collection();
     self.busLines = new Collection();
 
+    self.selectedBusStop = ko.observable();
+    var selectBusStopEvent = function(busStop)
+    {
+        switch (self.selectedView().name)
+        {
+            case 'List':
+                self.selectedBusStop(busStop);
+                break;
+        }
+    };
+
     sendAjaxRequest('/api/BusStop', "GET", null, function(response)
     {
         for (var i = 0; i < response.length; i++)
-            self.busStops.add(new BusStop(response[i].Id, response[i].Name, response[i].Latitude, response[i].Longitude, self.busLines));
+        {
+            var busStop = new BusStop(response[i].Id, response[i].Name, response[i].Latitude, response[i].Longitude, self.busLines);
+            busStop.selectBusStopEvent = selectBusStopEvent;
+            self.busStops.add(busStop);
+        }
 
         sendAjaxRequest('/api/BusLine', "GET", null, function(response)
         {
@@ -43,18 +58,9 @@
         return allRoutes;
     });
 
-    self.selectedBusStop = ko.observable();
-    var selectBusStopEvent = function(busStop)
-    {
-        switch (self.selectedView().name)
-        {
-            case 'List':
-                self.selectedBusStop(busStop);
-                break;
-        }
-    };
-    for (var i = 0; i < self.busStops.count() ; i++)
-        self.busStops.getAt(i).selectBusStopEvent = selectBusStopEvent;
+    
+    
+    
 
     self.selectedBusStop.subscribe(function(newBusStop)
     {
@@ -84,31 +90,28 @@
                 break;
             case 'AddBusStop':
             case 'EditBusStop':
-                self.selectedBusStop().dispose();
-                self.selectedBusStop(new BusStop(self.selectedBusStop().id, self.selectedBusStop().name(), e.latLng.lat(), e.latLng.lng()));
+                self.selectedBusStop().latitude(e.latLng.lat());
+                self.selectedBusStop().longitude(e.latLng.lng());
                 break;
         }
     });
 
     self.busStopsListAddBtnClick = function()
     {
-        self.selectedBusStop(new BusStop(null, 'Nowy przystanek', 0, 0));
+        self.selectedBusStop(new BusStop(null, 'Nowy przystanek', 0, 0, self.busLines));
         self.selectedView(self.views[1]);
     };
 
-    self.busStopsListEditBtnClick = function()
+    self.busStopsListEditBtnClick = function(busStop)
     {
-        if (self.selectedBusStop())
-        {
-            self.selectedBusStop(new BusStop(self.selectedBusStop().id, self.selectedBusStop().name(), self.selectedBusStop().latitude(), self.selectedBusStop().longitude()));
-            self.selectedView(self.views[2]);
-        }
+        self.selectedBusStop(new BusStop(busStop.id, busStop.name(), busStop.latitude(), busStop.longitude(), self.busLines));
+        self.selectedView(self.views[2]);
     };
 
-    self.busStopsListDeleteBtnClick = function()
+    self.busStopsListDeleteBtnClick = function(busStop)
     {
-        if (self.selectedBusStop())
-            self.selectedView(self.views[3]);
+        self.selectedBusStop(busStop);
+        self.selectedView(self.views[3]);
     };
 
     self.addBusStopAddBtnClick = function()
@@ -124,7 +127,7 @@
 
             self.selectedBusStop().dispose();
 
-            var newBusStop = new BusStop(response.Id, response.Name, response.Latitude, response.Longitude);
+            var newBusStop = new BusStop(response.Id, response.Name, response.Latitude, response.Longitude, self.busLines);
             newBusStop.selectBusStopEvent = selectBusStopEvent;
             self.busStops.add(newBusStop);
             self.selectedBusStop(newBusStop);
