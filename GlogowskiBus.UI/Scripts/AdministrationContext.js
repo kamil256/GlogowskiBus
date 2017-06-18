@@ -68,6 +68,8 @@
             self.busStops.getAt(i).deselect();
         if (newBusStop)
             newBusStop.select();
+        if (self.selectedRoute())
+            self.selectedRoute().selectBusStop(newBusStop);
     });
 
     self.selectedRoute = ko.observable();
@@ -77,7 +79,13 @@
         for (var i = 0; i < self.getAllRoutes().count() ; i++)
             self.getAllRoutes().getAt(i).deselect();
         if (newRoute)
+        {
             newRoute.select();
+            newRoute.selectBusStopEvent = selectBusStopEvent;
+        }
+
+        if (newRoute && self.selectedBusStop())
+            newRoute.selectBusStop(self.selectedBusStop());
     });
 
     map.addListener('click', function(e)
