@@ -74,8 +74,8 @@
 
     self.selectedRoute.subscribe(function(newRoute)
     {
-        for (var i = 0; i < self.routes().count(); i++)
-            self.routes().getAt(i).deselect();
+        for (var i = 0; i < self.getAllRoutes().count() ; i++)
+            self.getAllRoutes().getAt(i).deselect();
         if (newRoute)
             newRoute.select();
     });
