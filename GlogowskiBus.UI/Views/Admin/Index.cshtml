@@ -17,8 +17,8 @@
                     <p data-bind="text: 'Nazwa: ' + name()"></p>
                     <p data-bind="text: 'Pozycja: ' + latitude() + ', ' + longitude()"></p>
                     <p data-bind="text: 'Linie: ' + (getAllBusNumbers().join(', ') || '-')"></p>
-                    <button class="btn btn-xs btn-default" data-bind="click: function() { $root.busStopsListEditBtnClick($data); }">Edytuj</button>
-                    <button class="btn btn-xs btn-default" data-bind="click: function() { $root.busStopsListDeleteBtnClick($data); }">Usuń</button>
+                    <button class="btn btn-xs btn-default" data-bind="click: function() { $root.busStopsListEditBtnClick($data); }">EDYTUJ</button>
+                    <button class="btn btn-xs btn-default" data-bind="click: function() { $root.busStopsListDeleteBtnClick($data); }">USUŃ</button>
                 </div>
             </div>
         </div>
@@ -26,33 +26,31 @@
     </div>
 <!-- /ko -->
 
-<div id="busLinesList" data-bind="visible: selectedView().name == 'List' && selectedView().selectedTab() == 'LINIE'">
-    <button class="btn btn-default">Nowa linia</button>
-    <div data-bind="foreach: busLines.toArray()">
-        <p>
-            LINIA <span data-bind="text: busNumber"></span>
-            <button class="btn btn-xs btn-default">Edytuj</button>
-            <button class="btn btn-xs btn-default">Usuń</button>
-            <button class="btn btn-xs btn-default">Nowa trasa</button>
-        </p>
-        <div class="itemsList" data-bind="foreach: $data.routes.toArray()">
-            <div data-bind="click: function() { $root.selectedRoute($data); return true; }, css: { active: $root.selectedRoute() == $data }">
-                <div>
-                    <input data-bind="checked: $root.selectedRoute() == $data, checkedValue: true" type="radio" />
+<!-- ko if: selectedView().name == 'List' && selectedView().selectedTab() == 'LINIE' -->
+    <div id="busLinesList">
+        <div data-bind="foreach: busLines.toArray()">
+            <div>
+                <p data-bind="text: 'LINIA #' + id"></p>
+                <p data-bind="text: 'Numer autobusu: ' + busNumber()"></p>
+                <div class="itemsList" data-bind="foreach: $data.routes.toArray()">
+                    <div data-bind="click: function() { $root.selectedRoute($data); return true; }, css: { active: $root.selectedRoute() == $data }">
+                        <div>
+                            <input data-bind="checked: $root.selectedRoute() == $data, checkedValue: true" type="radio" />
+                        </div>
+                        <div>
+                            <p data-bind="text: 'TRASA #' + id"></p>
+                            <p data-bind="text: points.getFirst().busStop.name() + ' - ' + points.getLast().busStop.name()"></p>
+                            <p data-bind="text: indexMark() + ' - ' + details(), visible: indexMark() && details()"></p>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <p>
-                        TRASA
-                        <button class="btn btn-xs btn-default">Edytuj</button>
-                        <button class="btn btn-xs btn-default">Usuń</button>
-                    </p>
-                    <p data-bind="text: getAllBusStops().getFirst().name() + ' - ' + getAllBusStops().getLast().name()"></p>
-                    <p data-bind="text: indexMark + ' - ' + details, visible: indexMark && details"></p>
-                </div>
+                <button class="btn btn-xs btn-default">EDYTUJ</button>
+                <button class="btn btn-xs btn-default">USUŃ</button>
             </div>
         </div>
+        <button class="btn btn-default">DODAJ</button>
     </div>
-</div>
+<!-- /ko -->
 
 <!-- ko if: selectedView().name == 'AddBusStop' && selectedView().selectedTab() == 'DODAWANIE PRZYSTANKU' -->
     <div id="addBusStop">

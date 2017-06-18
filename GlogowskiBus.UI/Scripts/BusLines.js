@@ -7,7 +7,7 @@
 
     self.routes = new Collection();
     for (var i = 0; i < routesModel.length; i++)
-        self.routes.add(new Route(self, routesModel[i].id, routesModel[i].Details, routesModel[i].IndexMark, routesModel[i].DepartureTimes, routesModel[i].Points, busStops));
+        self.routes.add(new Route(self, routesModel[i].Id, routesModel[i].Details, routesModel[i].IndexMark, routesModel[i].DepartureTimes, routesModel[i].Points, busStops));
 
     self.getAllDepartureTimes = ko.computed(function()
     {
