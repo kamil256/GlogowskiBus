@@ -1,4 +1,4 @@
-﻿function AdministrationContext(busStopsFromModel, busLinesFromModel)
+﻿function AdministrationContext()
 {
     var self = this;
 
@@ -23,13 +23,19 @@
     self.busStops = new Collection();
     self.busLines = new Collection();
 
-    for (var i = 0; i < busStopsFromModel.length; i++)
-        self.busStops.add(new BusStop(busStopsFromModel[i].Id, busStopsFromModel[i].Name, busStopsFromModel[i].Latitude, busStopsFromModel[i].Longitude, self.busLines));
+    sendAjaxRequest('/api/BusStop', "GET", null, function(response)
+    {
+        for (var i = 0; i < response.length; i++)
+            self.busStops.add(new BusStop(response[i].Id, response[i].Name, response[i].Latitude, response[i].Longitude, self.busLines));
 
-    for (var i = 0; i < busLinesFromModel.length; i++)
-        self.busLines.add(new BusLine(busLinesFromModel[i].Id, busLinesFromModel[i].BusNumber, busLinesFromModel[i].Routes, self.busStops));
+        sendAjaxRequest('/api/BusLine', "GET", null, function(response)
+        {
+            for (var i = 0; i < response.length; i++)
+                self.busLines.add(new BusLine(response[i].Id, response[i].BusNumber, response[i].Routes, self.busStops));
+        });
+    });
 
-    self.routes = ko.computed(function()
+    self.getAllRoutes = ko.computed(function()
     {
         var allRoutes = new Collection();
         for (var i = 0; i < self.busLines.count(); i++)
