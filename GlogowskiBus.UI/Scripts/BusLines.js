@@ -59,8 +59,8 @@ function Route(busLine, id, details, indexMark, departureTimesModel, pointsModel
     {
         var allBusStops = new Collection();
         for (var i = 0; i < self.points.count(); i++)
-            if (self.points.getAt(i).busStop != null)
-                allBusStops.add(self.points.getAt(i).busStop);
+            if (self.points.getAt(i).busStop())
+                allBusStops.add(self.points.getAt(i).busStop());
         return allBusStops;
     });
 
@@ -189,7 +189,7 @@ function Route(busLine, id, details, indexMark, departureTimesModel, pointsModel
                     {
                         self.points.getAt(i).latitude(pointMarkers[i].position.lat());
                         self.points.getAt(i).longitude(pointMarkers[i].position.lng());
-                        self.points.getAt(i).busStop = null;
+                        self.points.getAt(i).busStop(null);
 
                         var mousePositionPixels = overlay.getProjection().fromLatLngToContainerPixel(e.latLng);
                         for (var j = 0; j < busStops.count(); j++)
@@ -200,7 +200,7 @@ function Route(busLine, id, details, indexMark, departureTimesModel, pointsModel
                             {
                                 self.points.getAt(i).latitude(busStops.getAt(j).latitude());
                                 self.points.getAt(i).longitude(busStops.getAt(j).longitude());
-                                self.points.getAt(i).busStop = busStops.getAt(j);
+                                self.points.getAt(i).busStop(busStops.getAt(j));
                             }
                         }
 
@@ -244,6 +244,16 @@ function Route(busLine, id, details, indexMark, departureTimesModel, pointsModel
     };
 
     update();
+
+    self.dispose = function()
+    {
+        for (var i = 0; i < busStopMarkers.length; i++)
+            busStopMarkers[i].setMap(null);
+        for (var i = 0; i < pointMarkers.length; i++)
+            pointMarkers[i].setMap(null);
+        for (var i = 0; i < polylines.length; i++)
+            polylines[i].setMap(null);
+    };
 }
 
 function DepartureTime(route, id, hours, minutes, dayOfWeek)
@@ -287,11 +297,5 @@ function Point(route, id, latitude, longitude, timeOffset, busStopId, busStops)
     self.longitude = ko.observable(longitude);
     self.timeOffset = ko.observable(timeOffset);
 
-    self.busStop = busStops.getSingle(function(busStop) { return busStop.id == busStopId; });
-    //if (self.busStop)
-    //{
-    //    //if (!self.busStop.points)
-    //    //    self.busStop.points = new Collection();//Points();
-    //    self.busStop.points.add(self);
-    //}
+    self.busStop = ko.observable(busStops.getSingle(function(busStop) { return busStop.id == busStopId; }));
 }

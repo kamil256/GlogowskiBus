@@ -39,7 +39,9 @@
                         </div>
                         <div>
                             <p data-bind="text: 'TRASA #' + id"></p>
-                            <p data-bind="text: points.getFirst().busStop.name() + ' - ' + points.getLast().busStop.name()"></p>
+                            <!-- ko if: points.getFirst().busStop() && points.getLast().busStop() -->
+                                <p data-bind="text: points.getFirst().busStop().name() + ' - ' + points.getLast().busStop().name()"></p>
+                            <!-- /ko -->
                             <p data-bind="text: indexMark() + ' - ' + details(), visible: indexMark() && details()"></p>
                         </div>
                     </div>
@@ -48,7 +50,7 @@
                 <button class="btn btn-xs btn-default">USUŃ</button>
             </div>
         </div>
-        <button class="btn btn-default">DODAJ</button>
+        <button class="btn btn-default" data-bind="click: function() { busLinesListAddBtnClick(); }">DODAJ</button>
     </div>
 <!-- /ko -->
 
@@ -118,6 +120,72 @@
 
         <button class="btn btn-default" data-bind="click: function() { deleteBusStopDeleteBtnClick(); }">USUŃ</button>
         <button class="btn btn-default" data-bind="click: function() { deleteBusStopCancelBtnClick(); }">ANULUJ</button>
+    </div>
+<!-- /ko -->
+
+<!-- ko if: selectedView().name == 'AddBusLine' && selectedView().selectedTab() == 'DODAWANIE LINII' -->
+    <div id="addBusLine">
+        <!-- ko if: !directions() -->
+            <p>NUMER AUTOBUSU</p>
+            <input class="form-control" data-bind="value: selectedBusLine().busNumber" type="text" />
+            
+            <div class="itemsList" data-bind="foreach: selectedBusLine().routes.toArray()">
+                <div data-bind="click: function() { $root.selectedRoute($data); return true; }, css: { active: $root.selectedRoute() == $data }">
+                    <div>
+                        <input data-bind="checked: $root.selectedRoute() == $data, checkedValue: true" type="radio" />
+                    </div>
+                    <div>
+                        <p>NOWA TRASA</p>
+                        <!-- ko if: points.getFirst().busStop() && points.getLast().busStop() -->
+                            <p data-bind="text: points.getFirst().busStop().name() + ' - ' + points.getLast().busStop().name(), visible: points.getFirst().busStop() && points.getLast().busStop()"></p>
+                        <!-- /ko -->
+                        <p data-bind="text: indexMark() + ' - ' + details(), visible: indexMark() && details()"></p>
+
+                        <button class="btn btn-xs btn-default">USUŃ</button>
+                    </div>
+                </div>
+            </div>
+            <input class="btn btn-default" data-bind="click: function() { addBusLineAddRouteBtnClick(); }" type="button" value="NOWA TRASA" />
+            
+            <!-- ko if: selectedRoute() -->
+                <div data-bind="foreach: selectedRoute().points.toArray()">
+                    <!-- ko if: busStop() -->
+                        <p data-bind="text: busStop().name()"></p>
+                        <input data-bind="value: timeOffset" type="number" />
+                    <!-- /ko -->
+                </div>
+
+                <ul class="dayOfWeek" data-bind="foreach: serverTime.daysOfWeek">
+                    <li data-bind="css: { active: $data == $root.selectedDayOfWeek() }, click: function(data, event) { $root.selectedDayOfWeek($data); }, text: $data"></li>
+                </ul>
+
+                <table class="departureTimes" data-bind="foreach: selectedDepartureTimes()">
+                    <tr @*data-bind="visible: $root.selectedDepartureTimes()[$index()].length > 0"*@>
+                        <td>
+                            <div data-bind="text: $index"></div>
+                        </td>
+                        <td data-bind="foreach: $root.selectedDepartureTimes()[$index()]">
+                            <div>
+                                <span data-bind="text: minutes < 10 ? '0' + minutes : minutes"></span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <p>GODZINY</p>
+                <input class="form-control" data-bind="value: newDepartureTime.hours" type="number" />
+                <p>MINUTY</p>
+                <input class="form-control" data-bind="value: newDepartureTime.minutes" type="number" />
+                <button class="btn btn-default" data-bind="click: function() { if (newDepartureTime.hours() >= 0 && newDepartureTime.hours() < 24 && newDepartureTime.minutes() >= 0 && newDepartureTime.minutes() < 24) { selectedRoute().departureTimes.add(new DepartureTime(selectedRoute(), 0, newDepartureTime.hours(), newDepartureTime.minutes(), selectedDayOfWeek())); newDepartureTime.hours(0); newDepartureTime.minutes(0); } }">DODAJ GODZINĘ ODJAZDU</button>
+            <!-- /ko -->
+
+            <input class="btn btn-default" data-bind="click: function() { addBusLineAddBtnClick(); }" type="button" value="DODAJ" />
+            <input class="btn btn-default" data-bind="click: function() { addBusLineCancelBtnClick(); }" type="button" value="ANULUJ" />
+        <!-- /ko -->
+        <!-- ko if: directions() -->
+            <p>Dodawanie nowej trasy za pomocą Google Maps Directions.</p>
+            <input class="btn btn-default" data-bind="click: function() { addBusLineFinishAddingRouteBtnClick(); }, enable: directions().getPoints().length > 0" type="button" value="ZAKOŃCZ" />
+            <input class="btn btn-default" data-bind="click: function() { addBusLineCancelAddingRouteBtnClick(); }" type="button" value="ANULUJ" />
+        <!-- /ko -->
     </div>
 <!-- /ko -->
 

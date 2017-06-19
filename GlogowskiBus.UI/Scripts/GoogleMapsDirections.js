@@ -25,7 +25,7 @@
     var waypoints = [];
     var destination = null;
 
-    var points = [];
+    var points = ko.observableArray([]);
 
     var originMarker = new google.maps.Marker(
     {
@@ -39,10 +39,10 @@
         origin = e.latLng;
     });
     
-    var mapClickListener = map.addListener('click', function(e)
-    {
-        self.addNewPoint(e.latLng);
-    });
+    //var mapClickListener = map.addListener('click', function(e)
+    //{
+    //    self.addNewPoint(e.latLng);
+    //});
 
     self.addNewPoint = function(point)
     {
@@ -85,14 +85,14 @@
         //        latitude: destination.lat(),
         //        longitude: destination.lng()
         //    });
-        return points;
+        return points();
     };
 
     self.dispose = function()
     {
         originMarker.setMap(null);
         display.setMap(null);
-        google.maps.event.removeListener(mapClickListener);
+        //google.maps.event.removeListener(mapClickListener);
     };
     
     var update = function()
@@ -116,7 +116,7 @@
                 if (status === 'OK')
                 {
                     display.setDirections(response);
-                    points = [];
+                    points.removeAll();
                     for (var i = 0; i < response.routes[0].overview_path.length; i++)
                     {
                         points.push(
@@ -124,7 +124,7 @@
                             Latitude: response.routes[0].overview_path[i].lat(),
                             Longitude: response.routes[0].overview_path[i].lng(),
                             TimeOffset: 0,
-                            BusStop: null
+                            BusStopId: null
                         });
                     }
                 }
