@@ -166,12 +166,12 @@ namespace GlogowskiBus.UI.Controllers.WebAPI
                 {
                     Id = busLine.Id,
                     BusNumber = busLine.BusNumber,
-                    Routes = busLine.Routes == null ? null : busLine.Routes.Select(x => new Route()
+                    Routes = busLine.Routes == null ? new List<Route>() : busLine.Routes.Select(x => new Route()
                     {
                         Id = x.Id,
                         IndexMark = x.IndexMark,
                         Details = x.Details,
-                        DepartureTimes = x.DepartureTimes == null ? null : x.DepartureTimes.Select(y => new DepartureTime()
+                        DepartureTimes = x.DepartureTimes == null ? new List<DepartureTime>() : x.DepartureTimes.Select(y => new DepartureTime()
                         {
                             Id = y.Id,
                             Hours = y.Hours,
@@ -180,7 +180,7 @@ namespace GlogowskiBus.UI.Controllers.WebAPI
                             Saturday = y.Saturday,
                             Sunday = y.Sunday
                         }).ToList(),
-                        Points = x.Points == null ? null : x.Points.Select(y => new Point()
+                        Points = x.Points == null ? new List<Point>() : x.Points.Select(y => new Point()
                         {
                             Id = y.Id,
                             Latitude = y.Latitude,
@@ -203,12 +203,12 @@ namespace GlogowskiBus.UI.Controllers.WebAPI
                 {
                     Id = updatedBusLine.Id,
                     BusNumber = updatedBusLine.BusNumber,
-                    Routes = updatedBusLine.Routes.Select(x => new RouteDTO()
+                    Routes = updatedBusLine.Routes == null ? new List<RouteDTO>() : updatedBusLine.Routes.Select(x => new RouteDTO()
                     {
                         Id = x.Id,
                         IndexMark = x.IndexMark,
                         Details = x.Details,
-                        DepartureTimes = x.DepartureTimes.Select(y => new DepartureTimeDTO()
+                        DepartureTimes = x.DepartureTimes == null ? new List<DepartureTimeDTO>() : x.DepartureTimes.Select(y => new DepartureTimeDTO()
                         {
                             Id = y.Id,
                             Hours = y.Hours,
@@ -217,7 +217,7 @@ namespace GlogowskiBus.UI.Controllers.WebAPI
                             Saturday = y.Saturday,
                             Sunday = y.Sunday
                         }).ToList(),
-                        Points = x.Points.Select(y => new PointDTO()
+                        Points = x.Points == null ? new List<PointDTO>() : x.Points.Select(y => new PointDTO()
                         {
                             Id = y.Id,
                             Latitude = y.Latitude,

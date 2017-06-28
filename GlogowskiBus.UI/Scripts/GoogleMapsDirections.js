@@ -121,6 +121,7 @@
                     {
                         points.push(
                         {
+                            Id: null,
                             Latitude: response.routes[0].overview_path[i].lat(),
                             Longitude: response.routes[0].overview_path[i].lng(),
                             TimeOffset: 0,

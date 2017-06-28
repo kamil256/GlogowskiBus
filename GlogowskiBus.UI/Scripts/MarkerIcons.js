@@ -2,6 +2,14 @@
 {
     var self = this;
 
+    self.point = new google.maps.MarkerImage
+    (
+        '/Content/Images/dot_li_phixr.png',
+        new google.maps.Size(10, 10),
+        new google.maps.Point(0, 0),
+        new google.maps.Point(5, 5)
+    );
+
     self.inactiveBusStop = new google.maps.MarkerImage
     (
         '/Content/Images/inactive_bus_stop.png',

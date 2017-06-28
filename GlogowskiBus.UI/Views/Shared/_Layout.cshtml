@@ -11,9 +11,13 @@
     <div id="map"></div>
 
     <aside>
-        <ul class="tabs" data-bind="css: { oneTab: selectedView().tabs.length == 1, twoTabs: selectedView().tabs.length == 2, threeTabs: selectedView().tabs.length == 3 }, foreach: selectedView().tabs">
-            <li class="tab" data-bind="click: function() { $root.selectedView().selectedTab($data); }, css: { active: $root.selectedView().selectedTab() == $data }, text: $data"></li>
-        </ul>
+        <div id="tabs">
+            <!-- ko if: isStarted() === true -->
+            <ul class="tabs" data-bind="css: { oneTab: selectedViewGroup().views.length == 1, twoTabs: selectedViewGroup().views.length == 2, threeTabs: selectedViewGroup().views.length == 3 }, foreach: selectedViewGroup().views">
+                <li class="tab" data-bind="click: function() { $root.selectedViewGroup().selectedView($data); }, css: { active: $root.selectedViewGroup().selectedView() == $data }, text: $data.title"></li>
+            </ul>
+            <!-- /ko -->
+        </div>
 
         <div class="content">
             @RenderBody()
@@ -51,6 +55,19 @@
     <script src="~/Scripts/GoogleMapsDirections.js"></script>
     <script src="~/Scripts/TimeTableContext.js"></script>
     <script src="~/Scripts/AdministrationContext.js"></script>
-    <script src="~/Scripts/CreateOrEditBusLineContext.js"></script>
+
+    <script src="~/Scripts/NavigationViewModel.js"></script>
+    <script src="~/Scripts/BusStopsListViewModel.js"></script>
+    <script src="~/Scripts/BusLinesListViewModel.js"></script>
+    <script src="~/Scripts/AddBusStopViewModel.js"></script>
+    <script src="~/Scripts/EditBusStopViewModel.js"></script>
+    <script src="~/Scripts/DeleteBusStopViewModel.js"></script>
+    <script src="~/Scripts/AddBusLineViewModel.js"></script>
+    <script src="~/Scripts/EditBusLineViewModel.js"></script>
+    <script src="~/Scripts/BusStops2.js"></script>
+    <script src="~/Scripts/BusLines2.js"></script>
+    <script src="~/Scripts/Engine.js"></script>
+
+    @*<script src="~/Scripts/CreateOrEditBusLineContext.js"></script>*@
 </body>
 </html>

@@ -5,10 +5,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!-- ko if: selectedView().name == 'List' && selectedView().selectedTab() == 'PRZYSTANKI' -->
-    <div id="busStopsList">
-        <div class="itemsList" data-bind="foreach: busStops.toArray()">
-            <div data-bind="click: function() { $root.selectedBusStop($data); return true; }, css: { active: $root.selectedBusStop() == $data }">
+<div id="busStopsList">
+    <!-- ko if: isSelected -->
+        <button class="btn btn-default" data-bind="click: function() { addBusStopBtnClick(); }">DODAJ</button>
+        <button class="btn btn-default" data-bind="click: function() { editBusStopBtnClick(selectedBusStop()); }, enable: selectedBusStop()">EDYTUJ</button>
+        <button class="btn btn-default" data-bind="click: function() { deleteBusStopBtnClick(selectedBusStop()); }, enable: selectedBusStop()">USUŃ</button>
+        <div class="itemsList" data-bind="foreach: busStops">
+            <div data-bind="click: function() { $root.selectedBusStop($data); return true; }, css: { active: $root.selectedBusStop()  === $data }">
                 <div>
                     <input data-bind="checked: $root.selectedBusStop() == $data, checkedValue: true" type="radio" />
                 </div>
@@ -16,178 +19,251 @@
                     <p data-bind="text: 'PRZYSTANEK #' + id"></p>
                     <p data-bind="text: 'Nazwa: ' + name()"></p>
                     <p data-bind="text: 'Pozycja: ' + latitude() + ', ' + longitude()"></p>
-                    <p data-bind="text: 'Linie: ' + (getAllBusNumbers().join(', ') || '-')"></p>
-                    <button class="btn btn-xs btn-default" data-bind="click: function() { $root.busStopsListEditBtnClick($data); }">EDYTUJ</button>
-                    <button class="btn btn-xs btn-default" data-bind="click: function() { $root.busStopsListDeleteBtnClick($data); }">USUŃ</button>
+                    <p data-bind="text: 'Linie: ' + (busNumbers().join(', ') || '-')"></p>
+                    <button class="btn btn-xs btn-default" data-bind="click: function() { $root.editBusStopBtnClick($data); }">EDYTUJ</button>
+                    <button class="btn btn-xs btn-default" data-bind="click: function() { $root.deleteBusStopBtnClick($data); }">USUŃ</button>
                 </div>
             </div>
         </div>
-        <button class="btn btn-default" data-bind="click: function() { busStopsListAddBtnClick(); }">DODAJ</button>
-    </div>
-<!-- /ko -->
+    <!-- /ko -->
+</div>
 
-<!-- ko if: selectedView().name == 'List' && selectedView().selectedTab() == 'LINIE' -->
-    <div id="busLinesList">
-        <div data-bind="foreach: busLines.toArray()">
+<div id="busLinesList">
+    <!-- ko if: isSelected -->
+        <button class="btn btn-default" data-bind="click: function() { addBusLineBtnClick(); }">DODAJ</button>
+        <button class="btn btn-default" data-bind="click: function() { editBusLineBtnClick(selectedBusLine()); }, enable: selectedBusLine()">EDYTUJ</button>
+        <button class="btn btn-default" data-bind="click: function() { }">USUŃ</button>
+        <div data-bind="foreach: busLines">
             <div>
                 <p data-bind="text: 'LINIA #' + id"></p>
                 <p data-bind="text: 'Numer autobusu: ' + busNumber()"></p>
-                <div class="itemsList" data-bind="foreach: $data.routes.toArray()">
+                <div class="itemsList" data-bind="foreach: $data.routes">
                     <div data-bind="click: function() { $root.selectedRoute($data); return true; }, css: { active: $root.selectedRoute() == $data }">
                         <div>
                             <input data-bind="checked: $root.selectedRoute() == $data, checkedValue: true" type="radio" />
                         </div>
                         <div>
                             <p data-bind="text: 'TRASA #' + id"></p>
-                            <!-- ko if: points.getFirst().busStop() && points.getLast().busStop() -->
+                            @*<!-- ko if: points.getFirst().busStop() && points.getLast().busStop() -->
                                 <p data-bind="text: points.getFirst().busStop().name() + ' - ' + points.getLast().busStop().name()"></p>
-                            <!-- /ko -->
+                            <!-- /ko -->*@
                             <p data-bind="text: indexMark() + ' - ' + details(), visible: indexMark() && details()"></p>
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-xs btn-default">EDYTUJ</button>
-                <button class="btn btn-xs btn-default">USUŃ</button>
+                <button class="btn btn-xs btn-default" data-bind="click: function() { $root.editBusLineBtnClick($data); }">EDYTUJ</button>
+                <button class="btn btn-xs btn-default" data-bind="click: function() { }">USUŃ</button>
             </div>
         </div>
-        <button class="btn btn-default" data-bind="click: function() { busLinesListAddBtnClick(); }">DODAJ</button>
-    </div>
-<!-- /ko -->
+    <!-- /ko -->
+</div>
 
-<!-- ko if: selectedView().name == 'AddBusStop' && selectedView().selectedTab() == 'DODAWANIE PRZYSTANKU' -->
-    <div id="addBusStop">
+
+<div id="addBusStop">
+    <!-- ko if: isSelected -->
         <p>NAZWA</p>
-        <input class="form-control" data-bind="value: selectedBusStop().name" />
-
+        <input class="form-control" data-bind="value: newBusStop().name" />
         <p>POZYCJA</p>
         <table style="width: 100%">
             <tr>
                 <td>
-                    <input class="form-control" data-bind="value: selectedBusStop().latitude" />
+                    <input class="form-control" data-bind="value: newBusStop().latitude" />
                 </td>
                 <td>
-                    <input class="form-control" data-bind="value: selectedBusStop().longitude" />
+                    <input class="form-control" data-bind="value: newBusStop().longitude" />
                 </td>
             </tr>
         </table>
 
-        <button class="btn btn-default" data-bind="click: function() { addBusStopAddBtnClick(); }">DODAJ</button>
-        <button class="btn btn-default" data-bind="click: function() { addBusStopCancelBtnClick(); }">ANULUJ</button>
-    </div>
-<!-- /ko -->
+        <button class="btn btn-default" data-bind="click: function() { finishAddingBusStop(); }">DODAJ</button>
+        <button class="btn btn-default" data-bind="click: function() { cancelAddingBusStop(); }">ANULUJ</button>
+    <!-- /ko -->
+</div>
 
-<!-- ko if: selectedView().name == 'EditBusStop' && selectedView().selectedTab() == 'EDYTOWANIE PRZYSTANKU' -->
-    <div id="editBusStop">
-        <p data-bind="text: 'PRZYSTANEK #' + selectedBusStop().id"></p>
+
+<div id="editBusStop">
+    <!-- ko if: isSelected -->
+        <p data-bind="text: 'PRZYSTANEK #' + editedBusStop().id"></p>
     
         <p>NAZWA</p>
-        <input class="form-control" data-bind="value: selectedBusStop().name" />
+        <input class="form-control" data-bind="value: editedBusStop().name" />
 
         <p>POZYCJA</p>
         <table style="width: 100%">
             <tr>
                 <td>
-                    <input class="form-control" data-bind="value: selectedBusStop().latitude" />
+                    <input class="form-control" data-bind="value: editedBusStop().latitude" />
                 </td>
                 <td>
-                    <input class="form-control" data-bind="value: selectedBusStop().longitude" />
+                    <input class="form-control" data-bind="value: editedBusStop().longitude" />
                 </td>
             </tr>
         </table>
 
-        <button class="btn btn-default" data-bind="click: function() { editBusStopEditBtnClick(); }">EDYTUJ</button>
-        <button class="btn btn-default" data-bind="click: function() { editBusStopCancelBtnClick(); }">ANULUJ</button>
-    </div>
-<!-- /ko -->
+        <button class="btn btn-default" data-bind="click: function() { finishEditingBusStop(); }">EDYTUJ</button>
+        <button class="btn btn-default" data-bind="click: function() { cancelEditingBusStop(); }">ANULUJ</button>
+    <!-- /ko -->
+</div>
 
-<!-- ko if: selectedView().name == 'DeleteBusStop' && selectedView().selectedTab() == 'USUWANIE PRZYSTANKU' -->
-    <div id="deleteBusStop">
+
+<div id="deleteBusStop">
+    <!-- ko if: isSelected -->
         <p>NAZWA</p>
-        <input class="form-control" data-bind="value: selectedBusStop().name" />
+        <input class="form-control" data-bind="value: busStopToDelete().name" />
 
         <p>POZYCJA</p>
         <table style="width: 100%">
             <tr>
                 <td>
-                    <input class="form-control" data-bind="value: selectedBusStop().latitude" />
+                    <input class="form-control" data-bind="value: busStopToDelete().latitude" />
                 </td>
                 <td>
-                    <input class="form-control" data-bind="value: selectedBusStop().longitude" />
+                    <input class="form-control" data-bind="value: busStopToDelete().longitude" />
                 </td>
             </tr>
         </table>
-        <p data-bind="text: 'Linie: ' + (selectedBusStop().getAllBusNumbers().join(', ') || '-')@*busLinesNumbersListForBusStop(selectedBusStop())*@"></p>
+        <p data-bind="text: 'Linie: ' + (busStopToDelete().busNumbers().join(', ') || '-')"></p>
 
-        <button class="btn btn-default" data-bind="click: function() { deleteBusStopDeleteBtnClick(); }">USUŃ</button>
-        <button class="btn btn-default" data-bind="click: function() { deleteBusStopCancelBtnClick(); }">ANULUJ</button>
-    </div>
-<!-- /ko -->
+        <button class="btn btn-default" data-bind="click: function() { deleteBtnClick(); }">USUŃ</button>
+        <button class="btn btn-default" data-bind="click: function() { cancelBtnClick(); }">ANULUJ</button>
+    <!-- /ko -->
+</div>
 
-<!-- ko if: selectedView().name == 'AddBusLine' && selectedView().selectedTab() == 'DODAWANIE LINII' -->
-    <div id="addBusLine">
+<div id="addBusLine">
+    <!-- ko if: isSelected -->
+        <!-- ko if: directions() -->
+            <p>Dodawanie nowej trasy za pomocą Google Maps Directions.</p>
+            <input class="btn btn-default" data-bind="click: function() { $root.finishAddingRoute2(); }, enable: directions().getPoints().length > 0" type="button" value="ZAKOŃCZ" />
+            <input class="btn btn-default" data-bind="click: function() { cancelAddingRoute(); }" type="button" value="ANULUJ" />
+        <!-- /ko -->
+
         <!-- ko if: !directions() -->
             <p>NUMER AUTOBUSU</p>
-            <input class="form-control" data-bind="value: selectedBusLine().busNumber" type="text" />
-            
-            <div class="itemsList" data-bind="foreach: selectedBusLine().routes.toArray()">
-                <div data-bind="click: function() { $root.selectedRoute($data); return true; }, css: { active: $root.selectedRoute() == $data }">
+            <input class="form-control" data-bind="value: newBusLine().busNumber" type="text" />
+
+            <div class="itemsList" data-bind="foreach: newBusLine().routes">
+                <div data-bind="click: function() { $root.selectedRoute($data); }, css: { active: $root.selectedRoute() == $data }">
                     <div>
                         <input data-bind="checked: $root.selectedRoute() == $data, checkedValue: true" type="radio" />
                     </div>
                     <div>
                         <p>NOWA TRASA</p>
-                        <!-- ko if: points.getFirst().busStop() && points.getLast().busStop() -->
+                        @*<!-- ko if: points.getFirst().busStop() && points.getLast().busStop() -->
                             <p data-bind="text: points.getFirst().busStop().name() + ' - ' + points.getLast().busStop().name(), visible: points.getFirst().busStop() && points.getLast().busStop()"></p>
-                        <!-- /ko -->
+                        <!-- /ko -->*@
                         <p data-bind="text: indexMark() + ' - ' + details(), visible: indexMark() && details()"></p>
 
                         <button class="btn btn-xs btn-default">USUŃ</button>
                     </div>
                 </div>
             </div>
-            <input class="btn btn-default" data-bind="click: function() { addBusLineAddRouteBtnClick(); }" type="button" value="NOWA TRASA" />
-            
+            <input class="btn btn-default" data-bind="click: function() { addRoute(); }" type="button" value="NOWA TRASA" />
+
             <!-- ko if: selectedRoute() -->
-                <div data-bind="foreach: selectedRoute().points.toArray()">
-                    <!-- ko if: busStop() -->
-                        <p data-bind="text: busStop().name()"></p>
-                        <input data-bind="value: timeOffset" type="number" />
-                    <!-- /ko -->
+                <div data-bind="foreach: selectedBusStops">
+                    <p data-bind="text: name"></p>
+                    <input data-bind="value: originalPoint.timeOffset" type="number" />
                 </div>
+
+
 
                 <ul class="dayOfWeek" data-bind="foreach: serverTime.daysOfWeek">
                     <li data-bind="css: { active: $data == $root.selectedDayOfWeek() }, click: function(data, event) { $root.selectedDayOfWeek($data); }, text: $data"></li>
                 </ul>
 
-                <table class="departureTimes" data-bind="foreach: selectedDepartureTimes()">
-                    <tr @*data-bind="visible: $root.selectedDepartureTimes()[$index()].length > 0"*@>
+                <table class="departureTimes" data-bind="foreach: selectedDepartureTimes">
+                    <tr>
                         <td>
                             <div data-bind="text: $index"></div>
                         </td>
                         <td data-bind="foreach: $root.selectedDepartureTimes()[$index()]">
                             <div>
                                 <span data-bind="text: minutes < 10 ? '0' + minutes : minutes"></span>
+                                <span data-bind="click: function() { $root.removeDepartureTime(originalDepartureTime); }, text: 'x'"></span>
                             </div>
                         </td>
                     </tr>
                 </table>
                 <p>GODZINY</p>
-                <input class="form-control" data-bind="value: newDepartureTime.hours" type="number" />
+                <input class="form-control" data-bind="value: newDepartureTimeHours" type="number" />
                 <p>MINUTY</p>
-                <input class="form-control" data-bind="value: newDepartureTime.minutes" type="number" />
-                <button class="btn btn-default" data-bind="click: function() { if (newDepartureTime.hours() >= 0 && newDepartureTime.hours() < 24 && newDepartureTime.minutes() >= 0 && newDepartureTime.minutes() < 24) { selectedRoute().departureTimes.add(new DepartureTime(selectedRoute(), 0, newDepartureTime.hours(), newDepartureTime.minutes(), selectedDayOfWeek())); newDepartureTime.hours(0); newDepartureTime.minutes(0); } }">DODAJ GODZINĘ ODJAZDU</button>
+                <input class="form-control" data-bind="value: newDepartureTimeMinutes" type="number" />
+                <button class="btn btn-default" data-bind="click: function() { addDepartureTime(); }">DODAJ GODZINĘ ODJAZDU</button>
             <!-- /ko -->
 
-            <input class="btn btn-default" data-bind="click: function() { addBusLineAddBtnClick(); }" type="button" value="DODAJ" />
-            <input class="btn btn-default" data-bind="click: function() { addBusLineCancelBtnClick(); }" type="button" value="ANULUJ" />
+            <input class="btn btn-default" data-bind="click: function() { finishAddingBusLine(); }" type="button" value="DODAJ" />
+            <input class="btn btn-default" data-bind="click: function() { cancelAddingBusLine(); }" type="button" value="ANULUJ" />
         <!-- /ko -->
+    <!-- /ko -->
+</div>
+
+<div id="editBusLine">
+    <!-- ko if: isSelected -->
         <!-- ko if: directions() -->
             <p>Dodawanie nowej trasy za pomocą Google Maps Directions.</p>
-            <input class="btn btn-default" data-bind="click: function() { addBusLineFinishAddingRouteBtnClick(); }, enable: directions().getPoints().length > 0" type="button" value="ZAKOŃCZ" />
-            <input class="btn btn-default" data-bind="click: function() { addBusLineCancelAddingRouteBtnClick(); }" type="button" value="ANULUJ" />
+            <input class="btn btn-default" data-bind="click: function() { finishAddingRoute(); }, enable: directions().getPoints().length > 0" type="button" value="ZAKOŃCZ" />
+            <input class="btn btn-default" data-bind="click: function() { cancelAddingRoute(); }" type="button" value="ANULUJ" />
         <!-- /ko -->
-    </div>
-<!-- /ko -->
+        
+        <!-- ko if: !directions() -->
+            <p>NUMER AUTOBUSU</p>
+            <input class="form-control" data-bind="value: editedBusLine().busNumber" type="text" />
+
+            <div class="itemsList" data-bind="foreach: editedBusLine().routes">
+                <div data-bind="click: function() { $root.selectedRoute($data); }, css: { active: $root.selectedRoute() == $data }">
+                    <div>
+                        <input data-bind="checked: $root.selectedRoute() == $data, checkedValue: true" type="radio" />
+                    </div>
+                    <div>
+                        <p>NOWA TRASA</p>
+                        @*<!-- ko if: points.getFirst().busStop() && points.getLast().busStop() -->
+                                <p data-bind="text: points.getFirst().busStop().name() + ' - ' + points.getLast().busStop().name(), visible: points.getFirst().busStop() && points.getLast().busStop()"></p>
+                            <!-- /ko -->*@
+                        <p data-bind="text: indexMark() + ' - ' + details(), visible: indexMark() && details()"></p>
+
+                        <button class="btn btn-xs btn-default">USUŃ</button>
+                    </div>
+                </div>
+            </div>
+            <input class="btn btn-default" data-bind="click: function() { addRoute(); }" type="button" value="NOWA TRASA" />
+
+            <!-- ko if: selectedRoute() -->
+                <div data-bind="foreach: selectedBusStops">
+                    <p data-bind="text: name"></p>
+                    <input data-bind="value: originalPoint.timeOffset" type="number" />
+                </div>
+
+
+
+                <ul class="dayOfWeek" data-bind="foreach: serverTime.daysOfWeek">
+                    <li data-bind="css: { active: $data == $root.selectedDayOfWeek() }, click: function(data, event) { $root.selectedDayOfWeek($data); }, text: $data"></li>
+                </ul>
+
+                <table class="departureTimes" data-bind="foreach: selectedDepartureTimes()">
+                    <tr>
+                        <td>
+                            <div data-bind="text: $index"></div>
+                        </td>
+                        <td data-bind="foreach: $root.selectedDepartureTimes()[$index()]">
+                            <div>
+                                <span data-bind="text: minutes < 10 ? '0' + minutes : minutes"></span>
+                                <span data-bind="click: function() { $root.removeDepartureTime(originalDepartureTime); }, text: 'x'"></span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <p>GODZINY</p>
+                <input class="form-control" data-bind="value: newDepartureTimeHours" type="number" />
+                <p>MINUTY</p>
+                <input class="form-control" data-bind="value: newDepartureTimeMinutes" type="number" />
+                <button class="btn btn-default" data-bind="click: function() { addDepartureTime(); }">DODAJ GODZINĘ ODJAZDU</button>
+            <!-- /ko -->
+
+            <input class="btn btn-default" data-bind="click: function() { finishEditingBusLine(); }" type="button" value="DODAJ" />
+            <input class="btn btn-default" data-bind="click: function() { cancelEditingBusLine(); }" type="button" value="ANULUJ" />
+        <!-- /ko -->
+    <!-- /ko -->
+</div>
 
 <script>
 window.onload = function()
@@ -195,7 +271,49 @@ window.onload = function()
     markerIcons = new MarkerIcons();
     serverTime = new ServerTime(@Model.ServerTimeMilliseconds);
 
-    administrationContext = new AdministrationContext();
-    ko.applyBindings(administrationContext);
+    //administrationContext = new AdministrationContext();
+    //ko.applyBindings(administrationContext);
+    var engine = new Engine();
+
+    var busStopsListViewModel = new BusStopsListViewModel(engine);
+    ko.applyBindings(busStopsListViewModel, document.getElementById('busStopsList'));
+
+    var busLinesListViewModel = new BusLinesListViewModel(engine);
+    ko.applyBindings(busLinesListViewModel, document.getElementById('busLinesList'));
+
+    var addBusStopViewModel = new AddBusStopViewModel(engine);
+    ko.applyBindings(addBusStopViewModel, document.getElementById('addBusStop'));
+
+    var editBusStopViewModel = new EditBusStopViewModel(engine);
+    ko.applyBindings(editBusStopViewModel, document.getElementById('editBusStop'));
+
+    var deleteBusStopViewModel = new DeleteBusStopViewModel(engine);
+    ko.applyBindings(deleteBusStopViewModel, document.getElementById('deleteBusStop'));
+
+    var addBusLineViewModel = new AddBusLineViewModel(engine);
+    ko.applyBindings(addBusLineViewModel, document.getElementById('addBusLine'));
+
+    var editBusLineViewModel = new EditBusLineViewModel(engine);
+    ko.applyBindings(editBusLineViewModel, document.getElementById('editBusLine'));
+
+    navigationViewModel = new NavigationViewModel();
+
+    navigationViewModel.addViewGroup([busStopsListViewModel, busLinesListViewModel]);
+    navigationViewModel.addViewGroup([addBusStopViewModel]);
+    navigationViewModel.addViewGroup([editBusStopViewModel]);
+    navigationViewModel.addViewGroup([deleteBusStopViewModel]);
+    navigationViewModel.addViewGroup([addBusLineViewModel]);
+    navigationViewModel.addViewGroup([editBusLineViewModel]);
+    navigationViewModel.start();
+
+    //navigationViewModel.addView('AddBusStop', ['DODAWANIE PRZYSTANKU']);
+    //navigationViewModel.addView('EditBusStop', ['EDYTOWANIE PRZYSTANKU']);
+    //navigationViewModel.addView('DeleteBusStop', ['USUWANIE PRZYSTANKU']);
+    //navigationViewModel.addView('AddBusLine', ['DODAWANIE LINII']);
+    //navigationViewModel.addView('EditBusLine', ['EDYTOWANIE LINII']);
+    //navigationViewModel.addView('DeleteBusLine', ['USUWANIE LINII']);
+    ko.applyBindings(navigationViewModel, document.getElementById('tabs'));
+
+    
 }
 </script>

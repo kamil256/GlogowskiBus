@@ -191,30 +191,19 @@ namespace GlogowskiBus.BLL.Concrete
             if (string.IsNullOrWhiteSpace(busLine.BusNumber))
                 throw new Exception("Bus number must not be empty!");
 
-
-            foreach (DAL.Entities.Route route in existingBusLine.Routes)
+            while (existingBusLine.Routes.Count > 0)
             {
-                foreach (DAL.Entities.DepartureTime departureTime in route.DepartureTimes)
-                {
-                    unitOfWork.ScheduleRepository.Delete(departureTime);
-                }
+                while (existingBusLine.Routes[0].DepartureTimes.Count > 0)
+                    unitOfWork.ScheduleRepository.Delete(existingBusLine.Routes[0].DepartureTimes[0]);
 
-                foreach (DAL.Entities.Point point in route.Points)
-                {
-                    unitOfWork.PointRepository.Delete(point);
-                }
+                while (existingBusLine.Routes[0].Points.Count > 0)
+                    unitOfWork.PointRepository.Delete(existingBusLine.Routes[0].Points[0]);
 
-                unitOfWork.RouteRepository.Delete(route);
+                unitOfWork.RouteRepository.Delete(existingBusLine.Routes[0]);
             }
-
-            DAL.Entities.BusLine updatedBusLine = new DAL.Entities.BusLine()
-            {
-                Id = busLine.Id,
-                BusNumber = busLine.BusNumber.Trim(),
-                Routes = new List<DAL.Entities.Route>()
-            };
-            unitOfWork.BusLineRepository.Update(updatedBusLine);
-
+            //unitOfWork.Save();
+            existingBusLine.BusNumber = busLine.BusNumber;
+            //existingBusLine.Routes = new List<DAL.Entities.Route>();
             if (busLine.Routes != null)
                 foreach (Route route in busLine.Routes)
                 {
@@ -222,11 +211,12 @@ namespace GlogowskiBus.BLL.Concrete
                     {
                         IndexMark = route.IndexMark.Trim(),
                         Details = route.Details.Trim(),
-                        BusLineId = busLine.Id,
+                        //BusLineId = busLine.Id,
+                        BusLine = existingBusLine,
                         DepartureTimes = new List<DAL.Entities.DepartureTime>(),
                         Points = new List<DAL.Entities.Point>()
                     });
-                    updatedBusLine.Routes.Add(newRoute);
+                    //existingBusLine.Routes.Add(newRoute);
 
                     if (route.DepartureTimes != null)
                         foreach (DepartureTime departureTime in route.DepartureTimes)
@@ -242,9 +232,10 @@ namespace GlogowskiBus.BLL.Concrete
                                 WorkingDay = departureTime.WorkingDay,
                                 Saturday = departureTime.Saturday,
                                 Sunday = departureTime.Sunday,
-                                RouteId = newRoute.Id
+                                //RouteId = newRoute.Id
+                                Route = newRoute
                             });
-                            newRoute.DepartureTimes.Add(newDepartureTime);
+                            //newRoute.DepartureTimes.Add(newDepartureTime);
                         }
 
                     if (route.Points == null || route.Points.Count == 0)
@@ -267,13 +258,45 @@ namespace GlogowskiBus.BLL.Concrete
                             Longitude = point.Longitude,
                             TimeOffset = point.TimeOffset,
                             BusStopId = point.BusStopId,
-                            RouteId = newRoute.Id
+                            //RouteId = newRoute.Id
+                            Route = newRoute
                         });
-                        newRoute.Points.Add(newPoint);
+                        //newRoute.Points.Add(newPoint);
                     }
                 }
+            
+            unitOfWork.BusLineRepository.Update(existingBusLine);
+
+            
             unitOfWork.Save();
-            return busLine;
+            return new BusLine()
+            {
+                Id = existingBusLine.Id,
+                BusNumber = existingBusLine.BusNumber,
+                Routes = existingBusLine.Routes.Select(x => new Route()
+                {
+                    Id = x.Id,
+                    IndexMark = x.IndexMark,
+                    Details = x.Details,
+                    DepartureTimes = x.DepartureTimes.Select(y => new DepartureTime()
+                    {
+                        Id = y.Id,
+                        Hours = y.Hours,
+                        Minutes = y.Minutes,
+                        WorkingDay = y.WorkingDay,
+                        Saturday = y.Saturday,
+                        Sunday = y.Sunday
+                    }).ToList(),
+                    Points = x.Points.Select(y => new Point()
+                    {
+                        Id = y.Id,
+                        Latitude = y.Latitude,
+                        Longitude = y.Longitude,
+                        TimeOffset = y.TimeOffset,
+                        BusStopId = y.BusStopId
+                    }).ToList()
+                }).ToList()
+            };
         }
 
         public int? Delete(int id)
