@@ -15,8 +15,8 @@
 
             self.editedBusStop(new BusStop2(self.originalBusStop.getModel(), engine));
 
-            engine.selectedBusStop(self.editedBusStop());
-            engine.selectedBusLine(null);
+            engine.selectBusStop(self.editedBusStop());
+            engine.selectBusLine(null);
 
             engine.mapClickListener = function(e)
             {
@@ -36,7 +36,7 @@
         {
             var editedBusStop = new BusStop2(model, engine);
             engine.busStops.splice(engine.busStops.indexOf(self.originalBusStop), 1, editedBusStop);
-            engine.selectedBusStop(editedBusStop);
+            engine.selectBusStop(editedBusStop);
             self.originalBusStop.dispose();
             self.editedBusStop().dispose();
             navigationViewModel.selectView('PRZYSTANKI');
@@ -46,7 +46,7 @@
     self.cancelEditingBusStop = function()
     {
         self.originalBusStop.isVisible(true);
-        engine.selectedBusStop(self.originalBusStop);
+        engine.selectBusStop(self.originalBusStop);
         self.editedBusStop().dispose();
         navigationViewModel.selectView('PRZYSTANKI');
     };

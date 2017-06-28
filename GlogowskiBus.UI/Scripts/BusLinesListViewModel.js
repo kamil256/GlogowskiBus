@@ -12,13 +12,13 @@
         {
             engine.mapClickListener = function()
             {
-                engine.selectedBusStop(null);
-                engine.selectedRoute(null);
+                engine.selectBusStop(null);
+                engine.selectRoute(null);
             };
 
             engine.busStopClickListener = function(busStop)
             {
-                engine.selectedBusStop(busStop);
+                engine.selectBusStop(busStop);
             };
         }
     });
@@ -26,6 +26,7 @@
     self.busLines = engine.busLines;
 
     self.selectedRoute = engine.selectedRoute;
+    self.selectRoute = engine.selectRoute;
     self.selectedBusLine = engine.selectedBusLine;
 
     self.addBusLineBtnClick = function()
@@ -35,7 +36,7 @@
 
     self.editBusLineBtnClick = function(busLine)
     {
-        engine.selectedBusLine(busLine);
+        engine.selectBusLine(busLine);
 
         navigationViewModel.selectView('EDYTOWANIE LINII');
     };

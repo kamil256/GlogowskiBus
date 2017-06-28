@@ -16,8 +16,8 @@
             for (var i = 0; i < self.editedBusLine().routes().length; i++)
                 self.editedBusLine().routes()[i].isEditable(true);
 
-            engine.selectedBusStop(null);
-            engine.selectedBusLine(self.editedBusLine());
+            engine.selectBusStop(null);
+            engine.selectBusLine(self.editedBusLine());
             engine.selectedDayOfWeek(serverTime.daysOfWeek[0]);
 
             engine.mapClickListener = function(e)
@@ -37,6 +37,7 @@
     self.editedBusLine = ko.observable();
     self.directions = ko.observable();
     self.selectedRoute = engine.selectedRoute;
+    self.selectRoute = engine.selectRoute;
     self.selectedDayOfWeek = engine.selectedDayOfWeek;
     self.selectedBusStops = engine.selectedBusStops;
     self.selectedDepartureTimes = engine.selectedDepartureTimes;
@@ -45,7 +46,7 @@
 
     self.addRoute = function()
     {
-        engine.selectedRoute(null);
+        engine.selectRoute(null);
         self.directions(new GoogleMapsDirections());
     };
 
@@ -57,7 +58,7 @@
             newRoute.points.push(new Point2(newRoute, pointsModel[i], engine));
         newRoute.isEditable(true);
         self.editedBusLine().routes.push(newRoute);
-        engine.selectedRoute(newRoute);
+        engine.selectRoute(newRoute);
         self.directions().dispose();
         self.directions(null);
     };
@@ -89,12 +90,11 @@
 
     self.finishEditingBusLine = function()
     {
-        console.log(self.editedBusLine().departureTimes());
         sendAjaxRequest('/api/BusLine', 'PUT', self.editedBusLine().getModel(), function(model)
         {
             var editedBusLine = new BusLine2(model, engine);
             engine.busLines.splice(engine.busLines.indexOf(self.originalBusLine), 1, editedBusLine);
-            engine.selectedBusLine(editedBusLine);
+            engine.selectBusLine(editedBusLine);
             self.originalBusLine.dispose();
             self.editedBusLine().dispose();
             navigationViewModel.selectView('LINIE');
@@ -103,7 +103,7 @@
 
     self.cancelEditingBusLine = function()
     {
-        engine.selectedBusLine(self.originalBusLine);
+        engine.selectBusLine(self.originalBusLine);
         self.editedBusLine().dispose();
         navigationViewModel.selectView('LINIE');
     };

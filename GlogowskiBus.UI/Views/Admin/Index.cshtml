@@ -11,7 +11,7 @@
         <button class="btn btn-default" data-bind="click: function() { editBusStopBtnClick(selectedBusStop()); }, enable: selectedBusStop()">EDYTUJ</button>
         <button class="btn btn-default" data-bind="click: function() { deleteBusStopBtnClick(selectedBusStop()); }, enable: selectedBusStop()">USUŃ</button>
         <div class="itemsList" data-bind="foreach: busStops">
-            <div data-bind="click: function() { $root.selectedBusStop($data); return true; }, css: { active: $root.selectedBusStop()  === $data }">
+            <div data-bind="click: function() { $root.selectBusStop($data); return true; }, css: { active: $root.selectedBusStop()  === $data }">
                 <div>
                     <input data-bind="checked: $root.selectedBusStop() == $data, checkedValue: true" type="radio" />
                 </div>
@@ -38,7 +38,7 @@
                 <p data-bind="text: 'LINIA #' + id"></p>
                 <p data-bind="text: 'Numer autobusu: ' + busNumber()"></p>
                 <div class="itemsList" data-bind="foreach: $data.routes">
-                    <div data-bind="click: function() { $root.selectedRoute($data); return true; }, css: { active: $root.selectedRoute() == $data }">
+                    <div data-bind="click: function() { $root.selectRoute($data); return true; }, css: { active: $root.selectedRoute() == $data }">
                         <div>
                             <input data-bind="checked: $root.selectedRoute() == $data, checkedValue: true" type="radio" />
                         </div>
@@ -142,7 +142,7 @@
             <input class="form-control" data-bind="value: newBusLine().busNumber" type="text" />
 
             <div class="itemsList" data-bind="foreach: newBusLine().routes">
-                <div data-bind="click: function() { $root.selectedRoute($data); }, css: { active: $root.selectedRoute() == $data }">
+                <div data-bind="click: function() { $root.selectRoute($data); }, css: { active: $root.selectedRoute() == $data }">
                     <div>
                         <input data-bind="checked: $root.selectedRoute() == $data, checkedValue: true" type="radio" />
                     </div>
@@ -210,7 +210,7 @@
             <input class="form-control" data-bind="value: editedBusLine().busNumber" type="text" />
 
             <div class="itemsList" data-bind="foreach: editedBusLine().routes">
-                <div data-bind="click: function() { $root.selectedRoute($data); }, css: { active: $root.selectedRoute() == $data }">
+                <div data-bind="click: function() { $root.selectRoute($data); }, css: { active: $root.selectedRoute() == $data }">
                     <div>
                         <input data-bind="checked: $root.selectedRoute() == $data, checkedValue: true" type="radio" />
                     </div>

@@ -12,8 +12,8 @@
         {
             self.newBusStop(new BusStop2(null, engine));
 
-            engine.selectedBusStop(self.newBusStop());
-            engine.selectedBusLine(null);
+            engine.selectBusStop(self.newBusStop());
+            engine.selectBusLine(null);
 
             engine.mapClickListener = function(e)
             {
@@ -33,7 +33,7 @@
         {
             var newBusStop = new BusStop2(model, engine);
             engine.busStops.push(newBusStop);
-            engine.selectedBusStop(newBusStop);
+            engine.selectBusStop(newBusStop);
             self.newBusStop().dispose();
             navigationViewModel.selectView('PRZYSTANKI');
         });
@@ -41,7 +41,7 @@
 
     self.cancelAddingBusStop = function()
     {
-        engine.selectedBusStop(null);
+        engine.selectBusStop(null);
         self.newBusStop().dispose();
         navigationViewModel.selectView('PRZYSTANKI');
     };

@@ -46,6 +46,8 @@
 
         self.selectedBusLine = ko.observable();
 
+        self.selectedDepartureTime = ko.observable();
+
         self.selectedDayOfWeek = ko.observable(serverTime.daysOfWeek[0]);
 
         self.selectedBusStops = ko.computed(function()
@@ -106,33 +108,84 @@
         self.selectedBusStop.subscribe(function(newValue)
         {
             if (newValue && self.selectedRoute() && self.selectedRoute().busStops().indexOf(newValue) === -1)
-                self.selectedRoute(null);
+                self.selectRoute(null);
         });
+
+        //self.selectedDepartureTime.subscribe(function(newValue)
+        //{
+        //    if (newValue)
+        //    {
+        //        self.selectedRoute(newValue.route);
+        //        self.selectedBusLine(newValue.route.busLine);
+        //    }
+        //    else
+        //    {
+
+        //    }
+        //});
 
         self.selectedRoute.subscribe(function(newValue)
         {
             if (newValue && self.selectedBusStop() && self.selectedBusStop().routes().indexOf(newValue) === -1)
-                self.selectedBusStop(null);
+                self.selectBusStop(null);
 
-            if (newValue && self.selectedBusLine() !== newValue.busLine)
-                self.selectedBusLine(newValue.busLine);
-            else if (!newValue && self.selectedBusLine())
-                self.selectedBusLine(null);
+            //if (newValue && self.selectedBusLine() !== newValue.busLine)
+            //    self.selectedBusLine(newValue.busLine);
+            //else if (!newValue && self.selectedBusLine())
+            //    self.selectedBusLine(null);
         });
 
-        self.selectedBusLine.subscribe(function(newValue)
+        //self.selectedBusLine.subscribe(function(newValue)
+        //{
+        //    if (!newValue || newValue.routes().length == 0)
+        //    {
+        //        if (self.selectedRoute())
+        //            self.selectedRoute(null);
+        //    }
+        //    else
+        //    {
+        //        if (!self.selectedRoute() || (self.selectedRoute() && self.selectedRoute().busLine != newValue))
+        //            self.selectedRoute(newValue.routes()[0]);
+        //    }
+        //});
+
+        self.selectBusStop = function(newBusStop)
         {
-            if (!newValue || newValue.routes().length == 0)
+            self.selectedBusStop(newBusStop);
+
+            //if (newBusStop && self.selectedRoute() && self.selectedRoute().busStops().indexOf(newBusStop) === -1)
+            //    self.selectedRoute(null);
+        };
+
+        self.selectRoute = function(newRoute)
+        {
+            self.selectedRoute(newRoute);
+            self.selectedBusLine(newRoute ? newRoute.busLine : null);
+            self.selectedDepartureTime(newRoute ? newRoute.getNextDepartureTime() : null);
+        };
+
+        self.selectBusLine = function(newBusLine)
+        {
+            self.selectedBusLine(newBusLine);
+            if (newBusLine && newBusLine.routes().length > 0)
             {
-                if (self.selectedRoute())
-                    self.selectedRoute(null);
+                self.selectedDepartureTime(newBusLine.getNextDepartureTime());
+                self.selectedRoute(self.selectedDepartureTime() ? self.selectedDepartureTime().route : newBusLine.routes()[0]);
             }
             else
             {
-                if (!self.selectedRoute() || (self.selectedRoute() && self.selectedRoute().busLine != newValue))
-                    self.selectedRoute(newValue.routes()[0]);
+                self.selectedDepartureTime(null);
+                self.selectedRoute(null);
             }
-        });
+            
+        };
+
+        self.selectDepartureTime = function(newDepartureTime)
+        {
+            self.selectedDepartureTime(newDepartureTime);
+            self.selectedRoute(newDepartureTime.route);
+            self.selectedBusLine(newDepartureTime.route.busLine);
+        };
     }
 
     function defineEventListeners()

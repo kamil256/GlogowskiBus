@@ -38,6 +38,15 @@
         return result;
     });
 
+    self.getDepartureTimesForDayOfWeek = function(dayOfWeek)
+    {
+        var result = [];
+        for (var i = 0; i < self.departureTimes().length; i++)
+            if (self.departureTimes()[i].dayOfWeek() === dayOfWeek)
+                result.push(self.departureTimes()[i]);
+        return result;
+    };
+
     self.points = ko.computed(function()
     {
         var result = [];
@@ -59,6 +68,44 @@
     {
         for (var i = 0; i < self.routes().length; i++)
             self.routes()[i].dispose;
+    };
+
+    self.getNextDepartureTime = function()
+    {
+        var minutesSinceMidnightNow = 60 * serverTime.now().getHours() + serverTime.now().getMinutes();
+        var daysOfWeek =
+        [
+            {
+                dayOfWeek: serverTime.dayOfWeekYesterday(),
+                minutesSinceMidnightOffset: -24 * 60
+            },
+            {
+                dayOfWeek: serverTime.dayOfWeekToday(),
+                minutesSinceMidnightOffset: 0
+            },
+            {
+                dayOfWeek: serverTime.dayOfWeekTomorrow(),
+                minutesSinceMidnightOffset: 24 * 60
+            }
+        ];
+
+        for (var i = 0; i < daysOfWeek.length; i++)
+        {
+            var departureTimesForDayOfWeek = self.getDepartureTimesForDayOfWeek(daysOfWeek[i].dayOfWeek);
+
+            for (var j = 0; j < departureTimesForDayOfWeek.length; j++)
+            {
+                var busStopPoint = departureTimesForDayOfWeek[j].route.getBusStopPoint(engine.selectedBusStop());
+                if (busStopPoint)
+                {
+                    var minutesSinceMidnight = departureTimesForDayOfWeek[j].minutesSinceMidnight() + Math.floor(busStopPoint.timeOffset() / 60000) + daysOfWeek[i].minutesSinceMidnightOffset;
+                    if (minutesSinceMidnight > minutesSinceMidnightNow)
+                        return departureTimesForDayOfWeek[j];
+                }
+            }
+        }
+
+        return null;
     };
 }
 
@@ -210,6 +257,53 @@ function Route2(busLine, model, engine)
             self.points()[i].dispose;
         selectedRouteSubscription.dispose();
         pointsSubscription.dispose();
+    };
+
+    self.getDepartureTimesForDayOfWeek = function(dayOfWeek)
+    {
+        var result = [];
+        for (var i = 0; i < self.departureTimes().length; i++)
+            if (self.departureTimes()[i].dayOfWeek() === dayOfWeek)
+                result.push(self.departureTimes()[i]);
+        return result;
+    };
+
+    self.getNextDepartureTime = function()
+    {
+        var minutesSinceMidnightNow = 60 * serverTime.now().getHours() + serverTime.now().getMinutes();
+        var daysOfWeek =
+        [
+            {
+                dayOfWeek: serverTime.dayOfWeekYesterday(),
+                minutesSinceMidnightOffset: -24 * 60
+            },
+            {
+                dayOfWeek: serverTime.dayOfWeekToday(),
+                minutesSinceMidnightOffset: 0
+            },
+            {
+                dayOfWeek: serverTime.dayOfWeekTomorrow(),
+                minutesSinceMidnightOffset: 24 * 60
+            }
+        ];
+
+        for (var i = 0; i < daysOfWeek.length; i++)
+        {
+            var departureTimesForDayOfWeek = self.getDepartureTimesForDayOfWeek(daysOfWeek[i].dayOfWeek);
+
+            for (var j = 0; j < departureTimesForDayOfWeek.length; j++)
+            {
+                var busStopPoint = departureTimesForDayOfWeek[j].route.getBusStopPoint(engine.selectedBusStop());
+                if (busStopPoint)
+                {
+                    var minutesSinceMidnight = departureTimesForDayOfWeek[j].minutesSinceMidnight() + Math.floor(busStopPoint.timeOffset() / 60000) + daysOfWeek[i].minutesSinceMidnightOffset;
+                    if (minutesSinceMidnight > minutesSinceMidnightNow)
+                        return departureTimesForDayOfWeek[j];
+                }
+            }
+        }
+
+        return null;
     };
 }
 

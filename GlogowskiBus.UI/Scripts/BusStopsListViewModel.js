@@ -12,20 +12,20 @@
         {
             engine.mapClickListener = function()
             {
-                engine.selectedBusStop(null);
-                engine.selectedRoute(null);
+                engine.selectBusStop(null);
+                engine.selectRoute(null);
             };
 
             engine.busStopClickListener = function(busStop)
             {
-                engine.selectedBusStop(busStop);
+                engine.selectBusStop(busStop);
             };
         }
     });
 
     self.busStops = engine.busStops;
-
     self.selectedBusStop = engine.selectedBusStop;
+    self.selectBusStop = engine.selectBusStop;
 
     self.addBusStopBtnClick = function()
     {
@@ -34,14 +34,14 @@
 
     self.editBusStopBtnClick = function(busStop)
     {
-        engine.selectedBusStop(busStop);
+        engine.selectBusStop(busStop);
 
         navigationViewModel.selectView('EDYTOWANIE PRZYSTANKU');
     };
 
     self.deleteBusStopBtnClick = function(busStop)
     {
-        engine.selectedBusStop(busStop);
+        engine.selectBusStop(busStop);
 
         navigationViewModel.selectView('USUWANIE PRZYSTANKU');
     };

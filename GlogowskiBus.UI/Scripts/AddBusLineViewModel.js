@@ -12,8 +12,8 @@
         {
             self.newBusLine(new BusLine2(null, engine));
 
-            engine.selectedBusStop(null);
-            engine.selectedBusLine(self.newBusLine());
+            engine.selectBusStop(null);
+            engine.selectBusLine(self.newBusLine());
             engine.selectedDayOfWeek(serverTime.daysOfWeek[0]);
 
             engine.mapClickListener = function(e)
@@ -33,6 +33,7 @@
     self.newBusLine = ko.observable();
     self.directions = ko.observable();
     self.selectedRoute = engine.selectedRoute;
+    self.selectRoute = engine.selectRoute;
     self.selectedDayOfWeek = engine.selectedDayOfWeek;
     self.selectedBusStops = engine.selectedBusStops;
     self.selectedDepartureTimes = engine.selectedDepartureTimes;
@@ -41,7 +42,7 @@
 
     self.addRoute = function()
     {
-        engine.selectedRoute(null);
+        engine.selectRoute(null);
         self.directions(new GoogleMapsDirections());
     };
 
@@ -53,7 +54,7 @@
             newRoute.points.push(new Point2(newRoute, pointsModel[i], engine));
         newRoute.isEditable(true);
         self.newBusLine().routes.push(newRoute);
-        engine.selectedRoute(newRoute);
+        engine.selectRoute(newRoute);
         self.directions().dispose();
         self.directions(null);
     };
@@ -89,7 +90,7 @@
         {
             var newBusLine = new BusLine2(model, engine);
             engine.busLines.push(newBusLine);
-            engine.selectedBusLine(newBusLine);
+            engine.selectBusLine(newBusLine);
             self.newBusLine().dispose();
             navigationViewModel.selectView('LINIE');
         });
@@ -97,7 +98,7 @@
 
     self.cancelAddingBusLine = function()
     {
-        engine.selectedBusLine(null);
+        engine.selectBusLine(null);
         self.newBusLine().dispose();
         navigationViewModel.selectView('LINIE');
     };
