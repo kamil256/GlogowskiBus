@@ -52,54 +52,53 @@
 
         self.selectedBusStops = ko.computed(function()
         {
-            var busStops = [];
+            var result = [];
 
             if (self.selectedRoute())
             {
-                var busStop = self.selectedBusStop() || self.selectedRoute().busStops()[0];
-                var busStopPoint = self.selectedRoute().getBusStopPoint(busStop);
-
-                if (busStop && busStopPoint)
-                {
+                var busStopPoint = self.selectedRoute().getBusStopPoint(self.selectedBusStop() || self.selectedRoute().busStops()[0]);
+                if (busStopPoint)
                     for (var i = 0; i < self.selectedRoute().points().length; i++)
                         if (self.selectedRoute().points()[i].busStop())
-                        {
-                            busStops.push(
+                            result.push(
                             {
                                 name: self.selectedRoute().points()[i].busStop().name(),
                                 timeOffset: ko.observable((self.selectedRoute().points()[i].timeOffset() - busStopPoint.timeOffset())/* / 60000*/),
                                 originalPoint: self.selectedRoute().points()[i]
                             });
-                        }
-                }
             }
-
-            return busStops;
+            return result;
         });
 
         self.selectedDepartureTimes = ko.computed(function()
         {
-            var departureTimes = [];
+            var result = [];
             if (self.selectedRoute())
             {
+                var originalDepartureTimes = self.selectedBusStop() ? self.selectedBusLine().departureTimes() : self.selectedRoute().departureTimes();
                 for (var i = 0; i < 24; i++)
-                    departureTimes[i] = [];
-                for (var i = 0; i < self.selectedRoute().departureTimes().length; i++)
+                    result[i] = [];
+                for (var i = 0; i < originalDepartureTimes.length; i++)
                 {
-                    var minutes = self.selectedRoute().departureTimes()[i].minutes();
-                    var hours = self.selectedRoute().departureTimes()[i].hours();
-                    var dayOfWeek = self.selectedRoute().departureTimes()[i].dayOfWeek();
+                    var busStopPoint = originalDepartureTimes[i].route.getBusStopPoint(self.selectedBusStop() || self.selectedRoute().busStops()[0]);
+                    var minutes = originalDepartureTimes[i].minutes() + busStopPoint.timeOffset() / 60000;
+                    var hours = originalDepartureTimes[i].hours() + Math.floor(minutes / 60);
+                    var dayOfWeek = originalDepartureTimes[i].dayOfWeek();
+                    if (hours > 23)
+                        dayOfWeek = serverTime.nextDayOfWeek(dayOfWeek);
                     if (dayOfWeek == self.selectedDayOfWeek())
                     {
-                        departureTimes[hours].push(
+                        hours %= 24;
+                        minutes %= 60;
+                        result[hours].push(
                         {
                             minutes: minutes,
-                            originalDepartureTime: self.selectedRoute().departureTimes()[i]
+                            originalDepartureTime: originalDepartureTimes[i]
                         });
                     }
                 }
             }
-            return departureTimes;
+            return result;
         });
     }
 

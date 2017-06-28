@@ -266,54 +266,54 @@
 </div>
 
 <script>
-window.onload = function()
-{
-    markerIcons = new MarkerIcons();
-    serverTime = new ServerTime(@Model.ServerTimeMilliseconds);
+    window.onload = function()
+    {
+        markerIcons = new MarkerIcons();
+        serverTime = new ServerTime(@Model.ServerTimeMilliseconds);
 
-    //administrationContext = new AdministrationContext();
-    //ko.applyBindings(administrationContext);
-    var engine = new Engine();
+        //administrationContext = new AdministrationContext();
+        //ko.applyBindings(administrationContext);
+        var engine = new Engine();
 
-    var busStopsListViewModel = new BusStopsListViewModel(engine);
-    ko.applyBindings(busStopsListViewModel, document.getElementById('busStopsList'));
+        var busStopsListViewModel = new BusStopsListViewModel(engine);
+        ko.applyBindings(busStopsListViewModel, document.getElementById('busStopsList'));
 
-    var busLinesListViewModel = new BusLinesListViewModel(engine);
-    ko.applyBindings(busLinesListViewModel, document.getElementById('busLinesList'));
+        var busLinesListViewModel = new BusLinesListViewModel(engine);
+        ko.applyBindings(busLinesListViewModel, document.getElementById('busLinesList'));
 
-    var addBusStopViewModel = new AddBusStopViewModel(engine);
-    ko.applyBindings(addBusStopViewModel, document.getElementById('addBusStop'));
+        var addBusStopViewModel = new AddBusStopViewModel(engine);
+        ko.applyBindings(addBusStopViewModel, document.getElementById('addBusStop'));
 
-    var editBusStopViewModel = new EditBusStopViewModel(engine);
-    ko.applyBindings(editBusStopViewModel, document.getElementById('editBusStop'));
+        var editBusStopViewModel = new EditBusStopViewModel(engine);
+        ko.applyBindings(editBusStopViewModel, document.getElementById('editBusStop'));
 
-    var deleteBusStopViewModel = new DeleteBusStopViewModel(engine);
-    ko.applyBindings(deleteBusStopViewModel, document.getElementById('deleteBusStop'));
+        var deleteBusStopViewModel = new DeleteBusStopViewModel(engine);
+        ko.applyBindings(deleteBusStopViewModel, document.getElementById('deleteBusStop'));
 
-    var addBusLineViewModel = new AddBusLineViewModel(engine);
-    ko.applyBindings(addBusLineViewModel, document.getElementById('addBusLine'));
+        var addBusLineViewModel = new AddBusLineViewModel(engine);
+        ko.applyBindings(addBusLineViewModel, document.getElementById('addBusLine'));
 
-    var editBusLineViewModel = new EditBusLineViewModel(engine);
-    ko.applyBindings(editBusLineViewModel, document.getElementById('editBusLine'));
+        var editBusLineViewModel = new EditBusLineViewModel(engine);
+        ko.applyBindings(editBusLineViewModel, document.getElementById('editBusLine'));
 
-    navigationViewModel = new NavigationViewModel();
+        navigationViewModel = new NavigationViewModel();
 
-    navigationViewModel.addViewGroup([busStopsListViewModel, busLinesListViewModel]);
-    navigationViewModel.addViewGroup([addBusStopViewModel]);
-    navigationViewModel.addViewGroup([editBusStopViewModel]);
-    navigationViewModel.addViewGroup([deleteBusStopViewModel]);
-    navigationViewModel.addViewGroup([addBusLineViewModel]);
-    navigationViewModel.addViewGroup([editBusLineViewModel]);
-    navigationViewModel.start();
+        navigationViewModel.addViewGroup([busStopsListViewModel, busLinesListViewModel]);
+        navigationViewModel.addViewGroup([addBusStopViewModel]);
+        navigationViewModel.addViewGroup([editBusStopViewModel]);
+        navigationViewModel.addViewGroup([deleteBusStopViewModel]);
+        navigationViewModel.addViewGroup([addBusLineViewModel]);
+        navigationViewModel.addViewGroup([editBusLineViewModel]);
+        navigationViewModel.start();
 
-    //navigationViewModel.addView('AddBusStop', ['DODAWANIE PRZYSTANKU']);
-    //navigationViewModel.addView('EditBusStop', ['EDYTOWANIE PRZYSTANKU']);
-    //navigationViewModel.addView('DeleteBusStop', ['USUWANIE PRZYSTANKU']);
-    //navigationViewModel.addView('AddBusLine', ['DODAWANIE LINII']);
-    //navigationViewModel.addView('EditBusLine', ['EDYTOWANIE LINII']);
-    //navigationViewModel.addView('DeleteBusLine', ['USUWANIE LINII']);
-    ko.applyBindings(navigationViewModel, document.getElementById('tabs'));
+        //navigationViewModel.addView('AddBusStop', ['DODAWANIE PRZYSTANKU']);
+        //navigationViewModel.addView('EditBusStop', ['EDYTOWANIE PRZYSTANKU']);
+        //navigationViewModel.addView('DeleteBusStop', ['USUWANIE PRZYSTANKU']);
+        //navigationViewModel.addView('AddBusLine', ['DODAWANIE LINII']);
+        //navigationViewModel.addView('EditBusLine', ['EDYTOWANIE LINII']);
+        //navigationViewModel.addView('DeleteBusLine', ['USUWANIE LINII']);
+        ko.applyBindings(navigationViewModel, document.getElementById('tabs'));
 
     
-}
+    }
 </script>

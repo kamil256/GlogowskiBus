@@ -167,7 +167,8 @@
     <Content Include="Scripts\GoogleMapsDirections.js" />
     <Content Include="Scripts\NavigationViewModel.js" />
     <Content Include="Scripts\ServerTime.js" />
-    <Content Include="Scripts\TimeTableContext.js" />
+    <Content Include="Scripts\FindRouteViewModel.js" />
+    <Content Include="Scripts\TimeTableViewModel.js" />
     <Content Include="Scripts\BusLines.js" />
     <Content Include="Scripts\BusStops.js" />
     <Content Include="Scripts\Common.js" />
