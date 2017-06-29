@@ -71,12 +71,13 @@
 
     self.addDepartureTime = function()
     {
-        if (self.newDepartureTimeHours() >= 0 && self.newDepartureTimeHours() < 24 && self.newDepartureTimeMinutes() >= 0 && self.newDepartureTimeMinutes() < 60 &&
-            !self.selectedRoute().getDepartureTime(self.newDepartureTimeHours(), self.newDepartureTimeMinutes(), engine.selectedDayOfWeek()))
+        var hours = Number(self.newDepartureTimeHours());
+        var minutes = Number(self.newDepartureTimeMinutes());
+        if (hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60 && !self.selectedRoute().getDepartureTime(hours, minutes, engine.selectedDayOfWeek()))
         {
             var newDepartureTime = new DepartureTime2(self.selectedRoute(), null, engine.selectedDayOfWeek(), engine);
-            newDepartureTime.hours(self.newDepartureTimeHours());
-            newDepartureTime.minutes(self.newDepartureTimeMinutes());
+            newDepartureTime.hours(hours);
+            newDepartureTime.minutes(minutes);
             newDepartureTime.dayOfWeek(engine.selectedDayOfWeek());
             self.selectedRoute().departureTimes.push(newDepartureTime);
             self.selectedRoute().sortDepartureTimes();

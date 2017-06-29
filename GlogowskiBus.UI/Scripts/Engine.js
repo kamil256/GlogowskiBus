@@ -73,7 +73,7 @@
         self.selectedDepartureTimes = ko.computed(function()
         {
             var result = [];
-            if (self.selectedRoute())
+            if (self.selectedRoute() && self.selectedBusLine())
             {
                 var originalDepartureTimes = self.selectedBusStop() ? self.selectedBusLine().departureTimes() : self.selectedRoute().departureTimes();
                 for (var i = 0; i < 24; i++)
@@ -81,20 +81,24 @@
                 for (var i = 0; i < originalDepartureTimes.length; i++)
                 {
                     var busStopPoint = originalDepartureTimes[i].route.getBusStopPoint(self.selectedBusStop() || self.selectedRoute().busStops()[0]);
-                    var minutes = originalDepartureTimes[i].minutes() + busStopPoint.timeOffset() / 60000;
-                    var hours = originalDepartureTimes[i].hours() + Math.floor(minutes / 60);
-                    var dayOfWeek = originalDepartureTimes[i].dayOfWeek();
-                    if (hours > 23)
-                        dayOfWeek = serverTime.nextDayOfWeek(dayOfWeek);
-                    if (dayOfWeek == self.selectedDayOfWeek())
+                    if (busStopPoint)
                     {
-                        hours %= 24;
-                        minutes %= 60;
-                        result[hours].push(
+                        
+                        var minutes = originalDepartureTimes[i].minutes() + busStopPoint.timeOffset() / 60000;
+                        var hours = originalDepartureTimes[i].hours() + Math.floor(minutes / 60);
+                        var dayOfWeek = originalDepartureTimes[i].dayOfWeek();
+                        if (hours > 23)
+                            dayOfWeek = serverTime.nextDayOfWeek(dayOfWeek);
+                        if (dayOfWeek == self.selectedDayOfWeek())
                         {
-                            minutes: minutes,
-                            originalDepartureTime: originalDepartureTimes[i]
-                        });
+                            hours %= 24;
+                            minutes %= 60;
+                            result[hours].push(
+                            {
+                                minutes: minutes,
+                                originalDepartureTime: originalDepartureTimes[i]
+                            });
+                        }
                     }
                 }
             }
@@ -159,8 +163,8 @@
         self.selectRoute = function(newRoute)
         {
             self.selectedRoute(newRoute);
-            self.selectedBusLine(newRoute ? newRoute.busLine : null);
-            self.selectedDepartureTime(newRoute ? newRoute.getNextDepartureTime() : null);
+            self.selectedBusLine(self.selectedRoute() ? self.selectedRoute().busLine : null);
+            self.selectedDepartureTime(self.selectedRoute() ? self.selectedRoute().getNextDepartureTime() : null);
         };
 
         self.selectBusLine = function(newBusLine)
@@ -181,9 +185,12 @@
 
         self.selectDepartureTime = function(newDepartureTime)
         {
+            
             self.selectedDepartureTime(newDepartureTime);
-            self.selectedRoute(newDepartureTime.route);
-            self.selectedBusLine(newDepartureTime.route.busLine);
+            self.selectedRoute(self.selectedDepartureTime() ? self.selectedDepartureTime().route : null);
+
+            
+            self.selectedBusLine(self.selectedRoute() ? self.selectedRoute().busLine : null);
         };
     }
 

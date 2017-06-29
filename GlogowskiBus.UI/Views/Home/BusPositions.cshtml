@@ -27,7 +27,7 @@
         <!-- ko if: selectedBusStop() -->
             <p>LINIA</p>
             <ul id="busLinesTiles" data-bind="foreach: selectedBusStop().busLines">
-                <li data-bind="@*attr: { title: busStops()[0].name() + ' - ' + busStops()[busStops().length - 1].name() },*@ click: function() { $root.selectBusLine($data);@*$root.selectedDepartureTime($root.getNextDepartureTime($data))*@ }, css: { active: $root.selectedBusLine() === $data }, text: busNumber()"></li>
+                <li data-bind="@*attr: { title: busStops()[0].name() + ' - ' + busStops()[busStops().length - 1].name() },*@ click: function() { $root.selectDepartureTime($data.getNextDepartureTime()); }, css: { active: $root.selectedBusLine() === $data }, text: busNumber()"></li>
             </ul>
         <!-- /ko -->
 
