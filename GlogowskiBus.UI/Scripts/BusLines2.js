@@ -339,19 +339,20 @@ function DepartureTime2(route, model, dayOfWeek, engine)
         return 60 * self.hours() + self.minutes();
     });
 
-    //self.isOnTour = function()
-    //{
-    //    var currentMinutesSinceMidnight = 60 * serverTime.now().getHours() + serverTime.now().getMinutes();
-    //    var departureMinutesSinceMidnight = self.getMinutesSinceMidnight();
-    //    var arrivalMinutesSinceMidnight = departureMinutesSinceMidnight + Math.floor(self.route.points.getLast().timeOffset() / 60000);
+    self.isOnTour = function()
+    {
+        var currentMinutesSinceMidnight = 60 * serverTime.now().getHours() + serverTime.now().getMinutes();
+        console.log(currentMinutesSinceMidnight);
+        var departureMinutesSinceMidnight = self.minutesSinceMidnight();
+        var arrivalMinutesSinceMidnight = departureMinutesSinceMidnight + Math.floor(self.route.points()[self.route.points().length - 1].timeOffset() / 60000);
 
-    //    if (self.dayOfWeek == serverTime.dayOfWeekToday() && currentMinutesSinceMidnight >= departureMinutesSinceMidnight && currentMinutesSinceMidnight < arrivalMinutesSinceMidnight)
-    //        return true;
-    //    else if (self.dayOfWeek == serverTime.dayOfWeekYesterday() && currentMinutesSinceMidnight >= departureMinutesSinceMidnight - 24 * 60 && currentMinutesSinceMidnight < arrivalMinutesSinceMidnight - 24 * 60)
-    //        return true;
-    //    else
-    //        return false;
-    //};
+        if (self.dayOfWeek() == serverTime.dayOfWeekToday() && currentMinutesSinceMidnight >= departureMinutesSinceMidnight && currentMinutesSinceMidnight < arrivalMinutesSinceMidnight)
+            return true;
+        else if (self.dayOfWeek() == serverTime.dayOfWeekYesterday() && currentMinutesSinceMidnight >= departureMinutesSinceMidnight - 24 * 60 && currentMinutesSinceMidnight < arrivalMinutesSinceMidnight - 24 * 60)
+            return true;
+        else
+            return false;
+    };
 }
 
 function Point2(route, model, engine)
@@ -364,6 +365,8 @@ function Point2(route, model, engine)
     //self.longitude = ko.observable(model ? model.Longitude : 0);
     self.pointPosition = ko.observable(new google.maps.LatLng(model ? model.Latitude : 0, model ? model.Longitude : 0));
     self.timeOffset = ko.observable(model ? model.TimeOffset : 0);
+    
+
     self.busStopId = ko.observable(model ? model.BusStopId : null);
 
     self.getModel = function()
@@ -398,6 +401,18 @@ function Point2(route, model, engine)
                 if (engine.busStops()[i].id === self.busStopId())
                     return engine.busStops()[i];
         return null;
+    });
+
+    self.timeOffsetInMinutes = ko.observable(self.busStop() ? (self.timeOffset() / 60000).toFixed(0) : null);
+
+    self.timeOffset.subscribe(function(newValue)
+    {
+    });
+
+    self.timeOffsetInMinutes.subscribe(function(newValue)
+    {
+
+        self.timeOffset(newValue * 60000);
     });
 
     self.position = ko.computed(function()
@@ -462,6 +477,7 @@ function Point2(route, model, engine)
     var busStopSubscription = self.busStop.subscribe(function(newValue)
     {
         updateMarkerIcon();
+        self.timeOffsetInMinutes((self.timeOffset() / 60000).toFixed(0));
     });
 
     var routeIsEditableSubscription = self.route.isEditable.subscribe(function(newValue)

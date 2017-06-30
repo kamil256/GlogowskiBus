@@ -40,6 +40,8 @@
             return result;
         });
 
+        self.buses = ko.observableArray([]);
+
         self.selectedBusStop = ko.observable();
 
         self.selectedRoute = ko.observable();
@@ -63,7 +65,7 @@
                             result.push(
                             {
                                 name: self.selectedRoute().points()[i].busStop().name(),
-                                timeOffset: ko.observable((self.selectedRoute().points()[i].timeOffset() - busStopPoint.timeOffset())/* / 60000*/),
+                                timeOffset: ko.observable((self.selectedRoute().points()[i].timeOffset() - busStopPoint.timeOffset()) / 60000),
                                 originalPoint: self.selectedRoute().points()[i]
                             });
             }
@@ -221,7 +223,45 @@
             {
                 for (var i = 0; i < model.length; i++)
                     self.busLines.push(new BusLine2(model[i], self));
+                updateBuses();
             });
         });
     }
+
+    function updateBuses()
+    {
+        console.log('update buses');
+        for (var i = 0; i < self.departureTimes().length; i++)
+            if (self.departureTimes()[i].isOnTour())
+            {
+                console.log('sdsdf');
+                var bus = null;
+                for (var j = 0; j < self.buses().length; j++)
+                    if (self.buses()[j].departureTime === self.departureTimes()[i])
+                    {
+                        bus = self.buses()[j];
+                        break;
+                    }
+
+                if (!bus)
+                {
+                    bus = new Bus(self.departureTimes()[i]);
+                    bus.selectBusEvent = function(departureTime)
+                    {
+                        self.selectedDepartureTime(departureTime);
+                    };
+                    bus.removeBusEvent = function(bus)
+                    {
+                        self.buses.remove(bus);
+                    };
+                    self.buses.push(bus);
+                }
+            }
+
+        setInterval(function()
+        {
+            if (serverTime.now().getSeconds() === 0)
+                updateBuses();
+        }, 1000);
+    };    
 }

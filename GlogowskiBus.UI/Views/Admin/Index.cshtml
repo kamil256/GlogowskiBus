@@ -162,7 +162,7 @@
             <!-- ko if: selectedRoute() -->
                 <div data-bind="foreach: selectedBusStops">
                     <p data-bind="text: name"></p>
-                    <input data-bind="value: originalPoint.timeOffset" type="number" />
+                    <input data-bind="value: originalPoint.timeOffsetInMinutes" type="number" />
                 </div>
 
 
@@ -230,7 +230,7 @@
             <!-- ko if: selectedRoute() -->
                 <div data-bind="foreach: selectedBusStops">
                     <p data-bind="text: name"></p>
-                    <input data-bind="value: originalPoint.timeOffset" type="number" />
+                    <input data-bind="value: originalPoint.timeOffsetInMinutes" type="number" />
                 </div>
 
 

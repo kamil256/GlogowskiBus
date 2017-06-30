@@ -115,11 +115,11 @@ function calculateTimeOffsets(route)
 
 function getPositionBetweenTwoPoints(startPoint, endPoint, currentTimeOffset)
 {
-    var latitudeDifference = endPoint.latitude - startPoint.latitude;
-    var longitudeDifference = endPoint.longitude - startPoint.longitude;
-    var timeRatio = (currentTimeOffset - startPoint.timeOffset) / (endPoint.timeOffset - startPoint.timeOffset);
-    var newPointLatitude = startPoint.latitude + latitudeDifference * timeRatio;
-    var newPointLongitude = startPoint.longitude + longitudeDifference * timeRatio;
+    var latitudeDifference = endPoint.position().lat() - startPoint.position().lat();
+    var longitudeDifference = endPoint.position().lng() - startPoint.position().lng();
+    var timeRatio = (currentTimeOffset - startPoint.timeOffset()) / (endPoint.timeOffset() - startPoint.timeOffset());
+    var newPointLatitude = startPoint.position().lat() + latitudeDifference * timeRatio;
+    var newPointLongitude = startPoint.position().lng() + longitudeDifference * timeRatio;
     return new google.maps.LatLng(newPointLatitude, newPointLongitude);
 }
 
