@@ -27,22 +27,20 @@
     self.selectedBusStop = engine.selectedBusStop;
     self.selectBusStop = engine.selectBusStop;
 
-    self.addBusStopBtnClick = function()
+    self.addBusStop = function()
     {
         navigationViewModel.selectView('DODAWANIE PRZYSTANKU');
     };
 
-    self.editBusStopBtnClick = function(busStop)
+    self.editBusStop = function(busStop)
     {
         engine.selectBusStop(busStop);
-
         navigationViewModel.selectView('EDYTOWANIE PRZYSTANKU');
     };
 
-    self.deleteBusStopBtnClick = function(busStop)
+    self.deleteBusStop = function(busStop)
     {
         engine.selectBusStop(busStop);
-
         navigationViewModel.selectView('USUWANIE PRZYSTANKU');
     };
 }

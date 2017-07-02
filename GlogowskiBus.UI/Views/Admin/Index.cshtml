@@ -1,27 +1,24 @@
-﻿@model GlogowskiBus.UI.Models.HomeBusPositionsViewModel
-
-@{
+﻿@{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div id="busStopsList">
     <!-- ko if: isSelected -->
-        <button class="btn btn-default" data-bind="click: function() { addBusStopBtnClick(); }">DODAJ</button>
-        <button class="btn btn-default" data-bind="click: function() { editBusStopBtnClick(selectedBusStop()); }, enable: selectedBusStop()">EDYTUJ</button>
-        <button class="btn btn-default" data-bind="click: function() { deleteBusStopBtnClick(selectedBusStop()); }, enable: selectedBusStop()">USUŃ</button>
+        <button class="btn btn-default" data-bind="click: function() { addBusStop(); }">DODAJ</button>
+        <button class="btn btn-default" data-bind="click: function() { editBusStop(selectedBusStop()); }, enable: selectedBusStop">EDYTUJ</button>
+        <button class="btn btn-default" data-bind="click: function() { deleteBusStop(selectedBusStop()); }, enable: selectedBusStop">USUŃ</button>
         <div class="itemsList" data-bind="foreach: busStops">
-            <div data-bind="click: function() { $root.selectBusStop($data); return true; }, css: { active: $root.selectedBusStop()  === $data }">
+            <div data-bind="click: function() { $root.selectBusStop($data); }, css: { active: $root.selectedBusStop()  === $data }">
                 <div>
                     <input data-bind="checked: $root.selectedBusStop() == $data, checkedValue: true" type="radio" />
                 </div>
                 <div>
-                    <p data-bind="text: 'PRZYSTANEK #' + id"></p>
-                    <p data-bind="text: 'Nazwa: ' + name()"></p>
+                    <p data-bind="text: name"></p>
                     <p data-bind="text: 'Pozycja: ' + position().lat() + ', ' + position().lng()"></p>
                     <p data-bind="text: 'Linie: ' + (busNumbers().join(', ') || '-')"></p>
-                    <button class="btn btn-xs btn-default" data-bind="click: function() { $root.editBusStopBtnClick($data); }">EDYTUJ</button>
-                    <button class="btn btn-xs btn-default" data-bind="click: function() { $root.deleteBusStopBtnClick($data); }">USUŃ</button>
+                    <button class="btn btn-xs btn-default" data-bind="click: function() { $root.editBusStop($data); }">EDYTUJ</button>
+                    <button class="btn btn-xs btn-default" data-bind="click: function() { $root.deleteBusStop($data); }">USUŃ</button>
                 </div>
             </div>
         </div>
@@ -269,7 +266,7 @@
     window.onload = function()
     {
         markerIcons = new MarkerIcons();
-        serverTime = new ServerTime(@Model.ServerTimeMilliseconds);
+        serverTime = new ServerTime();
 
         //administrationContext = new AdministrationContext();
         //ko.applyBindings(administrationContext);
