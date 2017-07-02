@@ -11,7 +11,7 @@
 
     var marker = new google.maps.Marker(
     {
-        icon: markerIcons.redBus2,
+        icon: markerIcons.redBus,
         label:
         {
             color: '#FF0000',
