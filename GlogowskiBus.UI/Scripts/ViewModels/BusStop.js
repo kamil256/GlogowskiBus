@@ -2,6 +2,8 @@
 {
     var self = this;
 
+    self.isVisible = ko.observable(true);
+
     self.id = model ? model.Id : null;
     self.name = ko.observable(model ? model.Name : 'Nowy przystanek');
     self.position = ko.observable(new google.maps.LatLng(model ? model.Latitude : 0, model ? model.Longitude : 0));
@@ -63,14 +65,12 @@
         return result;
     });
 
-    self.isVisible = ko.observable(true);
-
     var marker = new google.maps.Marker(
     {
         zIndex: 0
     });
 
-    var clickListener = marker.addListener('click', function()
+    marker.addListener('click', function()
     {
         if (engine.busStopClickListener)
             engine.busStopClickListener(self);
@@ -142,6 +142,5 @@
         selfPositionSubscription.dispose();
         selfNameSubscription.dispose();
         marker.setMap(null);
-        clickListener.remove();
     };
 }

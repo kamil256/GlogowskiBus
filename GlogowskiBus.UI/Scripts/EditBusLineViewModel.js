@@ -52,7 +52,7 @@
 
     self.finishAddingRoute = function()
     {
-        var newRoute = new Route2(self.editedBusLine(), null, engine);
+        var newRoute = new Route(self.editedBusLine(), null, engine);
         var pointsModel = self.directions().getPoints();
         for (var i = 0; i < pointsModel.length; i++)
             newRoute.points.push(new Point2(newRoute, pointsModel[i], engine));

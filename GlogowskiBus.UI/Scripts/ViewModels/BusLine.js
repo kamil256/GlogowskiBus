@@ -4,10 +4,11 @@
 
     self.id = model ? model.Id : null;
     self.busNumber = ko.observable(model ? model.BusNumber : 'Nowa linia');
+
     self.routes = ko.observableArray([]);
     if (model)
         for (var i = 0; i < model.Routes.length; i++)
-            self.routes.push(new Route2(self, model.Routes[i], engine));
+            self.routes.push(new Route(self, model.Routes[i], engine));
 
     self.getModel = function()
     {
