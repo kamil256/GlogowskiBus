@@ -60,14 +60,13 @@
         <table style="width: 100%">
             <tr>
                 <td>
-                    <input class="form-control" data-bind="value: newBusStop().latitude" />
+                    <input class="form-control" data-bind="value: newBusStop().position().lat()" />
                 </td>
                 <td>
-                    <input class="form-control" data-bind="value: newBusStop().longitude" />
+                    <input class="form-control" data-bind="value: newBusStop().position().lng()" />
                 </td>
             </tr>
         </table>
-
         <button class="btn btn-default" data-bind="click: function() { finishAddingBusStop(); }">DODAJ</button>
         <button class="btn btn-default" data-bind="click: function() { cancelAddingBusStop(); }">ANULUJ</button>
     <!-- /ko -->
@@ -85,10 +84,10 @@
         <table style="width: 100%">
             <tr>
                 <td>
-                    <input class="form-control" data-bind="value: editedBusStop().latitude" />
+                    <input class="form-control" data-bind="value: editedBusStop().position().lat()" />
                 </td>
                 <td>
-                    <input class="form-control" data-bind="value: editedBusStop().longitude" />
+                    <input class="form-control" data-bind="value: editedBusStop().position().lng()" />
                 </td>
             </tr>
         </table>
