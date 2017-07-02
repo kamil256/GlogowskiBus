@@ -14,11 +14,11 @@
         for (var i = 0; i < model.DepartureTimes.length; i++)
         {
             if (model.DepartureTimes[i].WorkingDay)
-                self.departureTimes.push(new DepartureTime2(self, model.DepartureTimes[i], serverTime.daysOfWeek[0], engine));
+                self.departureTimes.push(new DepartureTime(self, model.DepartureTimes[i], serverTime.daysOfWeek[0], engine));
             if (model.DepartureTimes[i].Saturday)
-                self.departureTimes.push(new DepartureTime2(self, model.DepartureTimes[i], serverTime.daysOfWeek[1], engine));
+                self.departureTimes.push(new DepartureTime(self, model.DepartureTimes[i], serverTime.daysOfWeek[1], engine));
             if (model.DepartureTimes[i].Sunday)
-                self.departureTimes.push(new DepartureTime2(self, model.DepartureTimes[i], serverTime.daysOfWeek[2], engine));
+                self.departureTimes.push(new DepartureTime(self, model.DepartureTimes[i], serverTime.daysOfWeek[2], engine));
         }
     self.sortDepartureTimes = function()
     {

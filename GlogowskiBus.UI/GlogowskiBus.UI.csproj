@@ -178,6 +178,7 @@
     <Content Include="Scripts\MarkerIcons.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\ViewModels\BusLine.js" />
+    <Content Include="Scripts\ViewModels\DepartureTime.js" />
     <Content Include="Scripts\ViewModels\Route.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

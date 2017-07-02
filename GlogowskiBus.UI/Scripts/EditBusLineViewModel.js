@@ -75,7 +75,7 @@
         var minutes = Number(self.newDepartureTimeMinutes());
         if (hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60 && !self.selectedRoute().getDepartureTime(hours, minutes, engine.selectedDayOfWeek()))
         {
-            var newDepartureTime = new DepartureTime2(self.selectedRoute(), null, engine.selectedDayOfWeek(), engine);
+            var newDepartureTime = new DepartureTime(self.selectedRoute(), null, engine.selectedDayOfWeek(), engine);
             newDepartureTime.hours(hours);
             newDepartureTime.minutes(minutes);
             newDepartureTime.dayOfWeek(engine.selectedDayOfWeek());

@@ -70,7 +70,7 @@
         if (self.newDepartureTimeHours() >= 0 && self.newDepartureTimeHours() < 24 && self.newDepartureTimeMinutes() >= 0 && self.newDepartureTimeMinutes() < 60 &&
             !self.selectedRoute().getDepartureTime(self.newDepartureTimeHours(), self.newDepartureTimeMinutes(), engine.selectedDayOfWeek()))
         {
-            var newDepartureTime = new DepartureTime2(self.selectedRoute(), null, engine.selectedDayOfWeek(), engine);
+            var newDepartureTime = new DepartureTime(self.selectedRoute(), null, engine.selectedDayOfWeek(), engine);
             newDepartureTime.hours(self.newDepartureTimeHours());
             newDepartureTime.minutes(self.newDepartureTimeMinutes());
             newDepartureTime.dayOfWeek(engine.selectedDayOfWeek());
