@@ -225,6 +225,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Scripts\ViewModels\Admin\" />
+    <Folder Include="Scripts\ViewModels\Home\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GlogowskiBus.BLL\GlogowskiBus.BLL.csproj">
