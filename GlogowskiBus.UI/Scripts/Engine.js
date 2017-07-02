@@ -215,7 +215,7 @@
         {
             for (var i = 0; i < model.length; i++)
             {
-                var busStop = new BusStop2(model[i], self);
+                var busStop = new BusStop(model[i], self);
                 self.busStops.push(busStop);
             }
 

@@ -418,7 +418,7 @@ function Point2(route, model, engine)
     self.position = ko.computed(function()
     {
         if (self.busStop())
-            return new google.maps.LatLng(self.busStop().latitude(), self.busStop().longitude());
+            return new self.busStop().position();
         else
             return new self.pointPosition();
     });
@@ -500,7 +500,7 @@ function Point2(route, model, engine)
         for (var i = 0; i < engine.busStops().length; i++)
             if (self.route.busStops().indexOf(engine.busStops()[i]) === -1)
             {
-                var busStopPositionPixels = overlay.getProjection().fromLatLngToContainerPixel(new google.maps.LatLng(engine.busStops()[i].latitude(), engine.busStops()[i].longitude()));
+                var busStopPositionPixels = overlay.getProjection().fromLatLngToContainerPixel(engine.busStops()[i].position());
                 if (Math.abs(mousePositionPixels.x - busStopPositionPixels.x) <= 9 && Math.abs(mousePositionPixels.y - busStopPositionPixels.y) <= 9)
                 {
                     //self.position(new google.maps.LatLng(engine.busStops()[i].latitude(), engine.busStops()[i].longitude()));

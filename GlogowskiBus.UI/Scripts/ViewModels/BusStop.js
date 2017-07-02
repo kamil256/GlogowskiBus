@@ -1,11 +1,10 @@
-﻿function BusStop2(model, engine)
+﻿function BusStop(model, engine)
 {
     var self = this;
 
     self.id = model ? model.Id : null;
     self.name = ko.observable(model ? model.Name : 'Nowy przystanek');
-    self.latitude = ko.observable(model ? model.Latitude : 0);
-    self.longitude = ko.observable(model ? model.Longitude : 0);
+    self.position = ko.observable(new google.maps.LatLng(model ? model.Latitude : 0, model ? model.Longitude : 0));
 
     self.getModel = function()
     {
@@ -13,8 +12,8 @@
         {
             Id: self.id,
             Name: self.name(),
-            Latitude: self.latitude(),
-            Longitude: self.longitude()
+            Latitude: self.position().lat(),
+            Longitude: self.position().lng()
         }
         return busStopModel;
     };
@@ -68,36 +67,18 @@
 
     var marker = new google.maps.Marker(
     {
-        icon: markerIcons.redBusStop,
-        map: map,
-        //optimized: false,
-        position:
-        {
-            lat: self.latitude(),
-            lng: self.longitude()
-        },
-        title: self.name(),
         zIndex: 0
     });
 
-    var nameSubscription = self.name.subscribe(function(newValue)
+    var clickListener = marker.addListener('click', function()
     {
-        marker.setTitle(newValue);
-    });
-
-    var latitudeSubscription = self.latitude.subscribe(function(newValue)
-    {
-        marker.setPosition(new google.maps.LatLng(newValue, self.longitude()));
-    });
-
-    var longitudeSubscription = self.longitude.subscribe(function(newValue)
-    {
-        marker.setPosition(new google.maps.LatLng(self.latitude(), newValue));
+        if (engine.busStopClickListener)
+            engine.busStopClickListener(self);
     });
 
     var updateMarkerIcon = function()
     {
-        if (engine.selectedBusStop() == self)
+        if (engine.selectedBusStop() === self)
             marker.setIcon(markerIcons.activeRedBusStop);
         else if (engine.selectedRoute() && self.routes().indexOf(engine.selectedRoute()) !== -1)
             marker.setIcon(markerIcons.redBusStopOnRoute);
@@ -113,35 +94,54 @@
             marker.setMap(null);
     };
 
-    var selectedBusStopSubscription = engine.selectedBusStop.subscribe(function()
+    var updateMarkerTitle = function()
+    {
+        marker.setTitle(self.name());
+    };
+
+    var updateMarkerPosition = function()
+    {
+        marker.setPosition(self.position());
+    };
+
+    updateMarkerIcon();
+    updateMarkerMap();
+    updateMarkerPosition();
+    updateMarkerTitle();
+
+    var engineSelectedBusStopSubscription = engine.selectedBusStop.subscribe(function()
     {
         updateMarkerIcon();
     });
 
-    var selectedRouteSubscription = engine.selectedRoute.subscribe(function()
+    var engineSelectedRouteSubscription = engine.selectedRoute.subscribe(function()
     {
         updateMarkerIcon();
     });
 
-    var isVisibleSubscription = self.isVisible.subscribe(function()
+    var selfIsVisibleSubscription = self.isVisible.subscribe(function()
     {
         updateMarkerMap();
     });
 
-    marker.addListener('click', function()
+    var selfPositionSubscription = self.position.subscribe(function()
     {
-        if (engine.busStopClickListener)
-            engine.busStopClickListener(self);
+        updateMarkerPosition();
+    });
+
+    var selfNameSubscription = self.name.subscribe(function()
+    {
+        updateMarkerTitle();
     });
 
     self.dispose = function()
     {
+        engineSelectedBusStopSubscription.dispose();
+        engineSelectedRouteSubscription.dispose();
+        selfIsVisibleSubscription.dispose();
+        selfPositionSubscription.dispose();
+        selfNameSubscription.dispose();
         marker.setMap(null);
-        nameSubscription.dispose();
-        latitudeSubscription.dispose();
-        longitudeSubscription.dispose();
-        selectedBusStopSubscription.dispose();
-        selectedRouteSubscription.dispose();
-        isVisibleSubscription.dispose();
+        clickListener.remove();
     };
 }

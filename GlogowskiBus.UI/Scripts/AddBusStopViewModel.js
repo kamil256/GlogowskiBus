@@ -10,15 +10,14 @@
     {
         if (newValue === true)
         {
-            self.newBusStop(new BusStop2(null, engine));
+            self.newBusStop(new BusStop(null, engine));
 
             engine.selectBusStop(self.newBusStop());
             engine.selectBusLine(null);
 
             engine.mapClickListener = function(e)
             {
-                self.newBusStop().latitude(e.latLng.lat());
-                self.newBusStop().longitude(e.latLng.lng());
+                self.newBusStop().position(e.latLng);
             };
 
             engine.busStopClickListener = null;
@@ -31,7 +30,7 @@
     {
         sendAjaxRequest('/api/BusStop', 'POST', self.newBusStop().getModel(), function(model)
         {
-            var newBusStop = new BusStop2(model, engine);
+            var newBusStop = new BusStop(model, engine);
             engine.busStops.push(newBusStop);
             engine.selectBusStop(newBusStop);
             self.newBusStop().dispose();

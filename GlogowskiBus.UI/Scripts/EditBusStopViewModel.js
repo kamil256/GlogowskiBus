@@ -13,15 +13,14 @@
             self.originalBusStop = engine.selectedBusStop();
             self.originalBusStop.isVisible(false);
 
-            self.editedBusStop(new BusStop2(self.originalBusStop.getModel(), engine));
+            self.editedBusStop(new BusStop(self.originalBusStop.getModel(), engine));
 
             engine.selectBusStop(self.editedBusStop());
             engine.selectBusLine(null);
 
             engine.mapClickListener = function(e)
             {
-                self.editedBusStop().latitude(e.latLng.lat());
-                self.editedBusStop().longitude(e.latLng.lng());
+                self.editedBusStop().position(e.latLng);
             };
 
             engine.busStopClickListener = null;
@@ -34,7 +33,7 @@
     {
         sendAjaxRequest('/api/BusStop', 'PUT', self.editedBusStop().getModel(), function(model)
         {
-            var editedBusStop = new BusStop2(model, engine);
+            var editedBusStop = new BusStop(model, engine);
             engine.busStops.splice(engine.busStops.indexOf(self.originalBusStop), 1, editedBusStop);
             engine.selectBusStop(editedBusStop);
             self.originalBusStop.dispose();
