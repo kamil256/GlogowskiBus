@@ -55,7 +55,7 @@
         var newRoute = new Route(self.editedBusLine(), null, engine);
         var pointsModel = self.directions().getPoints();
         for (var i = 0; i < pointsModel.length; i++)
-            newRoute.points.push(new Point2(newRoute, pointsModel[i], engine));
+            newRoute.points.push(new Point(newRoute, pointsModel[i], engine));
         newRoute.isEditable(true);
         self.editedBusLine().routes.push(newRoute);
         engine.selectRoute(newRoute);

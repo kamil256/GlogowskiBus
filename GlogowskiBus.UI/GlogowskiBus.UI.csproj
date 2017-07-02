@@ -157,7 +157,7 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Buses.js" />
-    <Content Include="Scripts\BusLines2.js" />
+    <Content Include="Scripts\ViewModels\Point.js" />
     <Content Include="Scripts\BusLinesListViewModel.js" />
     <Content Include="Scripts\ViewModels\BusStop.js" />
     <Content Include="Scripts\AddBusStopViewModel.js" />

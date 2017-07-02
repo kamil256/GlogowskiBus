@@ -32,7 +32,7 @@
     self.points = ko.observableArray([]);
     if (model)
         for (var i = 0; i < model.Points.length; i++)
-            self.points.push(new Point2(self, model.Points[i], engine));
+            self.points.push(new Point(self, model.Points[i], engine));
 
     self.getModel = function()
     {
@@ -108,7 +108,7 @@
                     for (var i = 0; i < polylines.length; i++)
                         if (this == polylines[i])
                         {
-                            var newPoint = new Point2(self, null, engine);
+                            var newPoint = new Point(self, null, engine);
                             newPoint.pointPosition(new google.maps.LatLng(e.latLng.lat(), e.latLng.lng()));
                             self.points.splice(i + 1, 0, newPoint);
                             break;

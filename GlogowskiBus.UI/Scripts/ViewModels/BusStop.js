@@ -94,14 +94,14 @@
             marker.setMap(null);
     };
 
-    var updateMarkerTitle = function()
-    {
-        marker.setTitle(self.name());
-    };
-
     var updateMarkerPosition = function()
     {
         marker.setPosition(self.position());
+    };
+
+    var updateMarkerTitle = function()
+    {
+        marker.setTitle(self.name());
     };
 
     updateMarkerIcon();
@@ -127,6 +127,8 @@
     var selfPositionSubscription = self.position.subscribe(function()
     {
         updateMarkerPosition();
+        for (var i = 0; i < self.points().length; i++)
+            self.points()[i].position(self.position());
     });
 
     var selfNameSubscription = self.name.subscribe(function()
