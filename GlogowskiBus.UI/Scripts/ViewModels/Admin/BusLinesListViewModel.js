@@ -24,27 +24,24 @@
     });
 
     self.busLines = engine.busLines;
-
+    self.selectedBusLine = engine.selectedBusLine;
     self.selectedRoute = engine.selectedRoute;
     self.selectRoute = engine.selectRoute;
-    self.selectedBusLine = engine.selectedBusLine;
 
-    self.addBusLineBtnClick = function()
+    self.addBusLine = function()
     {
         navigationViewModel.selectView('DODAWANIE LINII');
     };
 
-    self.editBusLineBtnClick = function(busLine)
+    self.editBusLine = function(busLine)
     {
         engine.selectBusLine(busLine);
-
         navigationViewModel.selectView('EDYTOWANIE LINII');
     };
 
-    self.deleteBusLineBtnClick = function(busLine)
+    self.deleteBusLine = function(busLine)
     {
-        //engine.selectedBusStop(busStop);
-
-        //navigationViewModel.selectView('USUWANIE LINII');
+        engine.selectedBusLine(busLine);
+        navigationViewModel.selectView('USUWANIE LINII');
     };
 }

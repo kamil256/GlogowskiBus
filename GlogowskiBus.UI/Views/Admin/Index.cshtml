@@ -27,29 +27,25 @@
 
 <div id="busLinesList">
     <!-- ko if: isSelected -->
-        <button class="btn btn-default" data-bind="click: function() { addBusLineBtnClick(); }">DODAJ</button>
-        <button class="btn btn-default" data-bind="click: function() { editBusLineBtnClick(selectedBusLine()); }, enable: selectedBusLine()">EDYTUJ</button>
-        <button class="btn btn-default" data-bind="click: function() { }">USUŃ</button>
+        <button class="btn btn-default" data-bind="click: function() { addBusLine(); }">DODAJ</button>
+        <button class="btn btn-default" data-bind="click: function() { editBusLine(selectedBusLine()); }, enable: selectedBusLine">EDYTUJ</button>
+        <button class="btn btn-default" data-bind="click: function() { deleteBusLine(selectedBusLine()); }">USUŃ</button>
         <div data-bind="foreach: busLines">
             <div>
-                <p data-bind="text: 'LINIA #' + id"></p>
-                <p data-bind="text: 'Numer autobusu: ' + busNumber()"></p>
+                <p data-bind="text: 'LINIA ' + busNumber()"></p>
                 <div class="itemsList" data-bind="foreach: $data.routes">
-                    <div data-bind="click: function() { $root.selectRoute($data); return true; }, css: { active: $root.selectedRoute() == $data }">
+                    <div data-bind="click: function() { $root.selectRoute($data); }, css: { active: $root.selectedRoute() == $data }">
                         <div>
                             <input data-bind="checked: $root.selectedRoute() == $data, checkedValue: true" type="radio" />
                         </div>
                         <div>
-                            <p data-bind="text: 'TRASA #' + id"></p>
-                            @*<!-- ko if: points.getFirst().busStop() && points.getLast().busStop() -->
-                                <p data-bind="text: points.getFirst().busStop().name() + ' - ' + points.getLast().busStop().name()"></p>
-                            <!-- /ko -->*@
+                            <p data-bind="text: 'TRASA ' + points()[0].busStop().name() + ' - ' + points()[points().length - 1].busStop().name()"></p>
                             <p data-bind="text: indexMark() + ' - ' + details(), visible: indexMark() && details()"></p>
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-xs btn-default" data-bind="click: function() { $root.editBusLineBtnClick($data); }">EDYTUJ</button>
-                <button class="btn btn-xs btn-default" data-bind="click: function() { }">USUŃ</button>
+                <button class="btn btn-xs btn-default" data-bind="click: function() { $root.editBusLine($data); }">EDYTUJ</button>
+                <button class="btn btn-xs btn-default" data-bind="click: function() { $root.deleteBusLine($data); }">USUŃ</button>
             </div>
         </div>
     <!-- /ko -->

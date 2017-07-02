@@ -133,6 +133,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\AddBusStopViewModel.js" />
     <Content Include="Scripts\EditBusLineViewModel.js" />
     <Content Include="Scripts\AddBusLineViewModel.js" />
     <Content Include="Scripts\DeleteBusStopViewModel.js" />
@@ -143,9 +144,8 @@
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\ViewModels\Bus.js" />
     <Content Include="Scripts\ViewModels\Point.js" />
-    <Content Include="Scripts\BusLinesListViewModel.js" />
+    <Content Include="Scripts\ViewModels\Admin\BusLinesListViewModel.js" />
     <Content Include="Scripts\ViewModels\BusStop.js" />
-    <Content Include="Scripts\AddBusStopViewModel.js" />
     <Content Include="Scripts\ViewModels\Admin\BusStopsListViewModel.js" />
     <Content Include="Scripts\CreateOrEditBusLineContext.js" />
     <Content Include="Scripts\Engine.js" />
