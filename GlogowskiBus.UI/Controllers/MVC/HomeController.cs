@@ -63,5 +63,10 @@ namespace GlogowskiBus.UI.Controllers.MVC
 
             return View("BusPositions", model);
         }
+
+        public long GetMillisecondsSince19700101()
+        {
+            return (long)(DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+        }
     }
 }

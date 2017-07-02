@@ -1,10 +1,13 @@
-﻿function ServerTime(serverTimeMilliseconds)
+﻿function ServerTime()
 {
     var self = this;
 
-    var serverTime = Number(serverTimeMilliseconds);
+    var timeDifference = 0;
 
-    var timeDifference = serverTime - new Date().getTime();
+    sendAjaxRequest('/Home/GetMillisecondsSince19700101', 'GET', null, function(response)
+    {
+        timeDifference = Number(response) - new Date().getTime();
+    });
 
     self.now = function()
     {
