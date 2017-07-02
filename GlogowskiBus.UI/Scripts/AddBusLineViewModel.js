@@ -10,7 +10,7 @@
     {
         if (newValue === true)
         {
-            self.newBusLine(new BusLine2(null, engine));
+            self.newBusLine(new BusLine(null, engine));
 
             engine.selectBusStop(null);
             engine.selectBusLine(self.newBusLine());
@@ -88,7 +88,7 @@
     {
         sendAjaxRequest('/api/BusLine', 'POST', self.newBusLine().getModel(), function(model)
         {
-            var newBusLine = new BusLine2(model, engine);
+            var newBusLine = new BusLine(model, engine);
             engine.busLines.push(newBusLine);
             engine.selectBusLine(newBusLine);
             self.newBusLine().dispose();

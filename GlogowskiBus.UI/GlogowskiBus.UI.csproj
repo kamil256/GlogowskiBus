@@ -169,7 +169,6 @@
     <Content Include="Scripts\ServerTime.js" />
     <Content Include="Scripts\FindRouteViewModel.js" />
     <Content Include="Scripts\TimeTableViewModel.js" />
-    <Content Include="Scripts\BusLines.js" />
     <Content Include="Scripts\Common.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -178,6 +177,7 @@
     <Content Include="Scripts\Maps.js" />
     <Content Include="Scripts\MarkerIcons.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\ViewModels\BusLine.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

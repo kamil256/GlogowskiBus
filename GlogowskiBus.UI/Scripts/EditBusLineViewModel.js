@@ -12,7 +12,7 @@
         {
             self.originalBusLine = engine.selectedBusLine();
             
-            self.editedBusLine(new BusLine2(self.originalBusLine.getModel(), engine));
+            self.editedBusLine(new BusLine(self.originalBusLine.getModel(), engine));
             for (var i = 0; i < self.editedBusLine().routes().length; i++)
                 self.editedBusLine().routes()[i].isEditable(true);
 
@@ -93,7 +93,7 @@
     {
         sendAjaxRequest('/api/BusLine', 'PUT', self.editedBusLine().getModel(), function(model)
         {
-            var editedBusLine = new BusLine2(model, engine);
+            var editedBusLine = new BusLine(model, engine);
             engine.busLines.splice(engine.busLines.indexOf(self.originalBusLine), 1, editedBusLine);
             engine.selectBusLine(editedBusLine);
             self.originalBusLine.dispose();

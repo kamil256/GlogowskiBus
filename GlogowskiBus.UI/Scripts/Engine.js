@@ -222,7 +222,7 @@
             sendAjaxRequest('/api/BusLine', 'GET', null, function(model)
             {
                 for (var i = 0; i < model.length; i++)
-                    self.busLines.push(new BusLine2(model[i], self));
+                    self.busLines.push(new BusLine(model[i], self));
                 updateBuses();
             });
         });
