@@ -97,30 +97,6 @@
     <!-- /ko -->
 </div>
 
-
-<div id="deleteBusStop">
-    <!-- ko if: isSelected -->
-        <p>NAZWA</p>
-        <input class="form-control" data-bind="value: busStopToDelete().name" />
-
-        <p>POZYCJA</p>
-        <table style="width: 100%">
-            <tr>
-                <td>
-                    <input class="form-control" data-bind="value: busStopToDelete().latitude" />
-                </td>
-                <td>
-                    <input class="form-control" data-bind="value: busStopToDelete().longitude" />
-                </td>
-            </tr>
-        </table>
-        <p data-bind="text: 'Linie: ' + (busStopToDelete().busNumbers().join(', ') || '-')"></p>
-
-        <button class="btn btn-default" data-bind="click: function() { deleteBtnClick(); }">USUŃ</button>
-        <button class="btn btn-default" data-bind="click: function() { cancelBtnClick(); }">ANULUJ</button>
-    <!-- /ko -->
-</div>
-
 <div id="addBusLine">
     <!-- ko if: isSelected -->
         <!-- ko if: directions() -->
@@ -279,9 +255,6 @@
         var editBusStopViewModel = new EditBusStopViewModel(engine);
         ko.applyBindings(editBusStopViewModel, document.getElementById('editBusStop'));
 
-        var deleteBusStopViewModel = new DeleteBusStopViewModel(engine);
-        ko.applyBindings(deleteBusStopViewModel, document.getElementById('deleteBusStop'));
-
         var addBusLineViewModel = new AddBusLineViewModel(engine);
         ko.applyBindings(addBusLineViewModel, document.getElementById('addBusLine'));
 
@@ -293,7 +266,6 @@
         navigationViewModel.addViewGroup([busStopsListViewModel, busLinesListViewModel]);
         navigationViewModel.addViewGroup([addBusStopViewModel]);
         navigationViewModel.addViewGroup([editBusStopViewModel]);
-        navigationViewModel.addViewGroup([deleteBusStopViewModel]);
         navigationViewModel.addViewGroup([addBusLineViewModel]);
         navigationViewModel.addViewGroup([editBusLineViewModel]);
         navigationViewModel.start();

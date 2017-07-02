@@ -136,7 +136,6 @@
     <Content Include="Scripts\ViewModels\Admin\AddBusStopViewModel.js" />
     <Content Include="Scripts\EditBusLineViewModel.js" />
     <Content Include="Scripts\AddBusLineViewModel.js" />
-    <Content Include="Scripts\DeleteBusStopViewModel.js" />
     <Content Include="Scripts\ViewModels\Admin\EditBusStopViewModel.js" />
     <Content Include="Scripts\AdministrationContext.js" />
     <Content Include="Scripts\bootstrap.js" />

@@ -41,6 +41,17 @@
     self.deleteBusStop = function(busStop)
     {
         engine.selectBusStop(busStop);
-        navigationViewModel.selectView('USUWANIE PRZYSTANKU');
+        var deleteBusStop = confirm('Usunąć przystanek \"' + busStop.name() + '\"?');
+        if (deleteBusStop)
+        {
+            sendAjaxRequest('/api/BusStop/' + busStop.id, 'DELETE', null, function(response)
+            {
+                engine.selectedBusStop(null);
+                engine.busStops.remove(busStop);
+                busStop.dispose();
+
+                navigationViewModel.selectView('PRZYSTANKI');
+            });
+        }
     };
 }
