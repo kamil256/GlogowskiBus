@@ -1,13 +1,11 @@
-﻿function Bus(departureTime)
+﻿function Bus(departureTime, engine)
 {
     var self = this;
 
-    var route = departureTime.route;
-    var points = route.points;
-    var busLine = route.busLine;
-
-    self.busNumber = busLine.busNumber();
+    self.busNumber = departureTime.route.busLine.busNumber();
     self.departureTime = departureTime;
+
+    var points = departureTime.route.points;
 
     var marker = new google.maps.Marker(
     {
@@ -19,66 +17,34 @@
             fontWeight: 'bold',
             text: self.busNumber
         },
-        map: /*busLine.hidden() ? null :*/ map,
+        map: map,
         position: points()[0].position()
-        //{
-        //    lat: points.getFirst().latitude,
-        //    lng: points.getFirst().longitude
-        //}
     });
-
-    self.selectBusEvent = null;
-    self.removeBusEvent = null;
 
     marker.addListener('click', function()
     {
-        if (self.selectBusEvent)
-            self.selectBusEvent(self.departureTime);
+        engine.selectDepartureTime(self.departureTime);
     });
-
-    self.hide = function()
-    {
-        if (marker.getMap() != null)
-            marker.setMap(null);
-    };
-
-    self.show = function()
-    {
-        if (marker.getMap() == null)
-            marker.setMap(map);
-    };
-
-    //busLine.hidden.subscribe(function(newValue)
-    //{
-    //    if (newValue)
-    //        self.hide();
-    //    else
-    //        self.show();
-    //});
 
     var departureMillisecondsSinceMidnight = 60 * 60 * 1000 * self.departureTime.hours() + 60 * 1000 * self.departureTime.minutes();
 
     var update = function()
     {
-        
         var now = serverTime.now();
         var currentMillisecondsSinceMidnight = 60 * 60 * 1000 * now.getHours() + 60 * 1000 * now.getMinutes() + 1000 * now.getSeconds() + now.getMilliseconds();
         if (currentMillisecondsSinceMidnight < departureMillisecondsSinceMidnight)
             departureMillisecondsSinceMidnight -= 24 * 60 * 60 * 1000;
         var currentTimeOffset = currentMillisecondsSinceMidnight - departureMillisecondsSinceMidnight;
-        if (currentTimeOffset > points()[points().length - 1].timeOffset()/*points.getLast().timeOffset*/)
+        if (currentTimeOffset > points()[points().length - 1].timeOffset())
         {
-            self.hide();
-            if (self.removeBusEvent)
-                self.removeBusEvent(self);
+            engine.buses.remove(self);
+            self.dispose();
         }
         else
         {
-            
             for (var i = 0; i < points().length - 1; i++)
                 if ((currentTimeOffset >= points()[i].timeOffset() && currentTimeOffset < points()[i + 1].timeOffset()))
                 {
-                    
                     var newPosition = getPositionBetweenTwoPoints(points()[i], points()[i+1], currentTimeOffset);
                     marker.setPosition(newPosition);
                     break;
@@ -88,4 +54,9 @@
     }
 
     update();
+
+    self.dispose = function()
+    {
+        marker.setMap(null);
+    };
 }

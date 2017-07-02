@@ -1,4 +1,4 @@
-﻿function Engine()
+﻿function Engine(disableBuses)
 {
     var self = this;
     defineObjects();
@@ -223,7 +223,8 @@
             {
                 for (var i = 0; i < model.length; i++)
                     self.busLines.push(new BusLine(model[i], self));
-                updateBuses();
+                if (!disableBuses)
+                    updateBuses();
             });
         });
     }
@@ -245,15 +246,15 @@
 
                 if (!bus)
                 {
-                    bus = new Bus(self.departureTimes()[i]);
-                    bus.selectBusEvent = function(departureTime)
-                    {
-                        self.selectedDepartureTime(departureTime);
-                    };
-                    bus.removeBusEvent = function(bus)
-                    {
-                        self.buses.remove(bus);
-                    };
+                    bus = new Bus(self.departureTimes()[i], self);
+                    //bus.selectBusEvent = function(departureTime)
+                    //{
+                    //    self.selectedDepartureTime(departureTime);
+                    //};
+                    //bus.removeBusEvent = function(bus)
+                    //{
+                    //    self.buses.remove(bus);
+                    //};
                     self.buses.push(bus);
                 }
             }

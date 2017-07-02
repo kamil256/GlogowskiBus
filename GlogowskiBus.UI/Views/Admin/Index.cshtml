@@ -273,7 +273,7 @@
 
         //administrationContext = new AdministrationContext();
         //ko.applyBindings(administrationContext);
-        var engine = new Engine();
+        var engine = new Engine(true);
 
         var busStopsListViewModel = new BusStopsListViewModel(engine);
         ko.applyBindings(busStopsListViewModel, document.getElementById('busStopsList'));
