@@ -14,7 +14,7 @@
                     <input data-bind="checked: $root.selectedBusStop() == $data, checkedValue: true" type="radio" />
                 </div>
                 <div>
-                    <p data-bind="text: name"></p>
+                    <p data-bind="text: 'PRZYSTANEK ' + name()"></p>
                     <p data-bind="text: 'Pozycja: ' + position().lat() + ', ' + position().lng()"></p>
                     <p data-bind="text: 'Linie: ' + (busNumbers().join(', ') || '-')"></p>
                     <button class="btn btn-xs btn-default" data-bind="click: function() { $root.editBusStop($data); }">EDYTUJ</button>
@@ -75,7 +75,7 @@
 
 <div id="editBusStop">
     <!-- ko if: isSelected -->
-        <p data-bind="text: 'PRZYSTANEK #' + editedBusStop().id"></p>
+        <p data-bind="text: 'PRZYSTANEK ' + editedBusStop().name()"></p>
     
         <p>NAZWA</p>
         <input class="form-control" data-bind="value: editedBusStop().name" />
