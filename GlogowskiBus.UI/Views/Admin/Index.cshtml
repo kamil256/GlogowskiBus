@@ -133,7 +133,7 @@
     <!-- ko if: isSelected -->
         <!-- ko if: directions() -->
             <p>Dodawanie nowej trasy za pomocą Google Maps Directions.</p>
-            <input class="btn btn-default" data-bind="click: function() { $root.finishAddingRoute2(); }, enable: directions().getPoints().length > 0" type="button" value="ZAKOŃCZ" />
+            <input class="btn btn-default" data-bind="click: function() { $root.finishAddingRoute2(); }, enable: directions().points().length > 0" type="button" value="ZAKOŃCZ" />
             <input class="btn btn-default" data-bind="click: function() { cancelAddingRoute(); }" type="button" value="ANULUJ" />
         <!-- /ko -->
 
@@ -201,7 +201,7 @@
     <!-- ko if: isSelected -->
         <!-- ko if: directions() -->
             <p>Dodawanie nowej trasy za pomocą Google Maps Directions.</p>
-            <input class="btn btn-default" data-bind="click: function() { finishAddingRoute(); }, enable: directions().getPoints().length > 0" type="button" value="ZAKOŃCZ" />
+            <input class="btn btn-default" data-bind="click: function() { finishAddingRoute(); }, enable: directions().points().length > 0" type="button" value="ZAKOŃCZ" />
             <input class="btn btn-default" data-bind="click: function() { cancelAddingRoute(); }" type="button" value="ANULUJ" />
         <!-- /ko -->
         

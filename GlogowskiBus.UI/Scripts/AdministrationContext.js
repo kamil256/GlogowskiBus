@@ -257,7 +257,7 @@
 
     self.addBusLineFinishAddingRouteBtnClick = function()
     {
-        self.selectedBusLine().routes.add(new Route(self.selectedBusLine(), 0, '', '', [], self.directions().getPoints()/*points*//*Model*/, self.busStops, true));
+        self.selectedBusLine().routes.add(new Route(self.selectedBusLine(), 0, '', '', [], self.directions().points()/*points*//*Model*/, self.busStops, true));
         self.selectedRoute(self.selectedBusLine().routes.getLast());
 
         self.directions().dispose();

@@ -2,8 +2,10 @@
 {
     var self = this;
 
+    var origin = null;
+    var waypoints = [];
+    var destination = null;
     var service = new google.maps.DirectionsService();
-
     var display = new google.maps.DirectionsRenderer(
     {
         draggable: true,
@@ -17,32 +19,21 @@
         for (var i = 0; i < waypoints.length; i++)
             waypoints[i].stopover = true;
         destination = display.getDirections().request.destination;
-
         update();
     });
 
-    var origin = null;
-    var waypoints = [];
-    var destination = null;
-
-    var points = ko.observableArray([]);
+    self.points = ko.observableArray([]);
 
     var originMarker = new google.maps.Marker(
     {
         draggable: true,
         label: 'A',
-        map: null//,
-        //position: origin
+        map: null,
     });
     originMarker.addListener('dragend', function(e)
     {
         origin = e.latLng;
     });
-    
-    //var mapClickListener = map.addListener('click', function(e)
-    //{
-    //    self.addNewPoint(e.latLng);
-    //});
 
     self.addNewPoint = function(point)
     {
@@ -62,37 +53,6 @@
         }
 
         update();
-    };
-
-    self.getPoints = function()
-    {
-        //var points = [];
-        //if (origin)
-        //    points.push(
-        //    {
-        //        latitude: origin.lat(),
-        //        longitude: origin.lng()
-        //    });
-        //for (var i = 0; i < waypoints.length; i++)
-        //    points.push(
-        //    {
-        //        latitude: waypoints[i].location.lat(),
-        //        longitude: waypoints[i].location.lng()
-        //    });
-        //if (destination)
-        //    points.push(
-        //    {
-        //        latitude: destination.lat(),
-        //        longitude: destination.lng()
-        //    });
-        return points();
-    };
-
-    self.dispose = function()
-    {
-        originMarker.setMap(null);
-        display.setMap(null);
-        //google.maps.event.removeListener(mapClickListener);
     };
     
     var update = function()
@@ -116,10 +76,10 @@
                 if (status === 'OK')
                 {
                     display.setDirections(response);
-                    points.removeAll();
+                    self.points.removeAll();
                     for (var i = 0; i < response.routes[0].overview_path.length; i++)
                     {
-                        points.push(
+                        self.points.push(
                         {
                             Id: null,
                             Latitude: response.routes[0].overview_path[i].lat(),
@@ -131,5 +91,11 @@
                 }
             });
         }
+    };
+
+    self.dispose = function()
+    {
+        originMarker.setMap(null);
+        display.setMap(null);
     };
 }

@@ -29,7 +29,7 @@
             engine.busStopClickListener = function(busStop)
             {
                 if (self.directions())
-                    self.directions().addNewPoint(new google.maps.LatLng(busStop.latitude(), busStop.longitude()));
+                    self.directions().addNewPoint(busStop.position());
             };
         }
     });
@@ -53,7 +53,7 @@
     self.finishAddingRoute = function()
     {
         var newRoute = new Route(self.editedBusLine(), null, engine);
-        var pointsModel = self.directions().getPoints();
+        var pointsModel = self.directions().points();
         for (var i = 0; i < pointsModel.length; i++)
             newRoute.points.push(new Point(newRoute, pointsModel[i], engine));
         newRoute.isEditable(true);

@@ -33,7 +33,7 @@
         <input data-bind="click: function() { selectedRoute(null); directions(new GoogleMapsDirections()); }" type="button" value="Nowa trasa" />
     <!-- /ko -->
     <!-- ko if: directions() -->
-        <input data-bind="click: function() { addNewRoute(directions().getPoints()); directions().dispose(); directions(null); }" type="button" value="Zakończ" />
+        <input data-bind="click: function() { addNewRoute(directions().points()); directions().dispose(); directions(null); }" type="button" value="Zakończ" />
         <input data-bind="click: function() { directions().dispose(); directions(null); }" type="button" value="Anuluj" />
     <!-- /ko -->
 </div>
