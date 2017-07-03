@@ -101,7 +101,7 @@
     <!-- ko if: isSelected -->
         <!-- ko if: directions() -->
             <p>Dodawanie nowej trasy za pomocą Google Maps Directions.</p>
-            <input class="btn btn-default" data-bind="click: function() { finishAddingRouteForNewBusLine(); }, enable: directions().points().length > 0" type="button" value="ZAKOŃCZ" />
+            <input class="btn btn-default" data-bind="click: function() { finishAddingRouteForNewBusLine(); }, enable: directions().points().length >= 2" type="button" value="ZAKOŃCZ" />
             <input class="btn btn-default" data-bind="click: function() { cancelAddingRouteForNewBusLine(); }" type="button" value="ANULUJ" />
         <!-- /ko -->
 
@@ -130,7 +130,7 @@
                     </div>
                 </div>
             </div>
-            <input class="btn btn-default" data-bind="click: function() { addRoute(); }" type="button" value="NOWA TRASA" />
+            <input class="btn btn-default" data-bind="click: function() { addRouteToNewBusLine(); }" type="button" value="NOWA TRASA" />
 
             <!-- ko if: selectedRoute() -->
                 <div data-bind="foreach: selectedBusStops">
@@ -172,8 +172,8 @@
     <!-- ko if: isSelected -->
         <!-- ko if: directions() -->
             <p>Dodawanie nowej trasy za pomocą Google Maps Directions.</p>
-            <input class="btn btn-default" data-bind="click: function() { finishAddingRoute(); }, enable: directions().points().length > 0" type="button" value="ZAKOŃCZ" />
-            <input class="btn btn-default" data-bind="click: function() { cancelAddingRoute(); }" type="button" value="ANULUJ" />
+            <input class="btn btn-default" data-bind="click: function() { finishAddingRouteForExistingBusLine(); }, enable: directions().points().length >= 2" type="button" value="ZAKOŃCZ" />
+            <input class="btn btn-default" data-bind="click: function() { cancelAddingRouteForExistingBusLine(); }" type="button" value="ANULUJ" />
         <!-- /ko -->
         
         <!-- ko if: !directions() -->
@@ -186,17 +186,23 @@
                         <input data-bind="checked: $root.selectedRoute() == $data, checkedValue: true" type="radio" />
                     </div>
                     <div>
-                        <p>NOWA TRASA</p>
-                        @*<!-- ko if: points.getFirst().busStop() && points.getLast().busStop() -->
-                                <p data-bind="text: points.getFirst().busStop().name() + ' - ' + points.getLast().busStop().name(), visible: points.getFirst().busStop() && points.getLast().busStop()"></p>
-                            <!-- /ko -->*@
-                        <p data-bind="text: indexMark() + ' - ' + details(), visible: indexMark() && details()"></p>
+                        <p>
+                            TRASA
+                            <!-- ko if: points()[0].busStop() && points()[points().length - 1].busStop() -->
+                            <span data-bind="text: points()[0].busStop().name() + ' - ' + points()[points().length - 1].busStop().name()"></span>
+                            <!-- /ko -->
+                        </p>
 
-                        <button class="btn btn-xs btn-default">USUŃ</button>
+                        <p>SYMBOL</p>
+                        <input class="form-control" data-bind="value: indexMark" type="text" />
+                        <p>OPIS</p>
+                        <input class="form-control" data-bind="value: details" type="text" />
+
+                        <button class="btn btn-xs btn-default" data-bind="click: function() { $root.deleteRouteOfExistingBusLine($data); }">USUŃ</button>
                     </div>
                 </div>
             </div>
-            <input class="btn btn-default" data-bind="click: function() { addRoute(); }" type="button" value="NOWA TRASA" />
+            <input class="btn btn-default" data-bind="click: function() { addRouteToExistingBusLine(); }" type="button" value="NOWA TRASA" />
 
             <!-- ko if: selectedRoute() -->
                 <div data-bind="foreach: selectedBusStops">
@@ -227,7 +233,7 @@
                 <input class="form-control" data-bind="value: newDepartureTimeHours" type="number" />
                 <p>MINUTY</p>
                 <input class="form-control" data-bind="value: newDepartureTimeMinutes" type="number" />
-                <button class="btn btn-default" data-bind="click: function() { addDepartureTime(); }">DODAJ GODZINĘ ODJAZDU</button>
+                <button class="btn btn-default" data-bind="click: function() { addDepartureTimeForExistingBusLine(); }">DODAJ GODZINĘ ODJAZDU</button>
             <!-- /ko -->
 
             <input class="btn btn-default" data-bind="click: function() { finishEditingBusLine(); }" type="button" value="DODAJ" />

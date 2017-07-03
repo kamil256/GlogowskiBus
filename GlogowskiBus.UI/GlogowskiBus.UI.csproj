@@ -134,7 +134,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\ViewModels\Admin\AddBusStopViewModel.js" />
-    <Content Include="Scripts\EditBusLineViewModel.js" />
+    <Content Include="Scripts\ViewModels\Admin\EditBusLineViewModel.js" />
     <Content Include="Scripts\ViewModels\Admin\AddBusLineViewModel.js" />
     <Content Include="Scripts\ViewModels\Admin\EditBusStopViewModel.js" />
     <Content Include="Scripts\AdministrationContext.js" />

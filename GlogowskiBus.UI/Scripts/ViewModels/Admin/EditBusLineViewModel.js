@@ -44,13 +44,13 @@
     self.newDepartureTimeHours = ko.observable(0);
     self.newDepartureTimeMinutes = ko.observable(0);
 
-    self.addRoute = function()
+    self.addRouteToExistingBusLine = function()
     {
         engine.selectRoute(null);
         self.directions(new GoogleMapsDirections());
     };
 
-    self.finishAddingRoute = function()
+    self.finishAddingRouteForExistingBusLine = function()
     {
         var newRoute = new Route(self.editedBusLine(), null, engine);
         var pointsModel = self.directions().points();
@@ -63,13 +63,20 @@
         self.directions(null);
     };
 
-    self.cancelAddingRoute = function()
+    self.cancelAddingRouteForExistingBusLine = function()
     {
         self.directions().dispose();
         self.directions(null);
     };
 
-    self.addDepartureTime = function()
+    self.deleteRouteOfExistingBusLine = function(route)
+    {
+        self.editedBusLine().routes.remove(route);
+        route.dispose();
+        engine.selectBusLine(self.editedBusLine());
+    };
+
+    self.addDepartureTimeForExistingBusLine = function()
     {
         var hours = Number(self.newDepartureTimeHours());
         var minutes = Number(self.newDepartureTimeMinutes());
@@ -84,7 +91,7 @@
         }
     }
 
-    self.removeDepartureTime = function(departureTime)
+    self.removeDepartureTimeOfExistingBusLine = function(departureTime)
     {
         self.selectedRoute().departureTimes.remove(departureTime);
     };

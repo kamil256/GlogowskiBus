@@ -40,7 +40,7 @@
     self.newDepartureTimeHours = ko.observable(0);
     self.newDepartureTimeMinutes = ko.observable(0);
 
-    self.addRoute = function()
+    self.addRouteToNewBusLine = function()
     {
         engine.selectRoute(null);
         self.directions(new GoogleMapsDirections());
