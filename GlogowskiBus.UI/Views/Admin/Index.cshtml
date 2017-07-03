@@ -29,7 +29,7 @@
     <!-- ko if: isSelected -->
         <button class="btn btn-default" data-bind="click: function() { addBusLine(); }">DODAJ</button>
         <button class="btn btn-default" data-bind="click: function() { editBusLine(selectedBusLine()); }, enable: selectedBusLine">EDYTUJ</button>
-        <button class="btn btn-default" data-bind="click: function() { deleteBusLine(selectedBusLine()); }">USUŃ</button>
+        <button class="btn btn-default" data-bind="click: function() { deleteBusLine(selectedBusLine()); }, enable: selectedBusLine">USUŃ</button>
         <div data-bind="foreach: busLines">
             <div>
                 <p data-bind="text: 'LINIA ' + busNumber()"></p>
@@ -248,8 +248,6 @@
         markerIcons = new MarkerIcons();
         serverTime = new ServerTime();
 
-        //administrationContext = new AdministrationContext();
-        //ko.applyBindings(administrationContext);
         var engine = new Engine(true);
 
         var busStopsListViewModel = new BusStopsListViewModel(engine);
@@ -279,14 +277,6 @@
         navigationViewModel.addViewGroup([editBusLineViewModel]);
         navigationViewModel.start();
 
-        //navigationViewModel.addView('AddBusStop', ['DODAWANIE PRZYSTANKU']);
-        //navigationViewModel.addView('EditBusStop', ['EDYTOWANIE PRZYSTANKU']);
-        //navigationViewModel.addView('DeleteBusStop', ['USUWANIE PRZYSTANKU']);
-        //navigationViewModel.addView('AddBusLine', ['DODAWANIE LINII']);
-        //navigationViewModel.addView('EditBusLine', ['EDYTOWANIE LINII']);
-        //navigationViewModel.addView('DeleteBusLine', ['USUWANIE LINII']);
         ko.applyBindings(navigationViewModel, document.getElementById('tabs'));
-
-    
     }
 </script>

@@ -12,7 +12,6 @@
 
     self.viewGroups = ko.observableArray([]);
         
-
     self.selectedViewGroup = ko.observable();
 
     var hideView = function(view)
@@ -67,8 +66,6 @@
         });
 
         self.viewGroups.push(newViewGroup);
-
-        
     };
 
     self.isStarted = ko.observable(false);
