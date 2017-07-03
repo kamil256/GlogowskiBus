@@ -304,22 +304,18 @@ namespace GlogowskiBus.BLL.Concrete
             DAL.Entities.BusLine busLine = unitOfWork.BusLineRepository.GetById(id);
             if (busLine != null)
             {
-                foreach (DAL.Entities.Route route in busLine.Routes)
+                while (busLine.Routes.Count > 0)
                 {
-                    foreach (DAL.Entities.DepartureTime departureTime in route.DepartureTimes)
-                    {
-                        unitOfWork.ScheduleRepository.Delete(departureTime);
-                    }
+                    while (busLine.Routes[0].DepartureTimes.Count > 0)
+                        unitOfWork.ScheduleRepository.Delete(busLine.Routes[0].DepartureTimes[0]);
 
-                    foreach (DAL.Entities.Point point in route.Points)
-                    {
-                        unitOfWork.PointRepository.Delete(point);
-                    }
+                    while (busLine.Routes[0].Points.Count > 0)
+                        unitOfWork.PointRepository.Delete(busLine.Routes[0].Points[0]);
 
-                    unitOfWork.RouteRepository.Delete(route);
+                    unitOfWork.RouteRepository.Delete(busLine.Routes[0]);
                 }
 
-                unitOfWork.BusLineRepository.Delete(id);
+                unitOfWork.BusLineRepository.Delete(busLine);
                 unitOfWork.Save();
                 return id;
             }

@@ -102,14 +102,14 @@
         self.departureTimesOfSelectedBusLine = ko.computed(function()
         {
             var result = [];
-            if (self.selectedBusLine())
+            if (self.selectedBusLine() && self.selectedBusStop())
             {
                 var originalDepartureTimes = self.selectedBusLine().departureTimes();
                 for (var i = 0; i < 24; i++)
                     result[i] = [];
                 for (var i = 0; i < originalDepartureTimes.length; i++)
                 {
-                    var busStopPoint = originalDepartureTimes[i].route.getBusStopPoint(self.selectedBusStop() || self.selectedRoute().busStops()[0]);
+                    var busStopPoint = originalDepartureTimes[i].route.getBusStopPoint(self.selectedBusStop());
                     if (busStopPoint)
                     {
                         var minutes = originalDepartureTimes[i].minutes() + busStopPoint.timeOffset() / 60000;

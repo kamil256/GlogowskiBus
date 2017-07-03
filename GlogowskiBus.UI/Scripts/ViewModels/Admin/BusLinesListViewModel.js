@@ -41,7 +41,18 @@
 
     self.deleteBusLine = function(busLine)
     {
-        engine.selectedBusLine(busLine);
-        navigationViewModel.selectView('USUWANIE LINII');
+        engine.selectBusLine(busLine);
+        var deleteBusLine = confirm('Usunąć linię \"' + busLine.busNumber() + '\"?');
+        if (deleteBusLine)
+        {
+            sendAjaxRequest('/api/BusLine/' + busLine.id, 'DELETE', null, function(response)
+            {
+                engine.selectedBusLine(null);
+                engine.busLines.remove(busLine);
+                busLine.dispose();
+
+                navigationViewModel.selectView('LINIE');
+            });
+        }
     };
 }
