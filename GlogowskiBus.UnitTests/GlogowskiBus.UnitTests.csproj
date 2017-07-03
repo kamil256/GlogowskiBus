@@ -79,7 +79,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdminControllerTests.cs" />
     <Compile Include="BLL\FakeData.cs" />
     <Compile Include="BusLineControllerTests.cs" />
     <Compile Include="BusLineServiceTests.cs" />
