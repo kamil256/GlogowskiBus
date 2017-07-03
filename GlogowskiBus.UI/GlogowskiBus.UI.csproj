@@ -137,7 +137,6 @@
     <Content Include="Scripts\ViewModels\Admin\EditBusLineViewModel.js" />
     <Content Include="Scripts\ViewModels\Admin\AddBusLineViewModel.js" />
     <Content Include="Scripts\ViewModels\Admin\EditBusStopViewModel.js" />
-    <Content Include="Scripts\AdministrationContext.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -146,7 +145,6 @@
     <Content Include="Scripts\ViewModels\Admin\BusLinesListViewModel.js" />
     <Content Include="Scripts\ViewModels\BusStop.js" />
     <Content Include="Scripts\ViewModels\Admin\BusStopsListViewModel.js" />
-    <Content Include="Scripts\CreateOrEditBusLineContext.js" />
     <Content Include="Scripts\Engine.js" />
     <Content Include="Scripts\GoogleMapsDirections.js" />
     <Content Include="Scripts\NavigationViewModel.js" />
