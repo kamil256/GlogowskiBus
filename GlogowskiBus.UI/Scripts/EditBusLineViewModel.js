@@ -40,7 +40,7 @@
     self.selectRoute = engine.selectRoute;
     self.selectedDayOfWeek = engine.selectedDayOfWeek;
     self.selectedBusStops = engine.selectedBusStops;
-    self.selectedDepartureTimes = engine.selectedDepartureTimes;
+    self.departureTimesOfSelectedRoute = engine.departureTimesOfSelectedRoute;
     self.newDepartureTimeHours = ko.observable(0);
     self.newDepartureTimeMinutes = ko.observable(0);
 

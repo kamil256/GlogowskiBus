@@ -41,6 +41,7 @@
     var marker = new google.maps.Marker(
     {
         draggable: true,
+        optimize: true
     });
 
     marker.addListener('click', function()

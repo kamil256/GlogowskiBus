@@ -73,12 +73,38 @@
             return result;
         });
 
-        self.selectedDepartureTimes = ko.computed(function()
+        self.departureTimesOfSelectedRoute = ko.computed(function()
         {
             var result = [];
-            if (self.selectedRoute() && self.selectedBusLine())
+            if (self.selectedRoute())
             {
-                var originalDepartureTimes = self.selectedBusStop() ? self.selectedBusLine().departureTimes() : self.selectedRoute().departureTimes();
+                var originalDepartureTimes = self.selectedRoute().departureTimes();
+                for (var i = 0; i < 24; i++)
+                    result[i] = [];
+                for (var i = 0; i < originalDepartureTimes.length; i++)
+                {
+                    var minutes = originalDepartureTimes[i].minutes();
+                    var hours = originalDepartureTimes[i].hours();
+                    var dayOfWeek = originalDepartureTimes[i].dayOfWeek();
+                    if (dayOfWeek == self.selectedDayOfWeek())
+                    {
+                        result[hours].push(
+                        {
+                            minutes: minutes,
+                            originalDepartureTime: originalDepartureTimes[i]
+                        });
+                    }
+                }
+            }
+            return result;
+        });
+
+        self.departureTimesOfSelectedBusLine = ko.computed(function()
+        {
+            var result = [];
+            if (self.selectedBusLine())
+            {
+                var originalDepartureTimes = self.selectedBusLine().departureTimes();
                 for (var i = 0; i < 24; i++)
                     result[i] = [];
                 for (var i = 0; i < originalDepartureTimes.length; i++)

@@ -35,7 +35,7 @@
     self.selectDepartureTime = engine.selectDepartureTime;
     self.selectedDayOfWeek = engine.selectedDayOfWeek;
     self.selectedBusStops = engine.selectedBusStops
-    self.selectedDepartureTimes = engine.selectedDepartureTimes;
+    self.departureTimesOfSelectedBusLine = engine.departureTimesOfSelectedBusLine;
 
     //self.buses = new Collection();//Buses();
     //function updateBuses()

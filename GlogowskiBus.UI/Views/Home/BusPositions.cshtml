@@ -48,12 +48,12 @@
                     </td>
 
                     <td>
-                        <table class="departureTimes" data-bind="foreach: selectedDepartureTimes">
-                            <tr data-bind="visible: $root.selectedDepartureTimes()[$index()].length > 0">
+                        <table class="departureTimes" data-bind="foreach: departureTimesOfSelectedBusLine">
+                            <tr data-bind="visible: $root.departureTimesOfSelectedBusLine()[$index()].length > 0">
                                 <td>
                                     <div data-bind="text: $index"></div>
                                 </td>
-                                <td data-bind="foreach: $root.selectedDepartureTimes()[$index()]">
+                                <td data-bind="foreach: $root.departureTimesOfSelectedBusLine()[$index()]">
                                     <div data-bind="attr: { title: originalDepartureTime.route.details() }, click: function() { $root.selectDepartureTime(originalDepartureTime); }, css: { active: originalDepartureTime === $root.selectedDepartureTime() }">
                                         <span data-bind="text: minutes < 10 ? '0' + minutes : minutes"></span><sub data-bind="text: originalDepartureTime.route.indexMark()"></sub>
                                     </div>

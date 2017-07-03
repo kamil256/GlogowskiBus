@@ -109,7 +109,7 @@
                         if (this == polylines[i])
                         {
                             var newPoint = new Point(self, null, engine);
-                            newPoint.pointPosition(new google.maps.LatLng(e.latLng.lat(), e.latLng.lng()));
+                            newPoint.position(new google.maps.LatLng(e.latLng.lat(), e.latLng.lng()));
                             self.points.splice(i + 1, 0, newPoint);
                             break;
                         }

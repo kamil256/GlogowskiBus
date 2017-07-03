@@ -25,7 +25,7 @@
             engine.busStopClickListener = function(busStop)
             {
                 if (self.directions())
-                    self.directions().addNewPoint(new google.maps.LatLng(busStop.latitude(), busStop.longitude()));
+                    self.directions().addNewPoint(busStop.position());
             };
         }
     });
@@ -36,7 +36,7 @@
     self.selectRoute = engine.selectRoute;
     self.selectedDayOfWeek = engine.selectedDayOfWeek;
     self.selectedBusStops = engine.selectedBusStops;
-    self.selectedDepartureTimes = engine.selectedDepartureTimes;
+    self.departureTimesOfSelectedRoute = engine.departureTimesOfSelectedRoute;
     self.newDepartureTimeHours = ko.observable(0);
     self.newDepartureTimeMinutes = ko.observable(0);
 
@@ -46,7 +46,7 @@
         self.directions(new GoogleMapsDirections());
     };
 
-    self.finishAddingRoute2 = function()
+    self.finishAddingRouteForNewBusLine = function()
     {
         var newRoute = new Route(self.newBusLine(), null, engine);
         var pointsModel = self.directions().points();
@@ -59,27 +59,35 @@
         self.directions(null);
     };
 
-    self.cancelAddingRoute = function()
+    self.cancelAddingRouteForNewBusLine = function()
     {
         self.directions().dispose();
         self.directions(null);
     };
 
-    self.addDepartureTime = function()
+    self.deleteRouteOfNewBusLine = function(route)
     {
-        if (self.newDepartureTimeHours() >= 0 && self.newDepartureTimeHours() < 24 && self.newDepartureTimeMinutes() >= 0 && self.newDepartureTimeMinutes() < 60 &&
-            !self.selectedRoute().getDepartureTime(self.newDepartureTimeHours(), self.newDepartureTimeMinutes(), engine.selectedDayOfWeek()))
+        self.newBusLine().routes.remove(route);
+        route.dispose();
+        engine.selectBusLine(self.newBusLine());
+    };
+
+    self.addDepartureTimeForNewBusLine = function()
+    {
+        var hours = Number(self.newDepartureTimeHours());
+        var minutes = Number(self.newDepartureTimeMinutes());
+        if (hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60 && !self.selectedRoute().getDepartureTime(hours, minutes, engine.selectedDayOfWeek()))
         {
             var newDepartureTime = new DepartureTime(self.selectedRoute(), null, engine.selectedDayOfWeek(), engine);
-            newDepartureTime.hours(self.newDepartureTimeHours());
-            newDepartureTime.minutes(self.newDepartureTimeMinutes());
+            newDepartureTime.hours(hours);
+            newDepartureTime.minutes(minutes);
             newDepartureTime.dayOfWeek(engine.selectedDayOfWeek());
             self.selectedRoute().departureTimes.push(newDepartureTime);
             self.selectedRoute().sortDepartureTimes();
         }
     }
 
-    self.removeDepartureTime = function(departureTime)
+    self.removeDepartureTimeOfNewBusLine = function(departureTime)
     {
         self.selectedRoute().departureTimes.remove(departureTime);
     };
