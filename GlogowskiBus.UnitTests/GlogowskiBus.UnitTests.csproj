@@ -87,7 +87,6 @@
     <Compile Include="FakeBusStopsBLL.cs" />
     <Compile Include="FakeBusStopsDAL.cs" />
     <Compile Include="FakeRepositories.cs" />
-    <Compile Include="HomeControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
