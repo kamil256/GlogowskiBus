@@ -31,7 +31,6 @@
     self.isOnTour = function()
     {
         var currentMinutesSinceMidnight = 60 * serverTime.now().getHours() + serverTime.now().getMinutes();
-        console.log(currentMinutesSinceMidnight);
         var departureMinutesSinceMidnight = self.minutesSinceMidnight();
         var arrivalMinutesSinceMidnight = departureMinutesSinceMidnight + Math.floor(self.route.points()[self.route.points().length - 1].timeOffset() / 60000);
 

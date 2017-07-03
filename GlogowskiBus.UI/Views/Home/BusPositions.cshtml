@@ -1,22 +1,7 @@
-﻿@model GlogowskiBus.UI.Models.HomeBusPositionsViewModel
-
-@{ 
+﻿@{ 
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Autobusy i przystanki";
 }
-
-@*<div id="navigation" data-bind="visible: view() == 'Navigation'">
-    <p>Pokaż/ukryj linie:</p>
-    <ul id="busLinesTiles" data-bind="foreach: busLines">
-        <li data-bind="click: function() { hidden(!hidden()); }, css: { active: !hidden() }, text: busNumber"></li>
-    </ul>
-    <p>
-        <span class="textButton">Pokaż wszystkie</span> | <span class="textButton">Ukryj wszystkie</span>
-    </p>
-</div>
-
-<div id="findRoute" data-bind="visible: view() == 'FindRoute'">
-</div>*@
 
 <div id="timeTable">
     <!-- ko if: isSelected -->
@@ -27,7 +12,7 @@
         <!-- ko if: selectedBusStop() -->
             <p>LINIA</p>
             <ul id="busLinesTiles" data-bind="foreach: selectedBusStop().busLines">
-                <li data-bind="@*attr: { title: busStops()[0].name() + ' - ' + busStops()[busStops().length - 1].name() },*@ click: function() { $root.selectDepartureTime($data.getNextDepartureTime()); }, css: { active: $root.selectedBusLine() === $data }, text: busNumber()"></li>
+                <li data-bind="attr: { title: busStops()[0].name() + ' - ' + busStops()[busStops().length - 1].name() }, click: function() { $root.selectDepartureTime($data.getNextDepartureTime()); }, css: { active: $root.selectedBusLine() === $data }, text: busNumber()"></li>
             </ul>
         <!-- /ko -->
 
@@ -76,11 +61,9 @@
     window.onload = function()
     {
         markerIcons = new MarkerIcons();
-        serverTime = new ServerTime(@Model.ServerTimeMilliseconds);
+        serverTime = new ServerTime();
 
         var engine = new Engine();
-
-
 
         var timeTableViewModel = new TimeTableViewModel(engine);
         ko.applyBindings(timeTableViewModel, document.getElementById('timeTable'));
