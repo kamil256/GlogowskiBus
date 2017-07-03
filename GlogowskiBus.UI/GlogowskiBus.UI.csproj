@@ -149,7 +149,7 @@
     <Content Include="Scripts\GoogleMapsDirections.js" />
     <Content Include="Scripts\ViewModels\Shared\NavigationViewModel.js" />
     <Content Include="Scripts\ServerTime.js" />
-    <Content Include="Scripts\FindRouteViewModel.js" />
+    <Content Include="Scripts\ViewModels\Home\FindRouteViewModel.js" />
     <Content Include="Scripts\ViewModels\Home\TimeTableViewModel.js" />
     <Content Include="Scripts\Common.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
