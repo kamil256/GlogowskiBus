@@ -3,9 +3,18 @@
     var self = this;
     
     self.id = model ? model.Id : null;
-    self.position = ko.observable(new google.maps.LatLng(model ? model.Latitude : 0, model ? model.Longitude : 0));
+    
     self.timeOffset = ko.observable(model ? model.TimeOffset : 0);
     self.busStopId = ko.observable(model ? model.BusStopId : null);
+    self.busStop = ko.computed(function()
+    {
+        if (self.busStopId())
+            for (var i = 0; i < engine.busStops().length; i++)
+                if (engine.busStops()[i].id === self.busStopId())
+                    return engine.busStops()[i];
+        return null;
+    });
+    self.position = ko.observable(self.busStop() ? self.busStop().position() : new google.maps.LatLng(model ? model.Latitude : 0, model ? model.Longitude : 0));
     self.busLine = route.busLine;
     self.route = route;
 
@@ -21,15 +30,6 @@
         }
         return pointModel;
     };
-
-    self.busStop = ko.computed(function() 
-    { 
-        if (self.busStopId())
-            for (var i = 0; i < engine.busStops().length; i++)
-                if (engine.busStops()[i].id === self.busStopId())
-                    return engine.busStops()[i];
-        return null;
-    });
 
     self.timeOffsetInMinutes = ko.observable(self.busStop() ? (self.timeOffset() / 60000).toFixed(0) : null);
 

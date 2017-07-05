@@ -9,10 +9,10 @@ namespace GlogowskiBus.BLL.Abstract
 {
     public interface IBusStopService
     {
-        IList<BusStop> Get();
-        BusStop GetById(int id);
-        BusStop Insert(BusStop busStop);
-        BusStop Update(BusStop busStop);
+        IList<BusStopBL> Get();
+        BusStopBL GetById(int id);
+        BusStopBL Insert(BusStopBL busStop);
+        BusStopBL Update(BusStopBL busStop);
         int? Delete(int id);
     }
 }

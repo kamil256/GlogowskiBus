@@ -1,5 +1,6 @@
 ﻿using GlogowskiBus.BLL.Abstract;
 using GlogowskiBus.DAL.Abstract;
+using GlogowskiBus.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,82 +18,67 @@ namespace GlogowskiBus.BLL.Concrete
             this.unitOfWork = unitOfWork;
         }
 
-        public IList<BusStop> Get()
+        public IList<BusStopBL> Get()
         {
-            return unitOfWork.BusStopRepository.Get().Select(x => new BusStop()
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Latitude = x.Latitude,
-                Longitude = x.Longitude
-            }).ToList();
+            return unitOfWork.BusStopRepository.Get().Select(x => (BusStopBL)x).ToList();
         }
 
-        public BusStop GetById(int id)
+        public BusStopBL GetById(int id)
         {
-            DAL.Entities.BusStop busStop = unitOfWork.BusStopRepository.GetById(id);
+            BusStop busStop = unitOfWork.BusStopRepository.GetById(id);
             if (busStop != null)
-                return new BusStop()
-                {
-                    Id = busStop.Id,
-                    Name = busStop.Name,
-                    Latitude = busStop.Latitude,
-                    Longitude = busStop.Longitude
-                };
+                return (BusStopBL)busStop;
             return null;
         }
 
-        public BusStop Insert(BusStop busStop)
+        public string GetValidationError(BusStopBL busStop)
         {
             if (string.IsNullOrWhiteSpace(busStop.Name))
-                throw new Exception("Bus stop name must not be empty!");
+                return "Bus stop name must not be empty!";
+
             if (unitOfWork.BusStopRepository.Count(x => x.Latitude == busStop.Latitude && x.Longitude == busStop.Longitude) != 0)
-                throw new Exception("Bus stop with those coordinates already exists!");
-            DAL.Entities.BusStop newBusStop = unitOfWork.BusStopRepository.Insert(new DAL.Entities.BusStop()
-            {
-                Name = busStop.Name.Trim(),
-                Latitude = busStop.Latitude,
-                Longitude = busStop.Longitude
-            });
-            unitOfWork.Save();
-            return new BLL.Concrete.BusStop()
-            {
-                Id = newBusStop.Id,
-                Name = newBusStop.Name,
-                Latitude = newBusStop.Latitude,
-                Longitude = newBusStop.Longitude
-            };
+                return "Bus stop with those coordinates already exists!";
+
+            return null;
         }
 
-        public BusStop Update(BusStop busStop)
+        public BusStopBL Insert(BusStopBL busStop)
         {
-            DAL.Entities.BusStop existingBusStop = unitOfWork.BusStopRepository.GetById(busStop.Id);
+            string error = GetValidationError(busStop);
+            if (error != null)
+                throw new Exception(error);
+
+            BusStop newBusStop = unitOfWork.BusStopRepository.Insert((BusStop)busStop);
+            unitOfWork.Save();
+
+            return (BusStopBL)newBusStop;
+        }
+
+        public BusStopBL Update(BusStopBL busStop)
+        {
+            BusStop existingBusStop = unitOfWork.BusStopRepository.GetById(busStop.Id);
             if (existingBusStop == null)
                 return null;
-            if (string.IsNullOrWhiteSpace(busStop.Name))
-                throw new Exception("Bus stop name must not be empty!");
-            if (unitOfWork.BusStopRepository.Count(x => x.Id != busStop.Id && x.Latitude == busStop.Latitude && x.Longitude == busStop.Longitude) != 0)
-                throw new Exception("Bus stop with those coordinates already exists!");
+
+            string error = GetValidationError(busStop);
+            if (error != null)
+                throw new Exception(error);
+
             existingBusStop.Name = busStop.Name;
             existingBusStop.Latitude = busStop.Latitude;
             existingBusStop.Longitude = busStop.Longitude;
-            unitOfWork.BusStopRepository.Update(existingBusStop);
+            unitOfWork.BusStopRepository.Update((BusStop)existingBusStop);
             unitOfWork.Save();
-            return new BLL.Concrete.BusStop()
-            {
-                Id = existingBusStop.Id,
-                Name = existingBusStop.Name,
-                Latitude = existingBusStop.Latitude,
-                Longitude = existingBusStop.Longitude
-            };
+
+            return (BusStopBL)existingBusStop;
         }
 
         public int? Delete(int id)
         {
-            DAL.Entities.BusStop busStop = unitOfWork.BusStopRepository.GetById(id);
-            if (busStop == null)
+            BusStop existingBusStop = unitOfWork.BusStopRepository.GetById(id);
+            if (existingBusStop == null)
                 return null;
-            if (busStop.Points.Count > 0)
+            if (existingBusStop.Points.Count > 0)
                 throw new Exception("Cannot delete bus stop which is used by at least one bus line!");
             unitOfWork.BusStopRepository.Delete(id);
             unitOfWork.Save();

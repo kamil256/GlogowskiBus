@@ -27,73 +27,45 @@ namespace GlogowskiBus.UI.Controllers.WebAPI
 
         public IList<BusStopDTO> GetBusStops()
         {
-            return busStopService.Get().Select(x => new BusStopDTO()
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Latitude = x.Latitude,
-                Longitude = x.Longitude
-            }).ToList();
+            return busStopService.Get().Select(x => (BusStopDTO)x).ToList();
         }
 
         [ResponseType(typeof(BusStopDTO))]
         public IHttpActionResult GetBusStop(int id)
         {
-            BusStop busStop = busStopService.GetById(id);
+            BusStopBL busStop = busStopService.GetById(id);
             if (busStop == null)
             {
                 return NotFound();
             }
-
-            return Ok(new BusStopDTO()
-            {
-                Id = busStop.Id,
-                Name = busStop.Name,
-                Latitude = busStop.Latitude,
-                Longitude = busStop.Longitude
-            });
+            return Ok((BusStopDTO)busStop);
         }
 
         [ResponseType(typeof(BusStopDTO))]
         public IHttpActionResult PostBusStop(BusStopDTO model)
         {
-            BusStop newBusStop = null;
+            BusStopBL newBusStop = null;
+
             try
             {
-                newBusStop = busStopService.Insert(new BusStop()
-                {
-                    Name = model.Name,
-                    Latitude = model.Latitude,
-                    Longitude = model.Longitude
-                });
+                newBusStop = busStopService.Insert((BusStopBL)model);
             }
             catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
 
-            return CreatedAtRoute("DefaultApi", new { id = newBusStop.Id }, new BusStopDTO()
-            {
-                Id = newBusStop.Id,
-                Name = newBusStop.Name,
-                Latitude = newBusStop.Latitude,
-                Longitude = newBusStop.Longitude
-            });
+            return CreatedAtRoute("DefaultApi", new { id = newBusStop.Id }, (BusStopDTO)newBusStop);
         }
 
         [ResponseType(typeof(BusStopDTO))]
-        public IHttpActionResult PutBusStop(BusStopDTO busStop)
+        public IHttpActionResult PutBusStop(BusStopDTO model)
         {
-            BusStop updatedBusStop = null;
+            BusStopBL updatedBusStop = null;
+
             try
             {
-                updatedBusStop = busStopService.Update(new BusStop()
-                {
-                    Id = busStop.Id,
-                    Name = busStop.Name,
-                    Latitude = busStop.Latitude,
-                    Longitude = busStop.Longitude
-                });
+                updatedBusStop = busStopService.Update((BusStopBL)model);
             }
             catch (Exception e)
             {
@@ -103,19 +75,14 @@ namespace GlogowskiBus.UI.Controllers.WebAPI
             if (updatedBusStop == null)
                 return NotFound();
             else
-                return Ok(new BusStopDTO()
-                {
-                    Id = updatedBusStop.Id,
-                    Name = updatedBusStop.Name,
-                    Latitude = updatedBusStop.Latitude,
-                    Longitude = updatedBusStop.Longitude
-                });
+                return Ok((BusStopDTO)updatedBusStop);
         }
 
         [ResponseType(typeof(void))]
         public IHttpActionResult DeleteBusStop(int id)
         {
             int? deletedBusStopId = null;
+
             try
             {
                 deletedBusStopId = busStopService.Delete(id);

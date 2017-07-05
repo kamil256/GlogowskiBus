@@ -1,12 +1,12 @@
-﻿using GlogowskiBus.BLL.Concrete;
+﻿using GlogowskiBus.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace GlogowskiBus.UI.Models
+namespace GlogowskiBus.BLL.Concrete
 {
-    public class DepartureTimeDTO
+    public class DepartureTimeBL
     {
         public int Id { get; set; }
         public int Hours { get; set; }
@@ -15,9 +15,9 @@ namespace GlogowskiBus.UI.Models
         public bool Saturday { get; set; }
         public bool Sunday { get; set; }
 
-        public static explicit operator DepartureTimeDTO(DepartureTimeBL departureTime)
+        public static explicit operator DepartureTimeBL(DepartureTime departureTime)
         {
-            return new DepartureTimeDTO()
+            return new DepartureTimeBL()
             {
                 Id = departureTime.Id,
                 Hours = departureTime.Hours,
@@ -28,9 +28,9 @@ namespace GlogowskiBus.UI.Models
             };
         }
 
-        public static explicit operator DepartureTimeBL(DepartureTimeDTO departureTime)
+        public static explicit operator DepartureTime(DepartureTimeBL departureTime)
         {
-            return new DepartureTimeBL()
+            return new DepartureTime()
             {
                 Id = departureTime.Id,
                 Hours = departureTime.Hours,

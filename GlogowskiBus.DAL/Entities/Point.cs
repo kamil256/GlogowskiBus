@@ -15,8 +15,8 @@ namespace GlogowskiBus.DAL.Entities
         public int TimeOffset { get; set; }
 
         public int RouteId { get; set; }
-        public virtual Route Route { get; set; }
+        public Route Route { get; set; }
         public int? BusStopId { get; set; }
-        public virtual BusStop BusStop { get; set; }
+        public BusStop BusStop { get; set; }
     }
 }

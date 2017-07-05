@@ -46,7 +46,7 @@
         {
             sendAjaxRequest('/api/BusStop/' + busStop.id, 'DELETE', null, function(response)
             {
-                engine.selectedBusStop(null);
+                engine.selectBusStop(null);
                 engine.busStops.remove(busStop);
                 busStop.dispose();
 

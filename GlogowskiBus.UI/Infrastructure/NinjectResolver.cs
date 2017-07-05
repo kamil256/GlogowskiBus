@@ -42,7 +42,6 @@ namespace GlogowskiBus.UI.Infrastructure
         private void AddBindings(IKernel kernel)
         {
             kernel.Bind<IUnitOfWork>().To<UnitOfWork>().InRequestScope();
-            kernel.Bind<IBusService>().To<BusService>().InRequestScope();
             kernel.Bind<IBusStopService>().To<BusStopService>().InRequestScope();
             kernel.Bind<IBusLineService>().To<BusLineService>().InRequestScope();
         }

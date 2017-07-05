@@ -14,7 +14,7 @@ namespace GlogowskiBus.DAL.Abstract
         TEntity GetById(int id);
         TEntity Insert(TEntity entity);
         void Update(TEntity entity);
-        TEntity Delete(int id);
-        TEntity Delete(TEntity entity);
+        void Delete(int id);
+        void Delete(TEntity entity);
     }
 }

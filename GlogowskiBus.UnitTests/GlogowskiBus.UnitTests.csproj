@@ -79,14 +79,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BLL\FakeData.cs" />
     <Compile Include="BusLineControllerTests.cs" />
     <Compile Include="BusLineServiceTests.cs" />
     <Compile Include="BusStopControllerTests.cs" />
     <Compile Include="BusStopServiceTests.cs" />
-    <Compile Include="FakeBusStopsBLL.cs" />
-    <Compile Include="FakeBusStopsDAL.cs" />
-    <Compile Include="FakeRepositories.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

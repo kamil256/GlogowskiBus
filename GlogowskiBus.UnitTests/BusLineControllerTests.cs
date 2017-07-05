@@ -16,118 +16,130 @@ namespace GlogowskiBus.UnitTests
     [TestFixture]
     class BusLineControllerTests
     {
+        public void AssertThatBusLinesAreEqual(BusLineDTO expectedBusLine, BusLineDTO actualBusLine)
+        {
+            Assert.AreEqual(expectedBusLine.Id, actualBusLine.Id);
+            Assert.AreEqual(expectedBusLine.BusNumber, actualBusLine.BusNumber);
+
+            Assert.IsTrue((expectedBusLine.Routes == null) == (actualBusLine.Routes == null));
+            if (expectedBusLine.Routes != null)
+            {
+                Assert.AreEqual(expectedBusLine.Routes.Count, actualBusLine.Routes.Count);
+                for (var i = 0; i < expectedBusLine.Routes.Count; i++)
+                {
+                    Assert.AreEqual(expectedBusLine.Routes[i].Id, actualBusLine.Routes[i].Id);
+                    Assert.AreEqual(expectedBusLine.Routes[i].IndexMark, actualBusLine.Routes[i].IndexMark);
+                    Assert.AreEqual(expectedBusLine.Routes[i].Details, actualBusLine.Routes[i].Details);
+
+                    Assert.IsTrue((expectedBusLine.Routes[i].DepartureTimes == null) == (actualBusLine.Routes[i].DepartureTimes == null));
+                    if (expectedBusLine.Routes[i].DepartureTimes != null)
+                    {
+                        Assert.AreEqual(expectedBusLine.Routes[i].DepartureTimes.Count, actualBusLine.Routes[i].DepartureTimes.Count);
+                        for (var j = 0; j < expectedBusLine.Routes[i].DepartureTimes.Count; j++)
+                        {
+                            Assert.AreEqual(expectedBusLine.Routes[i].DepartureTimes[j].Id, actualBusLine.Routes[i].DepartureTimes[j].Id);
+                            Assert.AreEqual(expectedBusLine.Routes[i].DepartureTimes[j].Hours, actualBusLine.Routes[i].DepartureTimes[j].Hours);
+                            Assert.AreEqual(expectedBusLine.Routes[i].DepartureTimes[j].Minutes, actualBusLine.Routes[i].DepartureTimes[j].Minutes);
+                            Assert.AreEqual(expectedBusLine.Routes[i].DepartureTimes[j].WorkingDay, actualBusLine.Routes[i].DepartureTimes[j].WorkingDay);
+                            Assert.AreEqual(expectedBusLine.Routes[i].DepartureTimes[j].Saturday, actualBusLine.Routes[i].DepartureTimes[j].Saturday);
+                            Assert.AreEqual(expectedBusLine.Routes[i].DepartureTimes[j].Sunday, actualBusLine.Routes[i].DepartureTimes[j].Sunday);
+                        }
+                    }
+
+                    Assert.IsTrue((expectedBusLine.Routes[i].Points == null) == (actualBusLine.Routes[i].Points == null));
+                    if (expectedBusLine.Routes[i].Points != null)
+                    {
+                        Assert.AreEqual(expectedBusLine.Routes[i].Points.Count, actualBusLine.Routes[i].Points.Count);
+                        for (var j = 0; j < expectedBusLine.Routes[i].Points.Count; j++)
+                        {
+                            Assert.AreEqual(expectedBusLine.Routes[i].Points[j].Id, actualBusLine.Routes[i].Points[j].Id);
+                            Assert.AreEqual(expectedBusLine.Routes[i].Points[j].Latitude, actualBusLine.Routes[i].Points[j].Latitude);
+                            Assert.AreEqual(expectedBusLine.Routes[i].Points[j].Longitude, actualBusLine.Routes[i].Points[j].Longitude);
+                            Assert.AreEqual(expectedBusLine.Routes[i].Points[j].TimeOffset, actualBusLine.Routes[i].Points[j].TimeOffset);
+                            Assert.AreEqual(expectedBusLine.Routes[i].Points[j].BusStopId, actualBusLine.Routes[i].Points[j].BusStopId);
+                        }
+                    }
+                }
+            }
+        }
+
+        private static readonly List<BusLineDTO> busLinesList = new List<BusLineDTO>()
+        {
+            new BusLineDTO()
+            {
+                Id = 1,
+                BusNumber = "A",
+                Routes = new List<RouteDTO>()
+                {
+                    new RouteDTO()
+                    {
+                        Id = 1,
+                        IndexMark = "i",
+                        Details = "Bus route details",
+                        DepartureTimes = new List<DepartureTimeDTO>()
+                        {
+                            new DepartureTimeDTO()
+                            {
+                                Id = 1,
+                                Hours = 12,
+                                Minutes = 34,
+                                WorkingDay = true,
+                                Saturday = false,
+                                Sunday = true,
+                            }
+                        },
+                        Points = new List<PointDTO>()
+                        {
+                            new PointDTO()
+                            {
+                                Id = 1,
+                                Latitude = 1,
+                                Longitude = 3,
+                                TimeOffset = 0,
+                                BusStopId = 1
+                            },
+                            new PointDTO()
+                            {
+                                Id = 2,
+                                Latitude = 2,
+                                Longitude = 2,
+                                TimeOffset = 100,
+                                BusStopId = null
+                            },
+                            new PointDTO()
+                            {
+                                Id = 3,
+                                Latitude = 3,
+                                Longitude = 1,
+                                TimeOffset = 200,
+                                BusStopId = 2
+                            }
+                        }
+                    }
+                }
+            },
+            new BusLineDTO()
+            {
+                Id = 2,
+                BusNumber = "B",
+                Routes = new List<RouteDTO>()
+            }
+        };
+
         [Test]
         public void GetBusLines_WhenCalled_ReturnsAllBusLines()
         {
             // Arrange
             IBusLineService busLineService = Substitute.For<IBusLineService>();
-            busLineService.Get().Returns(new List<BusLine>()
-            {
-                new BusLine()
-                {
-                    Id = 1,
-                    BusNumber = "A",
-                    Routes = new List<Route>()
-                    {
-                        new Route()
-                        {
-                            Id = 1,
-                            IndexMark = "i",
-                            Details = "Bus route details",
-                            DepartureTimes = new List<DepartureTime>()
-                            {
-                                new DepartureTime()
-                                {
-                                    Id = 1,
-                                    Hours = 12,
-                                    Minutes = 34,
-                                    WorkingDay = true,
-                                    Saturday = false,
-                                    Sunday = true,
-                                }
-                            },
-                            Points = new List<Point>()
-                            {
-                                new Point()
-                                {
-                                    Id = 1,
-                                    Latitude = 1,
-                                    Longitude = 3,
-                                    TimeOffset = 0,
-                                    BusStopId = 1
-                                },
-                                new Point()
-                                {
-                                    Id = 2,
-                                    Latitude = 2,
-                                    Longitude = 2,
-                                    TimeOffset = 100,
-                                    BusStopId = null
-                                },
-                                new Point()
-                                {
-                                    Id = 3,
-                                    Latitude = 3,
-                                    Longitude = 1,
-                                    TimeOffset = 200,
-                                    BusStopId = 2
-                                }
-                            }
-                        }
-                    }
-                },
-                new BusLine()
-                {
-                    Id = 2,
-                    BusNumber = "B",
-                    Routes = new List<Route>()
-                }
-            });
+            busLineService.Get().Returns(busLinesList.Select(x => (BusLineBL)x).ToList());
 
             // Act
             IList<BusLineDTO> busLines = new BusLineController(busLineService).GetBusLines();
 
             // Assert
-            Assert.AreEqual(2, busLines.Count());
-
-            Assert.AreEqual(1, busLines[0].Id);
-            Assert.AreEqual("A", busLines[0].BusNumber);
-            Assert.AreEqual(1, busLines[0].Routes.Count);
-
-            Assert.AreEqual(2, busLines[1].Id);
-            Assert.AreEqual("B", busLines[1].BusNumber);
-            Assert.AreEqual(0, busLines[1].Routes.Count);
-
-            Assert.AreEqual(1, busLines[0].Routes[0].Id);
-            Assert.AreEqual("i", busLines[0].Routes[0].IndexMark);
-            Assert.AreEqual("Bus route details", busLines[0].Routes[0].Details);
-            Assert.AreEqual(1, busLines[0].Routes[0].DepartureTimes.Count);
-            Assert.AreEqual(3, busLines[0].Routes[0].Points.Count);
-
-            Assert.AreEqual(1, busLines[0].Routes[0].DepartureTimes[0].Id);
-            Assert.AreEqual(12, busLines[0].Routes[0].DepartureTimes[0].Hours);
-            Assert.AreEqual(34, busLines[0].Routes[0].DepartureTimes[0].Minutes);
-            Assert.IsTrue(busLines[0].Routes[0].DepartureTimes[0].WorkingDay);
-            Assert.IsFalse(busLines[0].Routes[0].DepartureTimes[0].Saturday);
-            Assert.IsTrue(busLines[0].Routes[0].DepartureTimes[0].Sunday);
-
-            Assert.AreEqual(1, busLines[0].Routes[0].Points[0].Id);
-            Assert.AreEqual(1, busLines[0].Routes[0].Points[0].Latitude);
-            Assert.AreEqual(3, busLines[0].Routes[0].Points[0].Longitude);
-            Assert.AreEqual(0, busLines[0].Routes[0].Points[0].TimeOffset);
-            Assert.AreEqual(1, busLines[0].Routes[0].Points[0].BusStopId);
-
-            Assert.AreEqual(2, busLines[0].Routes[0].Points[1].Id);
-            Assert.AreEqual(2, busLines[0].Routes[0].Points[1].Latitude);
-            Assert.AreEqual(2, busLines[0].Routes[0].Points[1].Longitude);
-            Assert.AreEqual(100, busLines[0].Routes[0].Points[1].TimeOffset);
-            Assert.IsNull(busLines[0].Routes[0].Points[1].BusStopId);
-
-            Assert.AreEqual(3, busLines[0].Routes[0].Points[2].Id);
-            Assert.AreEqual(3, busLines[0].Routes[0].Points[2].Latitude);
-            Assert.AreEqual(1, busLines[0].Routes[0].Points[2].Longitude);
-            Assert.AreEqual(200, busLines[0].Routes[0].Points[2].TimeOffset);
-            Assert.AreEqual(2, busLines[0].Routes[0].Points[2].BusStopId);
+            Assert.AreEqual(busLinesList.Count, busLines.Count);
+            for (int i = 0; i < busLines.Count; i++)
+                AssertThatBusLinesAreEqual(busLinesList[i], busLines[i]);
         }
 
         [Test]
@@ -135,99 +147,14 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IBusLineService busLineService = Substitute.For<IBusLineService>();
-            busLineService.GetById(Arg.Is<int>(1)).Returns(new BusLine()
-            {
-                Id = 1,
-                BusNumber = "A",
-                Routes = new List<Route>()
-                    {
-                        new Route()
-                        {
-                            Id = 1,
-                            IndexMark = "i",
-                            Details = "Bus route details",
-                            DepartureTimes = new List<DepartureTime>()
-                            {
-                                new DepartureTime()
-                                {
-                                    Id = 1,
-                                    Hours = 12,
-                                    Minutes = 34,
-                                    WorkingDay = true,
-                                    Saturday = false,
-                                    Sunday = true,
-                                }
-                            },
-                            Points = new List<Point>()
-                            {
-                                new Point()
-                                {
-                                    Id = 1,
-                                    Latitude = 1,
-                                    Longitude = 3,
-                                    TimeOffset = 0,
-                                    BusStopId = 1
-                                },
-                                new Point()
-                                {
-                                    Id = 2,
-                                    Latitude = 2,
-                                    Longitude = 2,
-                                    TimeOffset = 100,
-                                    BusStopId = null
-                                },
-                                new Point()
-                                {
-                                    Id = 3,
-                                    Latitude = 3,
-                                    Longitude = 1,
-                                    TimeOffset = 200,
-                                    BusStopId = 2
-                                }
-                            }
-                        }
-                    }
-            });
+            busLineService.GetById(Arg.Is<int>(1)).Returns(x => (BusLineBL)busLinesList[0]);
 
             // Act
             OkNegotiatedContentResult<BusLineDTO> result = new BusLineController(busLineService).GetBusLine(1) as OkNegotiatedContentResult<BusLineDTO>;
             BusLineDTO busLine = result.Content;
 
             // Assert
-            Assert.AreEqual(1, busLine.Id);
-            Assert.AreEqual("A", busLine.BusNumber);
-            Assert.AreEqual(1, busLine.Routes.Count);
-
-            Assert.AreEqual(1, busLine.Routes[0].Id);
-            Assert.AreEqual("i", busLine.Routes[0].IndexMark);
-            Assert.AreEqual("Bus route details", busLine.Routes[0].Details);
-            Assert.AreEqual(1, busLine.Routes[0].DepartureTimes.Count);
-            Assert.AreEqual(3, busLine.Routes[0].Points.Count);
-
-            Assert.AreEqual(1, busLine.Routes[0].DepartureTimes[0].Id);
-            Assert.AreEqual(12, busLine.Routes[0].DepartureTimes[0].Hours);
-            Assert.AreEqual(34, busLine.Routes[0].DepartureTimes[0].Minutes);
-            Assert.IsTrue(busLine.Routes[0].DepartureTimes[0].WorkingDay);
-            Assert.IsFalse(busLine.Routes[0].DepartureTimes[0].Saturday);
-            Assert.IsTrue(busLine.Routes[0].DepartureTimes[0].Sunday);
-
-            Assert.AreEqual(1, busLine.Routes[0].Points[0].Id);
-            Assert.AreEqual(1, busLine.Routes[0].Points[0].Latitude);
-            Assert.AreEqual(3, busLine.Routes[0].Points[0].Longitude);
-            Assert.AreEqual(0, busLine.Routes[0].Points[0].TimeOffset);
-            Assert.AreEqual(1, busLine.Routes[0].Points[0].BusStopId);
-
-            Assert.AreEqual(2, busLine.Routes[0].Points[1].Id);
-            Assert.AreEqual(2, busLine.Routes[0].Points[1].Latitude);
-            Assert.AreEqual(2, busLine.Routes[0].Points[1].Longitude);
-            Assert.AreEqual(100, busLine.Routes[0].Points[1].TimeOffset);
-            Assert.IsNull(busLine.Routes[0].Points[1].BusStopId);
-
-            Assert.AreEqual(3, busLine.Routes[0].Points[2].Id);
-            Assert.AreEqual(3, busLine.Routes[0].Points[2].Latitude);
-            Assert.AreEqual(1, busLine.Routes[0].Points[2].Longitude);
-            Assert.AreEqual(200, busLine.Routes[0].Points[2].TimeOffset);
-            Assert.AreEqual(2, busLine.Routes[0].Points[2].BusStopId);
+            AssertThatBusLinesAreEqual(busLinesList[0], busLine);
         }
 
         [Test]
@@ -235,13 +162,12 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IBusLineService busLineService = Substitute.For<IBusLineService>();
-            busLineService.GetById(Arg.Is<int>(3)).Returns((BusLine)null);
+            busLineService.GetById(Arg.Is<int>(3)).Returns((BusLineBL)null);
 
             // Act
             NotFoundResult result = new BusLineController(busLineService).GetBusLine(3) as NotFoundResult;
 
             // Assert
-            busLineService.Received().GetById(3);
             Assert.IsNotNull(result);
         }
 
@@ -250,147 +176,14 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IBusLineService busLineService = Substitute.For<IBusLineService>();
-            busLineService.Insert(Arg.Any<BusLine>()).Returns(new BusLine()
-            {
-                Id = 3,
-                BusNumber = "C",
-                Routes = new List<Route>()
-                {
-                    new Route()
-                    {
-                        Id = 2,
-                        IndexMark = "i2",
-                        Details = "Bus route details 2",
-                        DepartureTimes = new List<DepartureTime>()
-                        {
-                            new DepartureTime()
-                            {
-                                Id = 2,
-                                Hours = 13,
-                                Minutes = 45,
-                                WorkingDay = true,
-                                Saturday = true,
-                                Sunday = true
-                            }
-                        },
-                        Points = new List<Point>()
-                        {
-                            new Point()
-                            {
-                                Id = 4,
-                                Latitude = 1,
-                                Longitude = 3,
-                                TimeOffset = 0,
-                                BusStopId = 1
-                            },
-                            new Point()
-                            {
-                                Id = 5,
-                                Latitude = 3,
-                                Longitude = 3,
-                                TimeOffset = 10,
-                                BusStopId = null
-                            },
-                            new Point()
-                            {
-                                Id = 6,
-                                Latitude = 3,
-                                Longitude = 1,
-                                TimeOffset = 20,
-                                BusStopId = 2
-                            }
-                        }
-                    }
-                }
-            });
-
-            BusLineDTO newBusLine = new BusLineDTO()
-            {
-                BusNumber = "C",
-                Routes = new List<RouteDTO>()
-                {
-                    new RouteDTO()
-                    {
-                        IndexMark = "i2",
-                        Details = "Bus route details 2",
-                        DepartureTimes = new List<DepartureTimeDTO>()
-                        {
-                            new DepartureTimeDTO()
-                            {
-                                Hours = 13,
-                                Minutes = 45,
-                                WorkingDay = true,
-                                Saturday = true,
-                                Sunday = true
-                            }
-                        },
-                        Points = new List<PointDTO>()
-                        {
-                            new PointDTO()
-                            {
-                                Latitude = 1,
-                                Longitude = 3,
-                                TimeOffset = 0,
-                                BusStopId = 1
-                            },
-                            new PointDTO()
-                            {
-                                Latitude = 3,
-                                Longitude = 3,
-                                TimeOffset = 10,
-                                BusStopId = null
-                            },
-                            new PointDTO()
-                            {
-                                Latitude = 3,
-                                Longitude = 1,
-                                TimeOffset = 20,
-                                BusStopId = 2
-                            }
-                        }
-                    }
-                }
-            };
+            busLineService.Insert(Arg.Any<BusLineBL>()).Returns((BusLineBL)busLinesList[0]);
 
             // Act
-            CreatedAtRouteNegotiatedContentResult<BusLineDTO> result = new BusLineController(busLineService).PostBusLine(newBusLine) as CreatedAtRouteNegotiatedContentResult<BusLineDTO>;
+            CreatedAtRouteNegotiatedContentResult<BusLineDTO> result = new BusLineController(busLineService).PostBusLine(busLinesList[0]) as CreatedAtRouteNegotiatedContentResult<BusLineDTO>;
             BusLineDTO busLine = result.Content;
 
             // Assert
-            Assert.AreEqual(3, busLine.Id);
-            Assert.AreEqual("C", busLine.BusNumber);
-            Assert.AreEqual(1, busLine.Routes.Count);
-
-            Assert.AreEqual(2, busLine.Routes[0].Id);
-            Assert.AreEqual("i2", busLine.Routes[0].IndexMark);
-            Assert.AreEqual("Bus route details 2", busLine.Routes[0].Details);
-            Assert.AreEqual(1, busLine.Routes[0].DepartureTimes.Count);
-            Assert.AreEqual(3, busLine.Routes[0].Points.Count);
-
-            Assert.AreEqual(2, busLine.Routes[0].DepartureTimes[0].Id);
-            Assert.AreEqual(13, busLine.Routes[0].DepartureTimes[0].Hours);
-            Assert.AreEqual(45, busLine.Routes[0].DepartureTimes[0].Minutes);
-            Assert.IsTrue(busLine.Routes[0].DepartureTimes[0].WorkingDay);
-            Assert.IsTrue(busLine.Routes[0].DepartureTimes[0].Saturday);
-            Assert.IsTrue(busLine.Routes[0].DepartureTimes[0].Sunday);
-
-            Assert.AreEqual(4, busLine.Routes[0].Points[0].Id);
-            Assert.AreEqual(1, busLine.Routes[0].Points[0].Latitude);
-            Assert.AreEqual(3, busLine.Routes[0].Points[0].Longitude);
-            Assert.AreEqual(0, busLine.Routes[0].Points[0].TimeOffset);
-            Assert.AreEqual(1, busLine.Routes[0].Points[0].BusStopId);
-
-            Assert.AreEqual(5, busLine.Routes[0].Points[1].Id);
-            Assert.AreEqual(3, busLine.Routes[0].Points[1].Latitude);
-            Assert.AreEqual(3, busLine.Routes[0].Points[1].Longitude);
-            Assert.AreEqual(10, busLine.Routes[0].Points[1].TimeOffset);
-            Assert.IsNull(busLine.Routes[0].Points[1].BusStopId);
-
-            Assert.AreEqual(6, busLine.Routes[0].Points[2].Id);
-            Assert.AreEqual(3, busLine.Routes[0].Points[2].Latitude);
-            Assert.AreEqual(1, busLine.Routes[0].Points[2].Longitude);
-            Assert.AreEqual(20, busLine.Routes[0].Points[2].TimeOffset);
-            Assert.AreEqual(2, busLine.Routes[0].Points[2].BusStopId);
+            AssertThatBusLinesAreEqual(busLinesList[0], busLine);
         }
 
         [Test]
@@ -398,7 +191,7 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IBusLineService busLineService = Substitute.For<IBusLineService>();
-            busLineService.When(x => x.Insert(Arg.Any<BusLine>())).Throw(new Exception("Exception message"));
+            busLineService.When(x => x.Insert(Arg.Any<BusLineBL>())).Throw(new Exception("Exception message"));
 
             // Act
             BadRequestErrorMessageResult result = new BusLineController(busLineService).PostBusLine(new BusLineDTO()) as BadRequestErrorMessageResult;
@@ -412,91 +205,15 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IBusLineService busLineService = Substitute.For<IBusLineService>();
-            busLineService.Update(Arg.Any<BusLine>()).Returns(x => (BusLine)x[0]);
-
-            BusLineDTO existingBusLine = new BusLineDTO()
-            {
-                Id = 1,
-                BusNumber = "C",
-                Routes = new List<RouteDTO>()
-                {
-                    new RouteDTO()
-                    {
-                        IndexMark = "i2",
-                        Details = "Bus route details 2",
-                        DepartureTimes = new List<DepartureTimeDTO>()
-                        {
-                            new DepartureTimeDTO()
-                            {
-                                Hours = 13,
-                                Minutes = 45,
-                                WorkingDay = true,
-                                Saturday = true,
-                                Sunday = true
-                            }
-                        },
-                        Points = new List<PointDTO>()
-                        {
-                            new PointDTO()
-                            {
-                                Latitude = 1,
-                                Longitude = 3,
-                                TimeOffset = 0,
-                                BusStopId = 1
-                            },
-                            new PointDTO()
-                            {
-                                Latitude = 3,
-                                Longitude = 3,
-                                TimeOffset = 10,
-                                BusStopId = null
-                            },
-                            new PointDTO()
-                            {
-                                Latitude = 3,
-                                Longitude = 1,
-                                TimeOffset = 20,
-                                BusStopId = 2
-                            }
-                        }
-                    }
-                }
-            };
+            busLineService.Update(Arg.Any<BusLineBL>()).Returns((BusLineBL)busLinesList[0]);
 
             // Act
 
-            OkNegotiatedContentResult<BusLineDTO> result = new BusLineController(busLineService).PutBusLine(existingBusLine) as OkNegotiatedContentResult<BusLineDTO>;
+            OkNegotiatedContentResult<BusLineDTO> result = new BusLineController(busLineService).PutBusLine(busLinesList[0]) as OkNegotiatedContentResult<BusLineDTO>;
             BusLineDTO busLine = result.Content;
 
             // Assert
-            Assert.AreEqual("C", busLine.BusNumber);
-            Assert.AreEqual(1, busLine.Routes.Count);
-
-            Assert.AreEqual("i2", busLine.Routes[0].IndexMark);
-            Assert.AreEqual("Bus route details 2", busLine.Routes[0].Details);
-            Assert.AreEqual(1, busLine.Routes[0].DepartureTimes.Count);
-            Assert.AreEqual(3, busLine.Routes[0].Points.Count);
-
-            Assert.AreEqual(13, busLine.Routes[0].DepartureTimes[0].Hours);
-            Assert.AreEqual(45, busLine.Routes[0].DepartureTimes[0].Minutes);
-            Assert.IsTrue(busLine.Routes[0].DepartureTimes[0].WorkingDay);
-            Assert.IsTrue(busLine.Routes[0].DepartureTimes[0].Saturday);
-            Assert.IsTrue(busLine.Routes[0].DepartureTimes[0].Sunday);
-
-            Assert.AreEqual(1, busLine.Routes[0].Points[0].Latitude);
-            Assert.AreEqual(3, busLine.Routes[0].Points[0].Longitude);
-            Assert.AreEqual(0, busLine.Routes[0].Points[0].TimeOffset);
-            Assert.AreEqual(1, busLine.Routes[0].Points[0].BusStopId);
-
-            Assert.AreEqual(3, busLine.Routes[0].Points[1].Latitude);
-            Assert.AreEqual(3, busLine.Routes[0].Points[1].Longitude);
-            Assert.AreEqual(10, busLine.Routes[0].Points[1].TimeOffset);
-            Assert.IsNull(busLine.Routes[0].Points[1].BusStopId);
-
-            Assert.AreEqual(3, busLine.Routes[0].Points[2].Latitude);
-            Assert.AreEqual(1, busLine.Routes[0].Points[2].Longitude);
-            Assert.AreEqual(20, busLine.Routes[0].Points[2].TimeOffset);
-            Assert.AreEqual(2, busLine.Routes[0].Points[2].BusStopId);
+            AssertThatBusLinesAreEqual(busLinesList[0], busLine);
         }
 
         [Test]
@@ -504,15 +221,10 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IBusLineService busLineService = Substitute.For<IBusLineService>();
-            busLineService.Update(Arg.Any<BusLine>()).Returns((BusLine)null);
-
-            BusLineDTO busLine = new BusLineDTO()
-            {
-                Id = 3
-            };
+            busLineService.Update(Arg.Any<BusLineBL>()).Returns((BusLineBL)null);
 
             // Act
-            NotFoundResult result = new BusLineController(busLineService).PutBusLine(busLine) as NotFoundResult;
+            NotFoundResult result = new BusLineController(busLineService).PutBusLine(new BusLineDTO() { Id = 3 }) as NotFoundResult;
 
             // Assert
             Assert.IsNotNull(result);
@@ -523,7 +235,7 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IBusLineService busLineService = Substitute.For<IBusLineService>();
-            busLineService.When(x => x.Update(Arg.Any<BusLine>())).Throw(new Exception("Exception message"));
+            busLineService.When(x => x.Update(Arg.Any<BusLineBL>())).Throw(new Exception("Exception message"));
 
             // Act
             BadRequestErrorMessageResult result = new BusLineController(busLineService).PutBusLine(new BusLineDTO()) as BadRequestErrorMessageResult;
@@ -558,6 +270,20 @@ namespace GlogowskiBus.UnitTests
 
             // Assert
             Assert.IsNotNull(result);
+        }
+
+        [Test]
+        public void DeleteBuslINE_WhenServiceThrowsException_ReturnsBadRequestResultWithMessage()
+        {
+            // Arrange
+            IBusLineService busLineService = Substitute.For<IBusLineService>();
+            busLineService.When(x => x.Delete(Arg.Is<int>(1))).Throw(new Exception("Exception message"));
+
+            // Act
+            BadRequestErrorMessageResult result = new BusLineController(busLineService).DeleteBusLine(1) as BadRequestErrorMessageResult;
+
+            // Assert
+            Assert.AreEqual("Exception message", result.Message);
         }
     }
 }

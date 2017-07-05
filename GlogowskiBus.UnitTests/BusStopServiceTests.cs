@@ -1,5 +1,6 @@
 ﻿using GlogowskiBus.BLL.Concrete;
 using GlogowskiBus.DAL.Abstract;
+using GlogowskiBus.DAL.Entities;
 using NSubstitute;
 using NUnit.Framework;
 using System;
@@ -14,11 +15,112 @@ namespace GlogowskiBus.UnitTests
     [TestFixture]
     public class BusStopServiceTests
     {
+        public void AssertThatBusStopsAreEqual(BusStopBL expectedBusStop, BusStopBL actualBusStop)
+        {
+            Assert.AreEqual(expectedBusStop.Id, actualBusStop.Id);
+            Assert.AreEqual(expectedBusStop.Name, actualBusStop.Name);
+            Assert.AreEqual(expectedBusStop.Latitude, actualBusStop.Latitude);
+            Assert.AreEqual(expectedBusStop.Longitude, actualBusStop.Longitude);
+        }
+
+        private static readonly List<BusStopBL> busStopsList = new List<BusStopBL>()
+        {
+            new BusStopBL()
+            {
+                Id = 1,
+                Name = "Bus stop 1",
+                Latitude = 1,
+                Longitude = 3
+            },
+            new BusStopBL()
+            {
+                Id = 2,
+                Name = "Bus stop 2",
+                Latitude = 3,
+                Longitude = 1
+            }
+        };
+
+        [Test]
+        public void GetValidationError_WhenBusStopIsCorrect_ReturnsNull()
+        {
+            // Arrange
+            IRepository<BusStop> busStopRepository = Substitute.For<IRepository<BusStop>>();
+            busStopRepository.Count(Arg.Any<Expression<Func<BusStop, bool>>>()).Returns(0);
+
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusStopRepository.Returns(busStopRepository);
+
+            BusStopService busStopService = new BusStopService(unitOfWork);
+
+            BusStopBL busStop = new BusStopBL()
+            {
+                Name = "Bus stop"
+            };
+
+            // Act
+            string validationResult = busStopService.GetValidationError(busStop);
+
+            // Assert
+            Assert.IsNull(validationResult);
+        }
+
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" ")]
+        public void GetValidationError_WhenBusStopNameIsEmptyString_ReturnsNull(string name)
+        {
+            // Arrange
+            IRepository<BusStop> busStopRepository = Substitute.For<IRepository<BusStop>>();
+            busStopRepository.Count(Arg.Any<Expression<Func<BusStop, bool>>>()).Returns(0);
+
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusStopRepository.Returns(busStopRepository);
+
+            BusStopService busStopService = new BusStopService(unitOfWork);
+
+            BusStopBL busStop = new BusStopBL()
+            {
+                Name = name
+            };
+
+            // Act
+            string validationResult = busStopService.GetValidationError(busStop);
+
+            // Assert
+            Assert.AreEqual("Bus stop name must not be empty!", validationResult);
+        }
+
+        [Test]
+        public void GetValidationError_WhenBusStopCoordinatesAlreadyExist_ReturnsNull()
+        {
+            // Arrange
+            IRepository<BusStop> busStopRepository = Substitute.For<IRepository<BusStop>>();
+            busStopRepository.Count(Arg.Any<Expression<Func<BusStop, bool>>>()).Returns(1);
+
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusStopRepository.Returns(busStopRepository);
+
+            BusStopService busStopService = new BusStopService(unitOfWork);
+
+            BusStopBL busStop = new BusStopBL()
+            {
+                Name = "Bus stop"
+            };
+
+            // Act
+            string validationResult = busStopService.GetValidationError(busStop);
+
+            // Assert
+            Assert.AreEqual("Bus stop with those coordinates already exists!", validationResult);
+        }
+
         [Test]
         public void Get_WhenCalled_ReturnsAllBusStops()
         {
             // Arrange
-            IRepository<GlogowskiBus.DAL.Entities.BusStop> busStopRepository = new FakeRepositories().BusStopRepository;
+            IRepository<BusStop> busStopRepository = Substitute.For<IRepository<BusStop>>();
+            busStopRepository.Get().Returns(busStopsList.Select(x => (BusStop)x).ToList());
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusStopRepository.Returns(busStopRepository);
@@ -26,32 +128,20 @@ namespace GlogowskiBus.UnitTests
             BusStopService busStopService = new BusStopService(unitOfWork);
 
             // Act
-            IList<BusStop> busStops = busStopService.Get();
+            IList<BusStopBL> busStops = busStopService.Get();
 
             // Assert
-            Assert.AreEqual(3, busStops.Count());
-
-            Assert.AreEqual(1, busStops[0].Id);
-            Assert.AreEqual("Bus stop 1", busStops[0].Name);
-            Assert.AreEqual(1, busStops[0].Latitude);
-            Assert.AreEqual(3, busStops[0].Longitude);
-
-            Assert.AreEqual(2, busStops[1].Id);
-            Assert.AreEqual("Bus stop 2", busStops[1].Name);
-            Assert.AreEqual(3, busStops[1].Latitude);
-            Assert.AreEqual(1, busStops[1].Longitude);
-
-            Assert.AreEqual(4, busStops[2].Id);
-            Assert.AreEqual("Bus stop 4", busStops[2].Name);
-            Assert.AreEqual(4, busStops[2].Latitude);
-            Assert.AreEqual(4, busStops[2].Longitude);
+            Assert.AreEqual(busStopsList.Count, busStops.Count);
+            for (int i = 0; i < busStops.Count; i++)
+                AssertThatBusStopsAreEqual(busStopsList[i], busStops[i]);
         }
 
         [Test]
         public void GetById_WhenCalled_ReturnsBusStop()
         {
             // Arrange
-            IRepository<GlogowskiBus.DAL.Entities.BusStop> busStopRepository = new FakeRepositories().BusStopRepository;
+            IRepository<BusStop> busStopRepository = Substitute.For<IRepository<BusStop>>();
+            busStopRepository.GetById(1).Returns((BusStop)busStopsList[0]);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusStopRepository.Returns(busStopRepository);
@@ -59,20 +149,18 @@ namespace GlogowskiBus.UnitTests
             BusStopService busStopService = new BusStopService(unitOfWork);
 
             // Act
-            BusStop busStop = busStopService.GetById(1);
+            BusStopBL busStop = busStopService.GetById(1);
 
             // Assert
-            Assert.AreEqual(1, busStop.Id);
-            Assert.AreEqual("Bus stop 1", busStop.Name);
-            Assert.AreEqual(1, busStop.Latitude);
-            Assert.AreEqual(3, busStop.Longitude);
+            AssertThatBusStopsAreEqual(busStopsList[0], busStop);
         }
 
         [Test]
         public void GetById_WhenBusStopIdDoesNotExist_ReturnsNull()
         {
             // Arrange
-            IRepository<GlogowskiBus.DAL.Entities.BusStop> busStopRepository = new FakeRepositories().BusStopRepository;
+            IRepository<BusStop> busStopRepository = Substitute.For<IRepository<BusStop>>();
+            busStopRepository.GetById(3).Returns((BusStop)null);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusStopRepository.Returns(busStopRepository);
@@ -80,260 +168,176 @@ namespace GlogowskiBus.UnitTests
             BusStopService busStopService = new BusStopService(unitOfWork);
 
             // Act
-            BusStop busStop = busStopService.GetById(3);
+            BusStopBL busStop = busStopService.GetById(3);
 
             // Assert
             Assert.IsNull(busStop);
         }
 
         [Test]
-        public void Insert_WhenCalled_InsertsBusStop()
+        public void Insert_WhenBusStopIsValid_InsertsBusStop()
         {
             // Arrange
-            IRepository<GlogowskiBus.DAL.Entities.BusStop> busStopRepository = new FakeRepositories().BusStopRepository;
+            IRepository<BusStop> busStopRepository = Substitute.For<IRepository<BusStop>>();
+            busStopRepository.Insert(Arg.Any<BusStop>()).Returns(x => (BusStop)x[0]);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusStopRepository.Returns(busStopRepository);
 
             BusStopService busStopService = new BusStopService(unitOfWork);
 
-            BusStop newBusStop = new BusStop()
+            BusStopBL busStop = new BusStopBL()
             {
-                Name = "Bus stop 3",
-                Latitude = 1,
-                Longitude = 2
+                Name = "Bus stop"
             };
 
             // Act
-            BusStop busStop = busStopService.Insert(newBusStop);
+            BusStopBL newBusStop = busStopService.Insert(busStop);
 
             // Assert
+            busStopRepository.Received().Insert(Arg.Any<BusStop>());
             unitOfWork.Received().Save();
-
-            Assert.AreEqual(5, busStop.Id);
-            Assert.AreEqual("Bus stop 3", busStop.Name);
-            Assert.AreEqual(1, busStop.Latitude);
-            Assert.AreEqual(2, busStop.Longitude);
-
-            Assert.AreEqual("Bus stop 3", busStopRepository.GetById(5).Name);
-            Assert.AreEqual(1, busStopRepository.GetById(5).Latitude);
-            Assert.AreEqual(2, busStopRepository.GetById(5).Longitude);
+            AssertThatBusStopsAreEqual(busStop, newBusStop);
         }
 
-        [TestCase(null)]
-        [TestCase("")]
-        [TestCase(" ")]
-        public void Insert_WhenBusStopNameIsEmptyString_ThrowsException(string busStopName)
+        [Test]
+        public void Insert_WhenBusStopIsNotValid_ThrowsException()
         {
             // Arrange
-            IRepository<GlogowskiBus.DAL.Entities.BusStop> busStopRepository = new FakeRepositories().BusStopRepository;
+            IRepository<BusStop> busStopRepository = Substitute.For<IRepository<BusStop>>();
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusStopRepository.Returns(busStopRepository);
 
             BusStopService busStopService = new BusStopService(unitOfWork);
 
-            BusStop newBusStop = new BusStop()
+            BusStopBL busStop = new BusStopBL()
             {
-                Name = busStopName,
-                Latitude = 1,
-                Longitude = 2
+                Name = null
             };
-
-            BusStop busStop = null;
 
             try
             {
                 // Act
-                busStop = busStopService.Insert(newBusStop);
+                busStopService.Insert(busStop);
             }
             catch (Exception e)
             {
                 // Assert
                 Assert.AreEqual("Bus stop name must not be empty!", e.Message);
+                busStopRepository.DidNotReceive().Insert(Arg.Any<BusStop>());
                 unitOfWork.DidNotReceive().Save();
-                Assert.IsNull(busStop);
                 Assert.Pass();
             }
             Assert.Fail("Exception should be thrown!");
         }
 
         [Test]
-        public void Insert_WhenBusStopCoordinatesAlreadyExist_ThrowsException()
+        public void Update_WhenBusStopIsValid_UpdatesBusStop()
         {
             // Arrange
-            IRepository<GlogowskiBus.DAL.Entities.BusStop> busStopRepository = new FakeRepositories().BusStopRepository;
+            BusStop existingBusStop = (BusStop)busStopsList[0];
+
+            IRepository<BusStop> busStopRepository = Substitute.For<IRepository<BusStop>>();
+            busStopRepository.GetById(1).Returns(existingBusStop);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusStopRepository.Returns(busStopRepository);
 
             BusStopService busStopService = new BusStopService(unitOfWork);
 
-            BusStop newBusStop = new BusStop()
+            BusStopBL busStop = new BusStopBL()
             {
-                Name = "Bus stop 3",
-                Latitude = 1,
-                Longitude = 3
+                Id = 1,
+                Name = "Updated bus stop",
+                Latitude = 3,
+                Longitude = 4
             };
 
-            BusStop busStop = null;
+            // Act
+            busStopService.Update(busStop);
+
+            // Assert
+            busStopRepository.Received().Update(Arg.Any<BusStop>());
+            unitOfWork.Received().Save();
+            AssertThatBusStopsAreEqual(busStop, (BusStopBL)existingBusStop);
+        }
+
+        [Test]
+        public void Update_WhenBusStopIsNotValid_ThrowsException()
+        {
+            // Arrange
+            BusStop existingBusStop = (BusStop)busStopsList[0];
+
+            IRepository<BusStop> busStopRepository = Substitute.For<IRepository<BusStop>>();
+            busStopRepository.GetById(1).Returns(existingBusStop);
+
+            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
+            unitOfWork.BusStopRepository.Returns(busStopRepository);
+
+            BusStopService busStopService = new BusStopService(unitOfWork);
+
+            BusStopBL busStop = new BusStopBL()
+            {
+                Id = 1,
+                Name = null
+            };
 
             try
             {
                 // Act
-                busStop = busStopService.Insert(newBusStop);
+                busStopService.Update(busStop);
             }
             catch (Exception e)
             {
                 // Assert
-                Assert.AreEqual("Bus stop with those coordinates already exists!", e.Message);
+                Assert.AreEqual("Bus stop name must not be empty!", e.Message);
+                busStopRepository.DidNotReceive().Update(Arg.Any<BusStop>());
                 unitOfWork.DidNotReceive().Save();
-                Assert.IsNull(busStop);
                 Assert.Pass();
             }
             Assert.Fail("Exception should be thrown!");
-        }
-
-        [Test]
-        public void Update_WhenCalled_UpdatesBusStop()
-        {
-            // Arrange
-            IRepository<GlogowskiBus.DAL.Entities.BusStop> busStopRepository = new FakeRepositories().BusStopRepository;
-
-            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
-            unitOfWork.BusStopRepository.Returns(busStopRepository);
-
-            BusStopService busStopService = new BusStopService(unitOfWork);
-
-            BusStop existingBusStop = new BusStop()
-            {
-                Id = 1,
-                Name = "Bus stop 3",
-                Latitude = 1,
-                Longitude = 2
-            };
-
-            // Act
-            busStopService.Update(existingBusStop);
-
-            // Assert
-            unitOfWork.Received().Save();
-
-            Assert.AreEqual("Bus stop 3", busStopRepository.GetById(1).Name);
-            Assert.AreEqual(1, busStopRepository.GetById(1).Latitude);
-            Assert.AreEqual(2, busStopRepository.GetById(1).Longitude);
         }
 
         [Test]
         public void Update_WhenBusStopIdDoesNotExist_ThrowsException()
         {
             // Arrange
-            IRepository<GlogowskiBus.DAL.Entities.BusStop> busStopRepository = new FakeRepositories().BusStopRepository;
+            IRepository<BusStop> busStopRepository = Substitute.For<IRepository<BusStop>>();
+            busStopRepository.GetById(3).Returns((BusStop)null);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusStopRepository.Returns(busStopRepository);
 
             BusStopService busStopService = new BusStopService(unitOfWork);
 
-            BusStop existingBusStop = new BusStop()
+            BusStopBL busStop = new BusStopBL()
             {
                 Id = 3,
-                Name = "Bus stop 3",
-                Latitude = 1,
-                Longitude = 2
+                Name = "Updated bus stop"
             };
 
             // Act
-            BusStop busStop = busStopService.Update(existingBusStop);
+            BusStopBL updatedBusStop = busStopService.Update(busStop);
             
             // Assert
-            Assert.IsNull(busStop);
+            Assert.IsNull(updatedBusStop);
             unitOfWork.DidNotReceive().Save();
-        }
-
-        [TestCase(null)]
-        [TestCase("")]
-        [TestCase(" ")]
-        public void Update_WhenBusStopNameIsEmptyString_ThrowsException(string busStopName)
-        {
-            // Arrange
-            IRepository<GlogowskiBus.DAL.Entities.BusStop> busStopRepository = new FakeRepositories().BusStopRepository;
-
-            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
-            unitOfWork.BusStopRepository.Returns(busStopRepository);
-
-            BusStopService busStopService = new BusStopService(unitOfWork);
-
-            BusStop existingBusStop = new BusStop()
-            {
-                Id = 1,
-                Name = busStopName,
-                Latitude = 1,
-                Longitude = 2
-            };
-
-            try
-            {
-                // Act
-                busStopService.Update(existingBusStop);
-            }
-            catch (Exception e)
-            {
-                // Assert
-                Assert.AreEqual("Bus stop name must not be empty!", e.Message);
-                unitOfWork.DidNotReceive().Save();
-
-                Assert.AreEqual("Bus stop 1", busStopRepository.GetById(1).Name);
-                Assert.AreEqual(1, busStopRepository.GetById(1).Latitude);
-                Assert.AreEqual(3, busStopRepository.GetById(1).Longitude);
-
-                Assert.Pass();
-            }
-            Assert.Fail("Exception should be thrown!");
-        }
-
-        [Test]
-        public void Update_WhenBusStopCoordinatesAlreadyExist_ThrowsException()
-        {
-            // Arrange
-            IRepository<GlogowskiBus.DAL.Entities.BusStop> busStopRepository = new FakeRepositories().BusStopRepository;
-
-            IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
-            unitOfWork.BusStopRepository.Returns(busStopRepository);
-
-            BusStopService busStopService = new BusStopService(unitOfWork);
-
-            BusStop existingBusStop = new BusStop()
-            {
-                Id = 1,
-                Name = "Bus stop 3",
-                Latitude = 3,
-                Longitude = 1
-            };
-
-            try
-            {
-                // Act
-                busStopService.Update(existingBusStop);
-            }
-            catch (Exception e)
-            {
-                // Assert
-                Assert.AreEqual("Bus stop with those coordinates already exists!", e.Message);
-                unitOfWork.DidNotReceive().Save();
-                Assert.AreEqual("Bus stop 1", busStopRepository.GetById(1).Name);
-                Assert.AreEqual(1, busStopRepository.GetById(1).Latitude);
-                Assert.AreEqual(3, busStopRepository.GetById(1).Longitude);
-                Assert.Pass();
-            }
-            Assert.Fail("Exception should be thrown!");
+            busStopRepository.DidNotReceive().Update(Arg.Any<BusStop>());
         }
 
         [Test]
         public void Delete_WhenCalled_DeletesBusStop()
         {
             // Arrange
-            IRepository<GlogowskiBus.DAL.Entities.BusStop> busStopRepository = new FakeRepositories().BusStopRepository;
+            BusStop existingBusStop = new BusStop()
+            {
+                Id = 1,
+                Points =new List<Point>()
+            };
+
+            IRepository<BusStop> busStopRepository = Substitute.For<IRepository<BusStop>>();
+            busStopRepository.GetById(1).Returns(existingBusStop);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusStopRepository.Returns(busStopRepository);
@@ -341,19 +345,20 @@ namespace GlogowskiBus.UnitTests
             BusStopService busStopService = new BusStopService(unitOfWork);
 
             // Act
-            int? busStopId = busStopService.Delete(4);
+            int? busStopId = busStopService.Delete(1);
 
             // Assert
-            Assert.AreEqual(4, busStopId);
+            Assert.AreEqual(1, busStopId);
+            busStopRepository.Received().Delete(1);
             unitOfWork.Received().Save();
-            Assert.IsNull(busStopRepository.GetById(4));
         }
 
         [Test]
         public void Delete_WhenBusStopIdDoesNotExist_DeletesBusStop()
         {
             // Arrange
-            IRepository<GlogowskiBus.DAL.Entities.BusStop> busStopRepository = new FakeRepositories().BusStopRepository;
+            IRepository<BusStop> busStopRepository = Substitute.For<IRepository<BusStop>>();
+            busStopRepository.GetById(3).Returns((BusStop)null);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusStopRepository.Returns(busStopRepository);
@@ -365,6 +370,7 @@ namespace GlogowskiBus.UnitTests
              
             // Assert
             Assert.IsNull(busStopId);
+            busStopRepository.DidNotReceive().Delete(Arg.Any<int>());
             unitOfWork.DidNotReceive().Save();
         }
 
@@ -372,26 +378,34 @@ namespace GlogowskiBus.UnitTests
         public void Delete_WhenBusStopIsUsed_ThrowsException()
         {
             // Arrange
-            IRepository<GlogowskiBus.DAL.Entities.BusStop> busStopRepository = new FakeRepositories().BusStopRepository;
+            BusStop existingBusStop = new BusStop()
+            {
+                Id = 1,
+                Points = new List<Point>()
+                {
+                    new Point()
+                }
+            };
+
+            IRepository<BusStop> busStopRepository = Substitute.For<IRepository<BusStop>>();
+            busStopRepository.GetById(1).Returns(existingBusStop);
 
             IUnitOfWork unitOfWork = Substitute.For<IUnitOfWork>();
             unitOfWork.BusStopRepository.Returns(busStopRepository);
 
             BusStopService busStopService = new BusStopService(unitOfWork);
 
-            int? busStopId = null;
-
             try
             {
                 // Act
-                busStopId = busStopService.Delete(1);
+                busStopService.Delete(1);
             }
             catch (Exception e)
             {
                 // Assert
                 Assert.AreEqual("Cannot delete bus stop which is used by at least one bus line!", e.Message);
+                busStopRepository.DidNotReceive().Delete(Arg.Any<int>());
                 unitOfWork.DidNotReceive().Save();
-                Assert.IsNull(busStopId);
                 Assert.Pass();
             }
             Assert.Fail("Exception should be thrown!");

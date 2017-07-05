@@ -18,44 +18,46 @@ namespace GlogowskiBus.UnitTests
     [TestFixture]
     public class BusStopControllerTests
     {
+        public void AssertThatBusStopsAreEqual(BusStopDTO expectedBusStop, BusStopDTO actualBusStop)
+        {
+            Assert.AreEqual(expectedBusStop.Id, actualBusStop.Id);
+            Assert.AreEqual(expectedBusStop.Name, actualBusStop.Name);
+            Assert.AreEqual(expectedBusStop.Latitude, actualBusStop.Latitude);
+            Assert.AreEqual(expectedBusStop.Longitude, actualBusStop.Longitude);
+        }
+
+        private static readonly List<BusStopDTO> busStopsList = new List<BusStopDTO>()
+        {
+            new BusStopDTO()
+            {
+                Id = 1,
+                Name = "Bus stop 1",
+                Latitude = 1,
+                Longitude = 3
+            },
+            new BusStopDTO()
+            {
+                Id = 2,
+                Name = "Bus stop 2",
+                Latitude = 3,
+                Longitude = 1
+            }
+        };
+
         [Test]
         public void GetBusStops_WhenCalled_ReturnsAllBusStops()
         {
             // Arrange
             IBusStopService busStopService = Substitute.For<IBusStopService>();
-            busStopService.Get().Returns(new List<BusStop>()
-            {
-                new BusStop()
-                {
-                    Id = 1,
-                    Name = "Bus stop 1",
-                    Latitude = 1,
-                    Longitude = 3
-                },
-                new BusStop()
-                {
-                    Id = 2,
-                    Name = "Bus stop 2",
-                    Latitude = 3,
-                    Longitude = 1
-                }
-            });
+            busStopService.Get().Returns(busStopsList.Select(x => (BusStopBL)x).ToList());
 
             // Act
             IList<BusStopDTO> busStops = new BusStopController(busStopService).GetBusStops();
 
             // Assert
-            Assert.AreEqual(2, busStops.Count);
-
-            Assert.AreEqual(1, busStops[0].Id);
-            Assert.AreEqual("Bus stop 1", busStops[0].Name);
-            Assert.AreEqual(1, busStops[0].Latitude);
-            Assert.AreEqual(3, busStops[0].Longitude);
-
-            Assert.AreEqual(2, busStops[1].Id);
-            Assert.AreEqual("Bus stop 2", busStops[1].Name);
-            Assert.AreEqual(3, busStops[1].Latitude);
-            Assert.AreEqual(1, busStops[1].Longitude);
+            Assert.AreEqual(busStopsList.Count, busStops.Count);
+            for (int i = 0; i < busStops.Count; i++)
+                AssertThatBusStopsAreEqual(busStopsList[i], busStops[i]);
         }
 
         [Test]
@@ -63,23 +65,14 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IBusStopService busStopService = Substitute.For<IBusStopService>();
-            busStopService.GetById(Arg.Is<int>(1)).Returns(new BusStop()
-            {
-                Id = 1,
-                Name = "Bus stop 1",
-                Latitude = 1,
-                Longitude = 3
-            });
+            busStopService.GetById(Arg.Is<int>(1)).Returns((BusStopBL)busStopsList[0]);
 
             // Act
             OkNegotiatedContentResult<BusStopDTO> result = new BusStopController(busStopService).GetBusStop(1) as OkNegotiatedContentResult<BusStopDTO>;
             BusStopDTO busStop = result.Content;
 
             // Assert
-            Assert.AreEqual(1, busStop.Id);
-            Assert.AreEqual("Bus stop 1", busStop.Name);
-            Assert.AreEqual(1, busStop.Latitude);
-            Assert.AreEqual(3, busStop.Longitude);
+            AssertThatBusStopsAreEqual(busStopsList[0], busStop);
         }
 
         [Test]
@@ -87,13 +80,12 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IBusStopService busStopService = Substitute.For<IBusStopService>();
-            busStopService.GetById(Arg.Is<int>(3)).Returns((BusStop)null);
+            busStopService.GetById(Arg.Is<int>(3)).Returns((BusStopBL)null);
 
             // Act
             NotFoundResult result = new BusStopController(busStopService).GetBusStop(3) as NotFoundResult;
 
             // Assert
-            busStopService.Received().GetById(3);
             Assert.IsNotNull(result);
         }
 
@@ -102,30 +94,14 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IBusStopService busStopService = Substitute.For<IBusStopService>();
-            busStopService.Insert(Arg.Any<BusStop>()).Returns(new BusStop()
-            {
-                Id = 3,
-                Name = "Bus stop 3",
-                Latitude = 1,
-                Longitude = 2
-            });
-
-            BusStopDTO newBusStop = new BusStopDTO()
-            {
-                Name = "Bus stop 3",
-                Latitude = 1,
-                Longitude = 2
-            };
+            busStopService.Insert(Arg.Any<BusStopBL>()).Returns((BusStopBL)busStopsList[0]);
 
             // Act
-            CreatedAtRouteNegotiatedContentResult<BusStopDTO> result = new BusStopController(busStopService).PostBusStop(newBusStop) as CreatedAtRouteNegotiatedContentResult<BusStopDTO>;
+            CreatedAtRouteNegotiatedContentResult<BusStopDTO> result = new BusStopController(busStopService).PostBusStop(busStopsList[0]) as CreatedAtRouteNegotiatedContentResult<BusStopDTO>;
             BusStopDTO busStop = result.Content;
 
             // Assert
-            Assert.AreEqual(3, busStop.Id);
-            Assert.AreEqual("Bus stop 3", busStop.Name);
-            Assert.AreEqual(1, busStop.Latitude);
-            Assert.AreEqual(2, busStop.Longitude);
+            AssertThatBusStopsAreEqual(busStopsList[0], busStop);
         }
 
         [Test]
@@ -133,7 +109,7 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IBusStopService busStopService = Substitute.For<IBusStopService>();
-            busStopService.When(x => x.Insert(Arg.Any<BusStop>())).Throw(new Exception("Exception message"));
+            busStopService.When(x => x.Insert(Arg.Any<BusStopBL>())).Throw(new Exception("Exception message"));
 
             // Act
             BadRequestErrorMessageResult result = new BusStopController(busStopService).PostBusStop(new BusStopDTO()) as BadRequestErrorMessageResult;
@@ -147,26 +123,15 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IBusStopService busStopService = Substitute.For<IBusStopService>();
-            busStopService.Update(Arg.Any<BusStop>()).Returns(x => (BusStop)x[0]);
-
-            BusStopDTO existingBusStop = new BusStopDTO()
-            {
-                Id = 1,
-                Name = "Bus stop 3",
-                Latitude = 1,
-                Longitude = 2
-            };
+            busStopService.Update(Arg.Any<BusStopBL>()).Returns((BusStopBL)busStopsList[0]);
 
             // Act
 
-            OkNegotiatedContentResult<BusStopDTO> result = new BusStopController(busStopService).PutBusStop(existingBusStop) as OkNegotiatedContentResult<BusStopDTO>;
+            OkNegotiatedContentResult<BusStopDTO> result = new BusStopController(busStopService).PutBusStop(busStopsList[0]) as OkNegotiatedContentResult<BusStopDTO>;
             BusStopDTO busStop = result.Content;
 
             // Assert
-            Assert.AreEqual(1, busStop.Id);
-            Assert.AreEqual("Bus stop 3", busStop.Name);
-            Assert.AreEqual(1, busStop.Latitude);
-            Assert.AreEqual(2, busStop.Longitude);
+            AssertThatBusStopsAreEqual(busStopsList[0], busStop);
         }
 
         [Test]
@@ -174,18 +139,10 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IBusStopService busStopService = Substitute.For<IBusStopService>();
-            busStopService.Update(Arg.Any<BusStop>()).Returns((BusStop)null);
-
-            BusStopDTO busStop = new BusStopDTO()
-            {
-                Id = 3,
-                Name = "Bus stop 3",
-                Latitude = 1,
-                Longitude = 2
-            };
+            busStopService.Update(Arg.Any<BusStopBL>()).Returns((BusStopBL)null);
 
             // Act
-            NotFoundResult result = new BusStopController(busStopService).PutBusStop(busStop) as NotFoundResult;
+            NotFoundResult result = new BusStopController(busStopService).PutBusStop(new BusStopDTO() { Id = 3 }) as NotFoundResult;
 
             // Assert
             Assert.IsNotNull(result);
@@ -196,18 +153,10 @@ namespace GlogowskiBus.UnitTests
         {
             // Arrange
             IBusStopService busStopService = Substitute.For<IBusStopService>();
-            busStopService.When(x => x.Update(Arg.Any<BusStop>())).Throw(new Exception("Exception message"));
-
-            BusStopDTO busStop = new BusStopDTO()
-            {
-                Id = 1,
-                Name = "",
-                Latitude = 5.6,
-                Longitude = 6.7
-            };
+            busStopService.When(x => x.Update(Arg.Any<BusStopBL>())).Throw(new Exception("Exception message"));
 
             // Act
-            BadRequestErrorMessageResult result = new BusStopController(busStopService).PutBusStop(busStop) as BadRequestErrorMessageResult;
+            BadRequestErrorMessageResult result = new BusStopController(busStopService).PutBusStop(new BusStopDTO() { }) as BadRequestErrorMessageResult;
 
             // Assert
             Assert.AreEqual("Exception message", result.Message);

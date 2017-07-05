@@ -47,7 +47,7 @@
         {
             sendAjaxRequest('/api/BusLine/' + busLine.id, 'DELETE', null, function(response)
             {
-                engine.selectedBusLine(null);
+                engine.selectBusLine(null);
                 engine.busLines.remove(busLine);
                 busLine.dispose();
 

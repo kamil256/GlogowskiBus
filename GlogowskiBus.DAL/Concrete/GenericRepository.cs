@@ -22,7 +22,7 @@ namespace GlogowskiBus.DAL.Concrete
             IQueryable<TEntity> query = context.Set<TEntity>();
             if (filter != null)
                 query = query.Where(filter);
-            return query;
+            return query.ToList();
         }
 
         public int Count(Expression<Func<TEntity, bool>> filter = null)
@@ -49,16 +49,16 @@ namespace GlogowskiBus.DAL.Concrete
             context.Entry(entity).State = EntityState.Modified;
         }
 
-        public virtual TEntity Delete(int id)
+        public virtual void Delete(int id)
         {
-            return Delete(context.Set<TEntity>().Find(id));
+            Delete(context.Set<TEntity>().Find(id));
         }
 
-        public virtual TEntity Delete(TEntity entity)
+        public virtual void Delete(TEntity entity)
         {
             if (context.Entry(entity).State == EntityState.Deleted)
                 context.Set<TEntity>().Attach(entity);
-            return context.Set<TEntity>().Remove(entity);
+            context.Set<TEntity>().Remove(entity);
         }
     }
 }

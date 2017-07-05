@@ -1,12 +1,13 @@
-﻿using GlogowskiBus.BLL.Concrete;
+﻿using GlogowskiBus.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace GlogowskiBus.UI.Models
+namespace GlogowskiBus.BLL.Concrete
 {
-    public class PointDTO
+    public class PointBL
     {
         public int Id { get; set; }
         public double Latitude { get; set; }
@@ -15,9 +16,9 @@ namespace GlogowskiBus.UI.Models
 
         public int? BusStopId { get; set; }
 
-        public static explicit operator PointDTO(PointBL point)
+        public static explicit operator PointBL(Point point)
         {
-            return new PointDTO()
+            return new PointBL()
             {
                 Id = point.Id,
                 Latitude = point.Latitude,
@@ -27,11 +28,11 @@ namespace GlogowskiBus.UI.Models
             };
         }
 
-        public static explicit operator PointBL(PointDTO point)
+        public static explicit operator Point(PointBL point)
         {
-            return new PointBL()
+            return new Point()
             {
-                Id = point.Id,
+                Id = point.Id,  
                 Latitude = point.Latitude,
                 Longitude = point.Longitude,
                 TimeOffset = point.TimeOffset,

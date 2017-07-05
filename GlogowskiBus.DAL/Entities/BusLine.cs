@@ -13,6 +13,6 @@ namespace GlogowskiBus.DAL.Entities
         public int Id { get; set; }
         public string BusNumber { get; set; }
 
-        public virtual IList<Route> Routes { get; set; }
+        public virtual ICollection<Route> Routes { get; set; }
     }
 }
