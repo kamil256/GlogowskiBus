@@ -269,6 +269,7 @@ aside > .content p {
 
 .unselectableList > div > p:first-child {
     font-weight: bold;
+    text-transform:uppercase;
 }
 
 /***** Bus stops and bus routes list *****/
@@ -300,6 +301,7 @@ aside > .content p {
 
 .selectableList > div > div:nth-child(2) > p:first-child {
     font-weight: bold;
+    text-transform:uppercase;
 }
 
 .selectableList > div:hover, .selectableList > div.active {
