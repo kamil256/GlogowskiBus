@@ -27,6 +27,11 @@
     self.selectedBusStop = engine.selectedBusStop;
     self.selectBusStop = engine.selectBusStop;
 
+
+
+
+    self.busStops = engine.busStops;
+
     self.addBusStop = function()
     {
         navigationViewModel.selectView('DODAWANIE PRZYSTANKU');

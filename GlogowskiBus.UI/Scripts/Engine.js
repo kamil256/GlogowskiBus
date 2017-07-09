@@ -78,6 +78,7 @@
             var result = [];
             if (self.selectedRoute())
             {
+                console.log('computed route');
                 var originalDepartureTimes = self.selectedRoute().departureTimes();
                 for (var i = 0; i < 24; i++)
                     result[i] = [];
@@ -104,6 +105,7 @@
             var result = [];
             if (self.selectedBusLine() && self.selectedBusStop())
             {
+                console.log('computed line');
                 var originalDepartureTimes = self.selectedBusLine().departureTimes();
                 for (var i = 0; i < 24; i++)
                     result[i] = [];
@@ -218,9 +220,11 @@
 
     function updateBuses()
     {
+        console.log('updateBuses');
         for (var i = 0; i < self.departureTimes().length; i++)
             if (self.departureTimes()[i].isOnTour())
             {
+                console.log('on tour');
                 var bus = null;
                 for (var j = 0; j < self.buses().length; j++)
                     if (self.buses()[j].departureTime === self.departureTimes()[i])
@@ -235,11 +239,13 @@
                     self.buses.push(bus);
                 }
             }
+    };
 
+    if (!disableBuses)
         setInterval(function()
         {
+            console.log('interval');
             if (serverTime.now().getSeconds() === 0)
                 updateBuses();
         }, 1000);
-    };    
 }

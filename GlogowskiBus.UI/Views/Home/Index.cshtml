@@ -5,13 +5,14 @@
 
 <div id="timeTable">
     <!-- ko if: isSelected -->
+    <p>Bus stops: <span data-bind="text: busStops().length"></span></p>
+
         <p>PRZYSTANEK</p>
         <select class="form-control" data-bind="options: busStops, optionsText: 'name', optionsCaption: '-', value: selectedBusStop"></select>
-        <br />
 
         <!-- ko if: selectedBusStop() -->
             <p>LINIA</p>
-            <ul id="busLinesTiles" data-bind="foreach: selectedBusStop().busLines">
+            <ul class="busLinesTiles" data-bind="foreach: selectedBusStop().busLines">
                 <li data-bind="attr: { title: busStops()[0].name() + ' - ' + busStops()[busStops().length - 1].name() }, click: function() { $root.selectDepartureTime($data.getNextDepartureTime()); }, css: { active: $root.selectedBusLine() === $data }, text: busNumber()"></li>
             </ul>
         <!-- /ko -->

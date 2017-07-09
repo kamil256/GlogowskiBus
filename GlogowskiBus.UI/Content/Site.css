@@ -1,9 +1,4 @@
-﻿/* Set width on the form input elements since they're 100% wide by default */
-/*input,
-select,
-textarea {
-    max-width: 280px;
-}*/
+﻿/***** Document *****/
 
 html, body {
     box-sizing: border-box;
@@ -12,10 +7,14 @@ html, body {
     padding: 0;
 }
 
+/***** Map *****/
+
 #map {
     height: 100%;
     width: 100%;
 }
+
+/***** Aside *****/
 
 aside {
     border-radius: 3px;
@@ -26,6 +25,8 @@ aside {
     top: 10px;
     width: 500px;
 }
+
+/***** Aside tabs *****/
 
 aside .tabs{
     border-top-left-radius: 3px;
@@ -81,6 +82,8 @@ aside .tabs.threeTabs > .tab:last-child {
     width: 34%;
 }
 
+/***** Aside content *****/
+
 aside > .content {
     background-color: white;
     border-bottom-left-radius: 3px;
@@ -91,22 +94,23 @@ aside > .content {
     width: 100%;
 }
 
-aside p {
-    color: black;
-    /*color: #eee;*/
-    /*font-weight: bold;*/
+aside > .content p {
+    margin: 20px 0 10px;
 }
 
-aside ul#busLinesTiles {
+/***** Bus lines tiles *****/
+
+.busLinesTiles {
     list-style-type: none;
     margin: 0;
-    margin-bottom: 5px;
     padding: 0;
     overflow: auto;
 }
 
-aside ul#busLinesTiles > li {
+.busLinesTiles > li {
+    background-color: #999;
     border-radius: 2px;
+    color: white;
     cursor: pointer;
     float: left;
     font-weight: bold;
@@ -118,38 +122,13 @@ aside ul#busLinesTiles > li {
     width: 50px;
 }
 
-aside ul#busLinesTiles > li:not(.active) {
-    /*background-color: rgba(0, 0, 0, 0.2);*/
-    background-color: #999;
-    color: white;
-    /*color: #777;*/
-}
-
-aside ul#busLinesTiles > li.active {
+.busLinesTiles > li.active {
     background-color: rgba(204, 24, 30, 1);
-    /*background-color: rgba(0, 0, 0, 0.75);*/
-    /*color: #ccc;*/
-    color: white;
 }
 
-aside .textButton {
-    color: #aaa;
-    cursor: pointer;
-    font-weight: normal;
-}
+/***** Day of week switch *****/
 
-/*aside select {
-    max-width: initial;
-}*/
-
-aside select:focus {
-    /*outline-color: rgba(204, 24, 30, 1) !important;*/
-    /*border-color: rgba(204, 24, 30, 1) !important;*/
-    /*box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(204, 24, 30, 1) !important;*/
-    /*outline: 0 none !important;*/
-}
-
-aside ul.dayOfWeek {
+.dayOfWeek {
     cursor: pointer;
     margin: 0;
     margin-top: 20px;
@@ -157,24 +136,26 @@ aside ul.dayOfWeek {
     list-style-type: none;
 }
 
-aside ul.dayOfWeek > li {
+.dayOfWeek > li {
     border-bottom: 1px solid #999;
     color: #999;
     float: left;
     font-weight: bold;
-    margin-bottom: 20px;
-    padding-bottom: 5px;
     text-align: center;
     width: 33%;
 }
 
-aside ul.dayOfWeek > li.active {
+.dayOfWeek > li.active {
     border-bottom: 3px solid rgba(204, 24, 30, 1);
     color: rgba(204, 24, 30, 1);
 }
 
-table.timeTable {
+/***** Time table *****/
+
+.timeTable {
     border-collapse: separate;
+    clear: both;
+    padding-top: 20px;
     width: 100%;
 }
 
@@ -188,59 +169,54 @@ table.timeTable {
     
 }
 
-.timeTable > tbody > tr > td:first-child {
-    border-right-width: 0;
-}
-
 .timeTable > tbody > tr > td {
     padding: 10px;
-}
-
-table.timeTable > tbody > tr > td {
     vertical-align: top;
 }
 
-table.timeTable > tbody > tr > td:first-child {
+.timeTable > tbody > tr > td:first-child {
+    border-bottom-left-radius: 4px;
+    border-right-width: 0;
+    border-top-left-radius: 4px;
     width: 100%;
 }
 
-table.timeTable > tbody > tr > td:first-child {
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
-}
-
-table.timeTable > tbody > tr > td:last-child {
-    border-top-right-radius: 4px;
+.timeTable > tbody > tr > td:last-child {
     border-bottom-right-radius: 4px;
+    border-top-right-radius: 4px;
 }
 
-aside #timeTable table.busStops td {
-    padding-left: 10px;
-    padding-right: 10px;
-
+.timeTable .busStops td {
+    padding: 0 10px;
 }
 
-aside #timeTable table.busStops td:first-child {
+.timeTable .busStops td:first-child {
     cursor: default;
     text-align: right;
 }
 
-aside #timeTable table.busStops td:last-child {
+.timeTable .busStops td:first-child input {
+    text-align: right;
+    width: 60px;
+}
+
+.timeTable .busStops td:last-child {
     cursor: pointer;
     width: 100%;
 }
 
-aside #timeTable table.busStops td.active {
+.timeTable .busStops td.active {
     font-weight: bold;
 }
 
-aside #timeTable .departureTimes td:last-child {
+.timeTable .departureTimes td:last-child {
     padding: 2px;
     white-space: nowrap;
 }
 
-aside #timeTable .departureTimes td div {
+.timeTable .departureTimes td div {
     border-radius: 2px;
+    color: #FFF;
     display: inline-block;
     font-size: 14px;
     font-weight: bold;
@@ -249,87 +225,103 @@ aside #timeTable .departureTimes td div {
     width: 30px;
 }
 
-aside #timeTable .departureTimes td:first-child div {
+.timeTable .departureTimes td:first-child div {
     background-color: rgba(204, 24, 30, 1);
-    color: #FFF;
     cursor: default;
 }
 
-aside #timeTable .departureTimes td:not(:first-child) div {
+.timeTable .departureTimes td:not(:first-child) div {
     background-color: #999;
-    color: #FFF;
     cursor: pointer;
 }
 
-aside #timeTable .departureTimes td:not(:first-child) div.active {
+.timeTable .departureTimes td:not(:first-child) div > span:last-child:hover {
+    color: #333;
+}
+
+.timeTable .departureTimes td:not(:first-child) div.active {
     background-color: #333;
 }
 
-/***** Bus stops and bus lines lists in /Admin/Index view *****/
+/***** New departure time *****/
+.newDepartureTime {
+    margin: 10px 0;
+    width: 100%;
+}
 
-#busLinesList > div > div {
+.newDepartureTime input {
+    width: 116px;
+}
+
+/***** Bus lines list *****/
+
+.unselectableList > div {
     border: 1px solid #ADADAD;
     border-radius: 7px;
     margin: 10px 0;
     padding: 10px 10px;
 }
 
-#busLinesList > div > div > p:first-child {
-    font-weight: bold;
+.unselectableList > div > p {
+    margin: 0;
+    margin-bottom: 5px;
 }
 
-#busLinesList > div > div > p {
-    margin-bottom: 3px;
+.unselectableList > div > p:first-child {
+    font-weight: bold;
 }
 
 /***** Bus stops and bus routes list *****/
 
-.itemsList > div {
-    /*background-color: #eee;*/
+.selectableList > div {
     border: 1px solid #ADADAD;
     border-radius: 7px;
     display: table;
     margin: 10px 0;
     overflow: auto;
-    padding: 10px 0;
+    padding: 10px 10px 10px 0;
     width: 100%;
 }
 
-.itemsList > div:hover, .itemsList > div.active {
-    background-color: #ebebeb;/*rgba(204, 24, 30, 1);*/
-    /*color: #fff;*/
+.selectableList > div > div {
+    display: table-cell;
 }
 
-.itemsList > div > div:nth-child(1) {
+.selectableList > div > div:nth-child(1) {
     text-align: center;
-    display: table-cell;
     vertical-align: middle;
     width: 40px;
 }
 
-.itemsList > div > div:nth-child(2) {
-    display: table-cell;
-}
-
-.itemsList > div > div:nth-child(2) > p:first-child {
-    font-weight: bold;
-}
-
-.itemsList > div > div:nth-child(2) > p {
-    color: inherit;
+.selectableList > div > div:nth-child(2) > p {
+    margin: 0;
     margin-bottom: 3px;
 }
 
-/***** Add bus stop in /Admin/Index view *****/
-
-#addBusStop input {
-    margin-bottom: 20px;
+.selectableList > div > div:nth-child(2) > p:first-child {
+    font-weight: bold;
 }
 
-/***** Add bus line in /Admin/Index view *****/
+.selectableList > div:hover, .selectableList > div.active {
+    background-color: #ebebeb;/*rgba(204, 24, 30, 0.8);*/
+    /*color: white;*/
+}
 
-#addBusLine input[type=text] {
-    margin-bottom: 20px;
+.selectableList > div > div:nth-child(2) table {
+    margin-bottom: 3px;
+}
+
+.selectableList > div > div:nth-child(2) table td:first-child input {
+    width: 75px;
+}
+
+.selectableList > div > div:nth-child(2) table td:last-child, .selectableList > div > div:nth-child(2) table td:last-child input {
+    width: 100%;
+}
+
+.selectableList + input {
+    display: block;
+    margin: 10px 0;
 }
 
 /***** Footer ****/

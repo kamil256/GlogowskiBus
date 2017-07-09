@@ -8,7 +8,7 @@
         <button class="btn btn-default" data-bind="click: function() { addBusStop(); }">DODAJ</button>
         <button class="btn btn-default" data-bind="click: function() { editBusStop(selectedBusStop()); }, enable: selectedBusStop">EDYTUJ</button>
         <button class="btn btn-default" data-bind="click: function() { deleteBusStop(selectedBusStop()); }, enable: selectedBusStop">USUŃ</button>
-        <div class="itemsList" data-bind="foreach: busStops">
+        <div class="selectableList" data-bind="foreach: busStops">
             <div data-bind="click: function() { $root.selectBusStop($data); }, css: { active: $root.selectedBusStop()  === $data }">
                 <div>
                     <input data-bind="checked: $root.selectedBusStop() == $data, checkedValue: true" type="radio" />
@@ -30,10 +30,10 @@
         <button class="btn btn-default" data-bind="click: function() { addBusLine(); }">DODAJ</button>
         <button class="btn btn-default" data-bind="click: function() { editBusLine(selectedBusLine()); }, enable: selectedBusLine">EDYTUJ</button>
         <button class="btn btn-default" data-bind="click: function() { deleteBusLine(selectedBusLine()); }, enable: selectedBusLine">USUŃ</button>
-        <div data-bind="foreach: busLines">
+        <div class="unselectableList" data-bind="foreach: busLines">
             <div>
                 <p data-bind="text: 'LINIA ' + busNumber()"></p>
-                <div class="itemsList" data-bind="foreach: $data.routes">
+                <div class="selectableList" data-bind="foreach: $data.routes">
                     <div data-bind="click: function() { $root.selectRoute($data); }, css: { active: $root.selectedRoute() == $data }">
                         <div>
                             <input data-bind="checked: $root.selectedRoute() == $data, checkedValue: true" type="radio" />
@@ -106,10 +106,10 @@
         <!-- /ko -->
 
         <!-- ko if: !directions() -->
-            <p>NUMER AUTOBUSU</p>
+            <p>NUMER AUTOBUSU:</p>
             <input class="form-control" data-bind="value: newBusLine().busNumber" type="text" />
 
-            <div class="itemsList" data-bind="foreach: newBusLine().routes">
+            <div class="selectableList" data-bind="foreach: newBusLine().routes">
                 <div data-bind="click: function() { $root.selectRoute($data); }, css: { active: $root.selectedRoute() == $data }">
                     <div>
                         <input data-bind="checked: $root.selectedRoute() == $data, checkedValue: true" type="radio" />
@@ -121,10 +121,19 @@
                             <!-- /ko -->
                         </p>
                         
-                        <p>SYMBOL</p>
-                        <input class="form-control" data-bind="value: indexMark" type="text" />
-                        <p>OPIS</p>
-                        <input class="form-control" data-bind="value: details" type="text" />
+                        <table>
+                            <tr>
+                                <td>
+                                    <input class="form-control" data-bind="value: indexMark" placeholder="Symbol" type="text" />
+                                </td>
+
+                                <td> - </td>
+
+                                <td>
+                                    <input class="form-control" data-bind="value: details" placeholder="Opis" type="text" />
+                                </td>
+                            </tr>
+                        </table>
 
                         <button class="btn btn-xs btn-default" data-bind="click: function() { $root.deleteRouteOfNewBusLine($data); }">USUŃ</button>
                     </div>
@@ -133,33 +142,55 @@
             <input class="btn btn-default" data-bind="click: function() { addRouteToNewBusLine(); }" type="button" value="NOWA TRASA" />
 
             <!-- ko if: selectedRoute() -->
-                <div data-bind="foreach: selectedBusStops">
-                    <p data-bind="text: name"></p>
-                    <input class="form-control" data-bind="value: originalPoint.timeOffsetInMinutes" type="number" />
-                </div>
-
                 <ul class="dayOfWeek" data-bind="foreach: serverTime.daysOfWeek">
                     <li data-bind="css: { active: $data == $root.selectedDayOfWeek() }, click: function(data, event) { $root.selectedDayOfWeek($data); }, text: $data"></li>
                 </ul>
 
-                <table class="departureTimes" data-bind="foreach: departureTimesOfSelectedRoute">
+                <table cellspacing="0" class="timeTable">
                     <tr>
                         <td>
-                            <div data-bind="text: $index"></div>
+                            <table class="busStops" data-bind="foreach: selectedBusStops()">
+                                <tr>
+                                    <td>
+                                        <input class="form-control" data-bind="value: originalPoint.timeOffsetInMinutes" placeholder="Czas odjazdu w minutach" type="number" />
+                                    </td>
+                                    <td data-bind="text: name"></td>
+                                </tr>
+                            </table>
                         </td>
-                        <td data-bind="foreach: $root.departureTimesOfSelectedRoute()[$index()]">
-                            <div>
-                                <span data-bind="text: minutes < 10 ? '0' + minutes : minutes"></span>
-                                <span data-bind="click: function() { $root.removeDepartureTimeOfNewBusLine(originalDepartureTime); }, text: 'x'"></span>
-                            </div>
+
+                        <td>
+                            <table class="departureTimes" data-bind="foreach: departureTimesOfSelectedRoute">
+                                <tr>
+                                    <td>
+                                        <div data-bind="text: $index"></div>
+                                    </td>
+                                    <td data-bind="foreach: $root.departureTimesOfSelectedRoute()[$index()]">
+                                        <div>
+                                            <span data-bind="text: minutes < 10 ? '0' + minutes : minutes"></span>
+                                            <span data-bind="click: function() { $root.removeDepartureTimeOfNewBusLine(originalDepartureTime); }, text: '&times;'"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                 </table>
-                <p>GODZINY</p>
-                <input class="form-control" data-bind="value: newDepartureTimeHours" type="number" />
-                <p>MINUTY</p>
-                <input class="form-control" data-bind="value: newDepartureTimeMinutes" type="number" />
-                <button class="btn btn-default" data-bind="click: function() { addDepartureTimeForNewBusLine(); }">DODAJ GODZINĘ ODJAZDU</button>
+
+                <table class="newDepartureTime">
+                    <tr>
+                        <td>
+                            <input class="form-control" data-bind="value: newDepartureTimeHours" placeholder="Godziny" type="number" />
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <input class="form-control" data-bind="value: newDepartureTimeMinutes" placeholder="Minuty" type="number" />
+                        </td>
+                        <td>
+                            <button class="btn btn-default" data-bind="click: function() { addDepartureTimeForNewBusLine(); }">DODAJ GODZINĘ ODJAZDU</button>
+                        </td>
+                    </tr>
+                </table>
             <!-- /ko -->
 
             <input class="btn btn-default" data-bind="click: function() { finishAddingBusLine(); }" type="button" value="DODAJ" />
@@ -177,10 +208,10 @@
         <!-- /ko -->
         
         <!-- ko if: !directions() -->
-            <p>NUMER AUTOBUSU</p>
+            <p>NUMER AUTOBUSU:</p>
             <input class="form-control" data-bind="value: editedBusLine().busNumber" type="text" />
 
-            <div class="itemsList" data-bind="foreach: editedBusLine().routes">
+            <div class="selectableList" data-bind="foreach: editedBusLine().routes">
                 <div data-bind="click: function() { $root.selectRoute($data); }, css: { active: $root.selectedRoute() == $data }">
                     <div>
                         <input data-bind="checked: $root.selectedRoute() == $data, checkedValue: true" type="radio" />
@@ -193,10 +224,19 @@
                             <!-- /ko -->
                         </p>
 
-                        <p>SYMBOL</p>
-                        <input class="form-control" data-bind="value: indexMark" type="text" />
-                        <p>OPIS</p>
-                        <input class="form-control" data-bind="value: details" type="text" />
+                        <table>
+                            <tr>
+                                <td>
+                                    <input class="form-control" data-bind="value: indexMark" placeholder="Symbol" type="text" />
+                                </td>
+
+                                <td> - </td>
+
+                                <td>
+                                    <input class="form-control" data-bind="value: details" placeholder="Opis" type="text" />
+                                </td>
+                            </tr>
+                        </table>
 
                         <button class="btn btn-xs btn-default" data-bind="click: function() { $root.deleteRouteOfExistingBusLine($data); }">USUŃ</button>
                     </div>
@@ -205,35 +245,55 @@
             <input class="btn btn-default" data-bind="click: function() { addRouteToExistingBusLine(); }" type="button" value="NOWA TRASA" />
 
             <!-- ko if: selectedRoute() -->
-                <div data-bind="foreach: selectedBusStops">
-                    <p data-bind="text: name"></p>
-                    <input data-bind="value: originalPoint.timeOffsetInMinutes" type="number" />
-                </div>
-
-
-
                 <ul class="dayOfWeek" data-bind="foreach: serverTime.daysOfWeek">
                     <li data-bind="css: { active: $data == $root.selectedDayOfWeek() }, click: function(data, event) { $root.selectedDayOfWeek($data); }, text: $data"></li>
                 </ul>
 
-                <table class="departureTimes" data-bind="foreach: departureTimesOfSelectedRoute()">
+                <table cellspacing="0" class="timeTable">
                     <tr>
                         <td>
-                            <div data-bind="text: $index"></div>
+                            <table class="busStops" data-bind="foreach: selectedBusStops()">
+                                <tr>
+                                    <td>
+                                        <input class="form-control" data-bind="value: originalPoint.timeOffsetInMinutes" placeholder="Czas odjazdu w minutach" type="number" />
+                                    </td>
+                                    <td data-bind="text: name"></td>
+                                </tr>
+                            </table>
                         </td>
-                        <td data-bind="foreach: $root.departureTimesOfSelectedRoute()[$index()]">
-                            <div>
-                                <span data-bind="text: minutes < 10 ? '0' + minutes : minutes"></span>
-                                <span data-bind="click: function() { $root.removeDepartureTime(originalDepartureTime); }, text: 'x'"></span>
-                            </div>
+
+                        <td>
+                            <table class="departureTimes" data-bind="foreach: departureTimesOfSelectedRoute">
+                                <tr>
+                                    <td>
+                                        <div data-bind="text: $index"></div>
+                                    </td>
+                                    <td data-bind="foreach: $root.departureTimesOfSelectedRoute()[$index()]">
+                                        <div>
+                                            <span data-bind="text: minutes < 10 ? '0' + minutes : minutes"></span>
+                                            <span data-bind="click: function() { $root.removeDepartureTimeOfExistingBusLine(originalDepartureTime); }, text: '&times;'"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                 </table>
-                <p>GODZINY</p>
-                <input class="form-control" data-bind="value: newDepartureTimeHours" type="number" />
-                <p>MINUTY</p>
-                <input class="form-control" data-bind="value: newDepartureTimeMinutes" type="number" />
-                <button class="btn btn-default" data-bind="click: function() { addDepartureTimeForExistingBusLine(); }">DODAJ GODZINĘ ODJAZDU</button>
+
+                <table class="newDepartureTime">
+                    <tr>
+                        <td>
+                            <input class="form-control" data-bind="value: newDepartureTimeHours" placeholder="Godziny" type="number" />
+                        </td>
+                        <td>:</td>
+                        <td>
+                            <input class="form-control" data-bind="value: newDepartureTimeMinutes" placeholder="Minuty" type="number" />
+                        </td>
+                        <td>
+                            <button class="btn btn-default" data-bind="click: function() { addDepartureTimeForExistingBusLine(); }">DODAJ GODZINĘ ODJAZDU</button>
+                        </td>
+                    </tr>
+                </table>
             <!-- /ko -->
 
             <input class="btn btn-default" data-bind="click: function() { finishEditingBusLine(); }" type="button" value="DODAJ" />
