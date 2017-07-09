@@ -30,7 +30,6 @@
 
     var update = function()
     {
-        console.log('update bus');
         var now = serverTime.now();
         var currentMillisecondsSinceMidnight = 60 * 60 * 1000 * now.getHours() + 60 * 1000 * now.getMinutes() + 1000 * now.getSeconds() + now.getMilliseconds();
         if (currentMillisecondsSinceMidnight < departureMillisecondsSinceMidnight)

@@ -104,7 +104,7 @@ aside > .content p {
     list-style-type: none;
     margin: 0;
     padding: 0;
-    overflow: auto;
+    overflow: hidden;
 }
 
 .busLinesTiles > li {
