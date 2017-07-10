@@ -96,7 +96,11 @@ aside > .content {
 }
 
 aside > .content p {
-    margin: 20px 0 10px;
+    margin: 10px 0 10px;
+}
+
+aside .finalButtons {
+    margin-top: 10px;
 }
 
 /***** Aside progress indicator *****/
@@ -265,6 +269,7 @@ aside > .progressIndicator > img {
 }
 
 /***** New departure time *****/
+
 .newDepartureTime {
     margin: 10px 0;
     width: 100%;

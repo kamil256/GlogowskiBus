@@ -67,16 +67,17 @@
                 </td>
             </tr>
         </table>
-        <button class="btn btn-default" data-bind="click: function() { finishAddingBusStop(); }">DODAJ</button>
-        <button class="btn btn-default" data-bind="click: function() { cancelAddingBusStop(); }">ANULUJ</button>
+        
+        <div class="finalButtons">
+            <button class="btn btn-default" data-bind="click: function() { finishAddingBusStop(); }">ZATWIERDŹ</button>
+            <button class="btn btn-default" data-bind="click: function() { cancelAddingBusStop(); }">ANULUJ</button>
+        </div>
     <!-- /ko -->
 </div>
 
 
 <div id="editBusStop">
     <!-- ko if: isSelected -->
-        <p data-bind="text: 'PRZYSTANEK ' + editedBusStop().name()"></p>
-    
         <p>NAZWA</p>
         <input class="form-control" data-bind="value: editedBusStop().name" />
 
@@ -92,8 +93,10 @@
             </tr>
         </table>
 
-        <button class="btn btn-default" data-bind="click: function() { finishEditingBusStop(); }">EDYTUJ</button>
-        <button class="btn btn-default" data-bind="click: function() { cancelEditingBusStop(); }">ANULUJ</button>
+        <div class="finalButtons">
+            <button class="btn btn-default" data-bind="click: function() { finishEditingBusStop(); }">ZATWIERDŹ</button>
+            <button class="btn btn-default" data-bind="click: function() { cancelEditingBusStop(); }">ANULUJ</button>
+        </div>
     <!-- /ko -->
 </div>
 
@@ -193,8 +196,10 @@
                 </table>
             <!-- /ko -->
 
-            <input class="btn btn-default" data-bind="click: function() { finishAddingBusLine(); }" type="button" value="DODAJ" />
-            <input class="btn btn-default" data-bind="click: function() { cancelAddingBusLine(); }" type="button" value="ANULUJ" />
+            <div class="finalButtons">
+                <input class="btn btn-default" data-bind="click: function() { finishAddingBusLine(); }" type="button" value="ZATWIERDŹ" />
+                <input class="btn btn-default" data-bind="click: function() { cancelAddingBusLine(); }" type="button" value="ANULUJ" />
+            </div>
         <!-- /ko -->
     <!-- /ko -->
 </div>
@@ -296,8 +301,10 @@
                 </table>
             <!-- /ko -->
 
-            <input class="btn btn-default" data-bind="click: function() { finishEditingBusLine(); }" type="button" value="DODAJ" />
-            <input class="btn btn-default" data-bind="click: function() { cancelEditingBusLine(); }" type="button" value="ANULUJ" />
+            <div class="finalButtons">
+                <input class="btn btn-default" data-bind="click: function() { finishEditingBusLine(); }" type="button" value="ZATWIERDŹ" />
+                <input class="btn btn-default" data-bind="click: function() { cancelEditingBusLine(); }" type="button" value="ANULUJ" />
+            </div>
         <!-- /ko -->
     <!-- /ko -->
 </div>
