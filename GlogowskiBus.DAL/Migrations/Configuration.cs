@@ -1,5 +1,9 @@
 namespace GlogowskiBus.DAL.Migrations
 {
+    using Concrete;
+    using Entities;
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.EntityFramework;
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
@@ -15,18 +19,41 @@ namespace GlogowskiBus.DAL.Migrations
 
         protected override void Seed(GlogowskiBus.DAL.Concrete.GlogowskiBusContext context)
         {
-            //  This method will be called after migrating to the latest version.
+            AppUserManager userMgr = new AppUserManager(new UserStore<AppUser>(context));
+            AppRoleManager roleMgr = new AppRoleManager(new RoleStore<AppRole>(context));
+            string adminRoleName = "Admin";
+            string userRoleName = "User";
+            string adminUserName = "admin";
+            string userUserName = "user";
 
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
+            if (!roleMgr.RoleExists(adminRoleName))
+            {
+                roleMgr.Create(new AppRole(adminRoleName));
+            }
+
+            if (!roleMgr.RoleExists(userRoleName))
+            {
+                roleMgr.Create(new AppRole(userRoleName));
+            }
+
+            AppUser admin = userMgr.FindByName(adminUserName);
+            if (admin == null)
+            {
+                // CURRENT ADMIN PASSWORD IS DIFFERENT THAN INITIAL!!!
+                userMgr.Create(new AppUser { UserName = adminUserName }, "Password");
+                admin = userMgr.FindByName(adminUserName);
+                userMgr.AddToRole(admin.Id, adminRoleName);
+            }
+
+            AppUser user = userMgr.FindByName(userUserName);
+            if (user == null)
+            {
+                userMgr.Create(new AppUser { UserName = userUserName }, "Password");
+                user = userMgr.FindByName(userUserName);
+                userMgr.AddToRole(user.Id, userRoleName);
+            }
+
+            context.SaveChanges();
         }
     }
 }
