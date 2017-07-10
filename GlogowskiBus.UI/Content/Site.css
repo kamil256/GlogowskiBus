@@ -17,6 +17,7 @@ html, body {
 /***** Aside *****/
 
 aside {
+    background-color: white;
     border-radius: 3px;
     bottom: 80px;
     box-shadow: 0 0 10px 2px #000;
@@ -88,6 +89,7 @@ aside > .content {
     background-color: white;
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px;
+    display: none;
     height: calc(100% - 50px);
     overflow: auto;
     padding: 15px;

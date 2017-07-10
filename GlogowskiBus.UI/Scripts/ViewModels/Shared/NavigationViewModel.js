@@ -74,5 +74,6 @@
     {
         self.selectedViewGroup(self.viewGroups()[0]);
         self.isStarted(true);
+        $('aside > .content').show(); 
     };
 }
