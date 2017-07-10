@@ -10,6 +10,7 @@ namespace GlogowskiBus.UI.Controllers.MVC
 {
     public class AdminController : Controller
     {
+        [Authorize]
         public ViewResult Index()
         {
             return View();

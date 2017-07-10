@@ -1,0 +1,52 @@
+﻿@model GlogowskiBus.UI.Models.LoginViewModel
+
+@{
+    ViewBag.Title = "Logowanie";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="login">
+    <!-- ko if: isSelected -->
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group">
+                @Html.LabelFor(x => x.UserName)
+                @Html.TextBoxFor(x => x.UserName, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.UserName, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(x => x.Password)
+                @Html.PasswordFor(x => x.Password, new { @class = "form-control" })
+                @Html.ValidationMessageFor(x => x.Password, "", new { @class = "text-danger" })
+            </div>
+
+            <input type="submit" class="btn btn-default" value="Zaloguj" />
+            @Html.ActionLink("Anuluj", "Logout", "Account", null, new { @class = "btn btn-default" })
+        }
+    <!-- /ko -->
+</div>
+
+<script>
+    window.onload = function()
+    {
+        markerIcons = new MarkerIcons();
+        serverTime = new ServerTime();
+
+        var engine = new Engine();
+
+        var loginViewModel = new LoginViewModel(engine, false);
+        ko.applyBindings(loginViewModel, document.getElementById('login'));
+
+        navigationViewModel = new NavigationViewModel();
+
+        navigationViewModel.addViewGroup([loginViewModel]);
+        navigationViewModel.start();
+
+        ko.applyBindings(navigationViewModel, document.getElementById('tabs'));
+    }
+</script>

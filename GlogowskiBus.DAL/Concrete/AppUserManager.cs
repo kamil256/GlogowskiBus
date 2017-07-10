@@ -29,7 +29,6 @@ namespace GlogowskiBus.DAL.Concrete
 
             manager.UserValidator = new Microsoft.AspNet.Identity.UserValidator<AppUser>(manager)
             {
-                RequireUniqueEmail = true,
                 AllowOnlyAlphanumericUserNames = false
             };
 

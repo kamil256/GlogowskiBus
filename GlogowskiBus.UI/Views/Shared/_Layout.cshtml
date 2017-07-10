@@ -37,7 +37,15 @@
             <img src="~/Content/Images/dsp2017-2.png" />
         </div>
         <div class="copyright">
-            Copyright &copy; 2017 Kamil Dzierlęga. All rights reserved.
+            <p>Copyright &copy; 2017 Kamil Dzierlęga. All rights reserved.</p>
+            @if (HttpContext.Current.User.Identity.IsAuthenticated)
+            {
+                <p>Zalogowany jako @HttpContext.Current.User.Identity.Name | @Html.ActionLink("Wyloguj", "Logout", "Account")</p>
+            }
+            else
+            {
+                <p>@Html.ActionLink("Zaloguj", "Login", "Account")</p>
+            }
         </div>
         <div class="lastUpdate">
             <div>Ostatnia aktualizacja rozkładu:</div>
@@ -73,6 +81,8 @@
 
     <script src="~/Scripts/ViewModels/Home/TimeTableViewModel.js"></script>
     <script src="~/Scripts/ViewModels/Home/FindRouteViewModel.js"></script>
+
+    <script src="~/Scripts/ViewModels/Admin/LoginViewModel.js"></script>
 
     <script src="~/Scripts/ViewModels/Shared/NavigationViewModel.js"></script>
 </body>

@@ -170,6 +170,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\ViewModels\Admin\LoginViewModel.js" />
     <Content Include="Scripts\ViewModels\Admin\AddBusStopViewModel.js" />
     <Content Include="Scripts\ViewModels\Admin\EditBusLineViewModel.js" />
     <Content Include="Scripts\ViewModels\Admin\AddBusLineViewModel.js" />
@@ -207,6 +208,7 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\MVC\AccountController.cs" />
     <Compile Include="Controllers\MVC\AdminController.cs" />
     <Compile Include="Controllers\MVC\HomeController.cs" />
     <Compile Include="Controllers\WebAPI\BusLineController.cs" />
@@ -218,6 +220,7 @@
     <Compile Include="Models\BusLineDTO.cs" />
     <Compile Include="Models\BusStopDTO.cs" />
     <Compile Include="Models\DepartureTimeDTO.cs" />
+    <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\RouteDTO.cs" />
     <Compile Include="Models\PointDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -232,6 +235,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

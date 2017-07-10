@@ -402,6 +402,16 @@ footer > .copyright {
     float: right;
 }
 
+footer > .copyright > p {
+    line-height: initial;
+    margin: 10px 0;
+    text-align: right;
+}
+
+footer > .copyright > p:last-child {
+    font-weight: bold;
+}
+
 footer > .lastUpdate {
     line-height: initial;
     padding-top: 10px;
