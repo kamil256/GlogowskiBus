@@ -71,11 +71,11 @@ function sendAjaxRequest(url, method, data, onSuccess)
             },
             400: function(response)
             {
-                alert('Bad request: ' + response.responseText);
+                alert('Błąd: ' + JSON.parse(response.responseText).Message);
             },
             404: function()
             {
-                alert('Not found!');
+                alert('Nie znaleziono zasobu!');
             }
         }
     });
