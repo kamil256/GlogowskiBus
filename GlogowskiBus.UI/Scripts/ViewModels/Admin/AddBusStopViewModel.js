@@ -26,6 +26,16 @@
 
     self.newBusStop = ko.observable();
 
+    self.changeLatitudeOfNewBusStop = function(value)
+    {
+        self.newBusStop().position(new google.maps.LatLng(value, self.newBusStop().position().lng()));
+    };
+
+    self.changeLongitudeOfNewBusStop = function(value)
+    {
+        self.newBusStop().position(new google.maps.LatLng(self.newBusStop().position().lat(), value));
+    };
+
     self.finishAddingBusStop = function()
     {
         sendAjaxRequest('/api/BusStop', 'POST', self.newBusStop().getModel(), function(model)

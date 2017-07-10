@@ -60,10 +60,10 @@
         <table style="width: 100%">
             <tr>
                 <td>
-                    <input class="form-control" data-bind="value: newBusStop().position().lat()" />
+                    <input class="form-control" data-bind="event: { change: function(data, event) { changeLatitudeOfNewBusStop(event.target.value); } }, value: newBusStop().position().lat()" />
                 </td>
                 <td>
-                    <input class="form-control" data-bind="value: newBusStop().position().lng()" />
+                    <input class="form-control" data-bind="event: { change: function(data, event) { changeLongitudeOfNewBusStop(event.target.value); } }, value: newBusStop().position().lng()" />
                 </td>
             </tr>
         </table>
@@ -85,10 +85,10 @@
         <table style="width: 100%">
             <tr>
                 <td>
-                    <input class="form-control" data-bind="value: editedBusStop().position().lat()" />
+                    <input class="form-control" data-bind="event: { change: function(data, event) { changeLatitudeOfExistingBusStop(event.target.value); } }, value: editedBusStop().position().lat()" />
                 </td>
                 <td>
-                    <input class="form-control" data-bind="value: editedBusStop().position().lng()" />
+                    <input class="form-control" data-bind="event: { change: function(data, event) { changeLongitudeOfExistingBusStop(event.target.value); } }, value: editedBusStop().position().lng()" />
                 </td>
             </tr>
         </table>
