@@ -36,7 +36,7 @@ namespace GlogowskiBus.BLL.Concrete
             if (string.IsNullOrWhiteSpace(busStop.Name))
                 return "Bus stop name must not be empty!";
 
-            if (unitOfWork.BusStopRepository.Count(x => x.Latitude == busStop.Latitude && x.Longitude == busStop.Longitude) != 0)
+            if (unitOfWork.BusStopRepository.Count(x => x.Id != busStop.Id && x.Latitude == busStop.Latitude && x.Longitude == busStop.Longitude) != 0)
                 return "Bus stop with those coordinates already exists!";
 
             return null;
