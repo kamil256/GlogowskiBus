@@ -91,11 +91,32 @@ aside > .content {
     height: calc(100% - 50px);
     overflow: auto;
     padding: 15px;
+    position: relative;
     width: 100%;
 }
 
 aside > .content p {
     margin: 20px 0 10px;
+}
+
+/***** Aside progress indicator *****/
+
+aside > .progressIndicator {
+    background-color: white;
+    /*bottom: 0;*/
+    display: none;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    /*right: 0;*/
+    top: 0;
+    width: 100%;
+}
+
+aside > .progressIndicator > img {
+    left: 50%;
+    position: absolute;
+    top: 50%;
 }
 
 /***** Bus lines tiles *****/

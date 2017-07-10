@@ -41,10 +41,22 @@ function getPositionBetweenTwoPoints(startPoint, endPoint, currentTimeOffset)
     return new google.maps.LatLng(newPointLatitude, newPointLongitude);
 }
 
+var numberOfUnansweredAjaxRequests = 0;
+
 function sendAjaxRequest(url, method, data, onSuccess)
 {
     $.ajax(url,
     {
+        beforeSend: function()
+        {
+            if (++numberOfUnansweredAjaxRequests !== 0)
+                $('.progressIndicator').show();
+        },
+        complete: function()
+        {
+            if (--numberOfUnansweredAjaxRequests === 0)
+                $('.progressIndicator').hide();
+        },
         type: method,
         data: data,
         statusCode:
