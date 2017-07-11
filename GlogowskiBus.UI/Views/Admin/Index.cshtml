@@ -103,9 +103,11 @@
 <div id="addBusLine">
     <!-- ko if: isSelected -->
         <!-- ko if: directions() -->
-            <p>Dodawanie nowej trasy za pomocą Google Maps Directions.</p>
-            <input class="btn btn-default" data-bind="click: function() { finishAddingRouteForNewBusLine(); }, enable: directions().points().length >= 2" type="button" value="ZAKOŃCZ" />
-            <input class="btn btn-default" data-bind="click: function() { cancelAddingRouteForNewBusLine(); }" type="button" value="ANULUJ" />
+            <div class="centerMiddle">
+                <p>Dodawanie nowej trasy za pomocą Google Maps Directions.</p>
+                <input class="btn btn-default" data-bind="click: function() { finishAddingRouteForNewBusLine(); }, enable: directions().points().length >= 2" type="button" value="ZAKOŃCZ" />
+                <input class="btn btn-default" data-bind="click: function() { cancelAddingRouteForNewBusLine(); }" type="button" value="ANULUJ" />
+            </div>
         <!-- /ko -->
 
         <!-- ko if: !directions() -->
@@ -207,9 +209,11 @@
 <div id="editBusLine">
     <!-- ko if: isSelected -->
         <!-- ko if: directions() -->
-            <p>Dodawanie nowej trasy za pomocą Google Maps Directions.</p>
-            <input class="btn btn-default" data-bind="click: function() { finishAddingRouteForExistingBusLine(); }, enable: directions().points().length >= 2" type="button" value="ZAKOŃCZ" />
-            <input class="btn btn-default" data-bind="click: function() { cancelAddingRouteForExistingBusLine(); }" type="button" value="ANULUJ" />
+            <div class="centerMiddle">
+                <p>Dodawanie nowej trasy za pomocą Google Maps Directions.</p>
+                <input class="btn btn-default" data-bind="click: function() { finishAddingRouteForExistingBusLine(); }, enable: directions().points().length >= 2" type="button" value="ZAKOŃCZ" />
+                <input class="btn btn-default" data-bind="click: function() { cancelAddingRouteForExistingBusLine(); }" type="button" value="ANULUJ" />
+            </div>
         <!-- /ko -->
         
         <!-- ko if: !directions() -->
