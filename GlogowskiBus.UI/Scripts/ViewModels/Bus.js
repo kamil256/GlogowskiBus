@@ -28,7 +28,7 @@
 
     var departureMillisecondsSinceMidnight = 60 * 60 * 1000 * self.departureTime.hours() + 60 * 1000 * self.departureTime.minutes();
 
-    var update = function()
+    self.update = function()
     {
         var now = serverTime.now();
         var currentMillisecondsSinceMidnight = 60 * 60 * 1000 * now.getHours() + 60 * 1000 * now.getMinutes() + 1000 * now.getSeconds() + now.getMilliseconds();
@@ -49,11 +49,8 @@
                     marker.setPosition(newPosition);
                     break;
                 }
-            setTimeout(update, 100);
         }
     }
-
-    update();
 
     self.dispose = function()
     {

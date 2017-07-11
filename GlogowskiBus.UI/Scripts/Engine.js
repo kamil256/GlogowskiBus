@@ -238,9 +238,17 @@
     };
 
     if (!disableBuses)
+    {
         setInterval(function()
         {
             if (serverTime.now().getSeconds() === 0)
                 updateBuses();
         }, 1000);
+
+        setInterval(function()
+        {
+            for (var i = 0; i < self.buses().length; i++)
+                self.buses()[i].update();
+        }, 100);
+    }
 }
