@@ -105,6 +105,14 @@ aside .finalButtons {
     margin-top: 10px;
 }
 
+aside #findRoute > p {
+    font-size: 22px;
+    font-weight: bold;
+    top: 40%;
+    position: absolute;
+    text-align: center;
+}
+
 /***** Aside progress indicator *****/
 
 aside > .progressIndicator {
