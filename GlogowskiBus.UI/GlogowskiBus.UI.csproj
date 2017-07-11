@@ -170,7 +170,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Scripts\ViewModels\Admin\LoginViewModel.js" />
+    <Content Include="Scripts\ViewModels\Account\LoginViewModel.js" />
     <Content Include="Scripts\ViewModels\Admin\AddBusStopViewModel.js" />
     <Content Include="Scripts\ViewModels\Admin\EditBusLineViewModel.js" />
     <Content Include="Scripts\ViewModels\Admin\AddBusLineViewModel.js" />

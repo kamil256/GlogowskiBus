@@ -2,7 +2,7 @@
 {
     if (route.Points[0].BusStopId && route.Points[route.Points.length - 1].BusStopId)
     {
-
+        var LAT_TO_LNG_RATIO_IN_KM = 0.6235;
         var start = 0;
         var end = 0;
         while (end < route.Points.length - 1)
@@ -14,7 +14,7 @@
             {
                 end++;
                 var diff_X = route.Points[end].Latitude - route.Points[end - 1].Latitude;
-                var diff_Y = route.Points[end].Longitude - route.Points[end - 1].Longitude;
+                var diff_Y = LAT_TO_LNG_RATIO_IN_KM * (route.Points[end].Longitude - route.Points[end - 1].Longitude);
                 var distance = Math.sqrt(diff_X * diff_X + diff_Y * diff_Y);
                 totalDistance += distance;
                 distances.push(distance);

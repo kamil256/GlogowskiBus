@@ -25,8 +25,6 @@ namespace GlogowskiBus.UI.Controllers.MVC
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model)
         {
-            
-
             if (ModelState.IsValid) 
             {
                 AppUser user = await userManager.FindAsync(model.UserName, model.Password);
