@@ -100,12 +100,19 @@
     {
         sendAjaxRequest('/api/BusLine', 'PUT', self.editedBusLine().getModel(), function(model)
         {
-            var editedBusLine = new BusLine(model, engine);
-            engine.busLines.splice(engine.busLines.indexOf(self.originalBusLine), 1, editedBusLine);
-            engine.selectBusLine(editedBusLine);
-            self.originalBusLine.dispose();
-            self.editedBusLine().dispose();
-            navigationViewModel.selectView('LINIE');
+            if (model.Message)
+            {
+                alert(model.Message);
+            }
+            else
+            {
+                var editedBusLine = new BusLine(model, engine);
+                engine.busLines.splice(engine.busLines.indexOf(self.originalBusLine), 1, editedBusLine);
+                engine.selectBusLine(editedBusLine);
+                self.originalBusLine.dispose();
+                self.editedBusLine().dispose();
+                navigationViewModel.selectView('LINIE');
+            }
         });
     };
 

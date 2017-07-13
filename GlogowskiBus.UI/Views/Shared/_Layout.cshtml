@@ -33,19 +33,20 @@
             <div>GłogowskiBUS</div>
             <div>ROZKŁAD JAZDY AUTOBUSÓW MIEJSKICH W GŁOGOWIE</div>
         </div>
-        <div class="dspLogo">
-            <img src="~/Content/Images/dsp2017-2.png" />
-        </div>
+        
         <div class="copyright">
             <p>Copyright &copy; 2017 Kamil Dzierlęga. All rights reserved.</p>
             @if (HttpContext.Current.User.Identity.IsAuthenticated)
             {
-                <p>Zalogowany jako @HttpContext.Current.User.Identity.Name | @Html.ActionLink("Wyloguj", "Logout", "Account")</p>
+                <p>Zalogowany jako <code>@HttpContext.Current.User.Identity.Name</code> | @Html.ActionLink("wyloguj", "Logout", "Account")</p>
             }
             else
             {
-                <p>@Html.ActionLink("Zaloguj", "Login", "Account")</p>
+                <p><b>Sprawdź wersję demo panelu administratora</b> <img src="~/Content/Images/red_arrow.gif" width="40" height="20" /> @Html.ActionLink("zaloguj", "Login", "Account")</p>
             }
+        </div>
+        <div class="dspLogo">
+            <img src="~/Content/Images/dsp2017-2.png" />
         </div>
         <div class="lastUpdate">
             <div>Ostatnia aktualizacja rozkładu:</div>

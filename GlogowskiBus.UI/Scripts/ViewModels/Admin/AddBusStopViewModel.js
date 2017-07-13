@@ -40,11 +40,18 @@
     {
         sendAjaxRequest('/api/BusStop', 'POST', self.newBusStop().getModel(), function(model)
         {
-            var newBusStop = new BusStop(model, engine);
-            engine.busStops.push(newBusStop);
-            engine.selectBusStop(newBusStop);
-            self.newBusStop().dispose();
-            navigationViewModel.selectView('PRZYSTANKI');
+            if (model.Message)
+            {
+                alert(model.Message);
+            }
+            else
+            {
+                var newBusStop = new BusStop(model, engine);
+                engine.busStops.push(newBusStop);
+                engine.selectBusStop(newBusStop);
+                self.newBusStop().dispose();
+                navigationViewModel.selectView('PRZYSTANKI');
+            }
         });
     };
 

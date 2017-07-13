@@ -43,12 +43,19 @@
     {
         sendAjaxRequest('/api/BusStop', 'PUT', self.editedBusStop().getModel(), function(model)
         {
-            var editedBusStop = new BusStop(model, engine);
-            engine.busStops.splice(engine.busStops.indexOf(self.originalBusStop), 1, editedBusStop);
-            engine.selectBusStop(editedBusStop);
-            self.originalBusStop.dispose();
-            self.editedBusStop().dispose();
-            navigationViewModel.selectView('PRZYSTANKI');
+            if (model.Message)
+            {
+                alert(model.Message);
+            }
+            else
+            {
+                var editedBusStop = new BusStop(model, engine);
+                engine.busStops.splice(engine.busStops.indexOf(self.originalBusStop), 1, editedBusStop);
+                engine.selectBusStop(editedBusStop);
+                self.originalBusStop.dispose();
+                self.editedBusStop().dispose();
+                navigationViewModel.selectView('PRZYSTANKI');
+            }
         });
     };
 

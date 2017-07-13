@@ -167,6 +167,7 @@
     <Content Include="Content\Images\bus_stop_on_route.png" />
     <Content Include="Content\Images\dsp2017-2.png" />
     <Content Include="Content\Images\point.png" />
+    <Content Include="Content\Images\red_arrow.gif" />
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

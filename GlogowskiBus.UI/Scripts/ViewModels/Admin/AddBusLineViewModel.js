@@ -96,11 +96,18 @@
     {
         sendAjaxRequest('/api/BusLine', 'POST', self.newBusLine().getModel(), function(model)
         {
-            var newBusLine = new BusLine(model, engine);
-            engine.busLines.push(newBusLine);
-            engine.selectBusLine(newBusLine);
-            self.newBusLine().dispose();
-            navigationViewModel.selectView('LINIE');
+            if (model.Message)
+            {
+                alert(model.Message);
+            }
+            else
+            {
+                var newBusLine = new BusLine(model, engine);
+                engine.busLines.push(newBusLine);
+                engine.selectBusLine(newBusLine);
+                self.newBusLine().dispose();
+                navigationViewModel.selectView('LINIE');
+            }
         });
     };
 

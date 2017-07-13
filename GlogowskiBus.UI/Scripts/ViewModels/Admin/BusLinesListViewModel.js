@@ -47,11 +47,18 @@
         {
             sendAjaxRequest('/api/BusLine/' + busLine.id, 'DELETE', null, function(response)
             {
-                engine.selectBusLine(null);
-                engine.busLines.remove(busLine);
-                busLine.dispose();
+                if (response.Message)
+                {
+                    alert(response.Message);
+                }
+                else
+                {
+                    engine.selectBusLine(null);
+                    engine.busLines.remove(busLine);
+                    busLine.dispose();
 
-                navigationViewModel.selectView('LINIE');
+                    navigationViewModel.selectView('LINIE');
+                }
             });
         }
     };

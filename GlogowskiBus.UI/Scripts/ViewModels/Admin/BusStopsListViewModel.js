@@ -51,11 +51,18 @@
         {
             sendAjaxRequest('/api/BusStop/' + busStop.id, 'DELETE', null, function(response)
             {
-                engine.selectBusStop(null);
-                engine.busStops.remove(busStop);
-                busStop.dispose();
+                if (response.Message)
+                {
+                    alert(response.Message);
+                }
+                else
+                {
+                    engine.selectBusStop(null);
+                    engine.busStops.remove(busStop);
+                    busStop.dispose();
 
-                navigationViewModel.selectView('PRZYSTANKI');
+                    navigationViewModel.selectView('PRZYSTANKI');
+                }
             });
         }
     };

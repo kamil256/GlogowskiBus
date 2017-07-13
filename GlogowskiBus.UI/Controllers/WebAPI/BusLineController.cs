@@ -36,6 +36,7 @@ namespace GlogowskiBus.UI.Controllers.WebAPI
             return Ok((BusLineDTO)busLine);
         }
 
+        [Authorize(Roles = "Admin")]
         public IHttpActionResult PostBusLine(BusLineDTO model)
         {
             BusLineBL newBusLine = null;
@@ -51,6 +52,7 @@ namespace GlogowskiBus.UI.Controllers.WebAPI
             return CreatedAtRoute("DefaultApi", new { id = newBusLine.Id }, (BusLineDTO)newBusLine);
         }
 
+        [Authorize(Roles = "Admin")]
         [ResponseType(typeof(BusLineDTO))]
         public IHttpActionResult PutBusLine(BusLineDTO model)
         {
@@ -70,6 +72,7 @@ namespace GlogowskiBus.UI.Controllers.WebAPI
                 return Ok((BusLineDTO)updatedBusLine);
         }
 
+        [Authorize(Roles = "Admin")]
         [ResponseType(typeof(void))]
         public IHttpActionResult DeleteBusLine(int id)
         {

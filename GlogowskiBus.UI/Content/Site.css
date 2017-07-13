@@ -133,6 +133,23 @@ aside > .progressIndicator > img {
     top: 50%;
 }
 
+/***** Demo *****/
+
+.demo {
+    border: 5px double black;
+    margin-top: 10px;
+    padding: 5px;
+}
+
+.demo > p {
+    margin: 5px 0 !important;
+}
+
+.demo > p:first-child {
+    font-weight: bold;
+    text-align: center;
+}
+
 /***** Bus lines tiles *****/
 
 .busLinesTiles {
@@ -414,6 +431,10 @@ footer > .copyright > p {
     line-height: initial;
     margin: 10px 0;
     text-align: right;
+}
+
+footer > .copyright > p > b {
+    color: red;
 }
 
 footer > .copyright > p:last-child {

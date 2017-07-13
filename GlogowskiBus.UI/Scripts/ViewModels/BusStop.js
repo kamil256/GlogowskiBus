@@ -23,9 +23,10 @@
     self.points = ko.computed(function()
     {
         var result = [];
-        for (var i = 0; i < engine.points().length; i++)
-            if (engine.points()[i].busStopId() === self.id && result.indexOf(engine.points()[i]) === -1)
-                result.push(engine.points()[i]);
+        if (engine.busStops.indexOf(self) !== -1)
+            for (var i = 0; i < engine.points().length; i++)
+                if (engine.points()[i].busStopId() === self.id && result.indexOf(engine.points()[i]) === -1)
+                    result.push(engine.points()[i]);
         return result;
     });
 
