@@ -24,7 +24,7 @@ namespace GlogowskiBus.DAL.Migrations
             string adminRoleName = "Admin";
             string userRoleName = "User";
             string adminUserName = "admin";
-            string userUserName = "user";
+            string demoUserName = "demo";
 
             if (!roleMgr.RoleExists(adminRoleName))
             {
@@ -40,16 +40,16 @@ namespace GlogowskiBus.DAL.Migrations
             if (admin == null)
             {
                 // CURRENT ADMIN PASSWORD IS DIFFERENT THAN INITIAL!!!
-                userMgr.Create(new AppUser { UserName = adminUserName }, "Password");
+                userMgr.Create(new AppUser { UserName = adminUserName }, "password");
                 admin = userMgr.FindByName(adminUserName);
                 userMgr.AddToRole(admin.Id, adminRoleName);
             }
 
-            AppUser user = userMgr.FindByName(userUserName);
+            AppUser user = userMgr.FindByName(demoUserName);
             if (user == null)
             {
-                userMgr.Create(new AppUser { UserName = userUserName }, "Password");
-                user = userMgr.FindByName(userUserName);
+                userMgr.Create(new AppUser { UserName = demoUserName }, "password");
+                user = userMgr.FindByName(demoUserName);
                 userMgr.AddToRole(user.Id, userRoleName);
             }
 

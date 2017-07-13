@@ -177,6 +177,8 @@
     <Content Include="Scripts\ViewModels\Admin\EditBusStopViewModel.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <None Include="Properties\PublishProfiles\GlogowskiBus - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\GlogowskiBus - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\ViewModels\Bus.js" />
     <Content Include="Scripts\ViewModels\Point.js" />
