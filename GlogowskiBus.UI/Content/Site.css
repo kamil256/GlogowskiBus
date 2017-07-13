@@ -403,8 +403,9 @@ footer > .logoDescription, footer > .dspLogo {
     float: left;
 }
 
-footer > .logoDescription > div:first-child {
+footer > .logoDescription > a {
     color: rgb(204, 24, 30);
+    display: block;
     font-size: 24px;
     font-weight: bold;
     line-height: initial;
@@ -412,13 +413,13 @@ footer > .logoDescription > div:first-child {
     padding-bottom: 8px;
 }
 
-footer > .logoDescription > div:last-child {
+footer > .logoDescription > div {
     color: black;
     font-size: 12px;
     line-height: initial;
 }
 
-footer > .dspLogo > img {
+footer > .dspLogo img {
     height: 50px;
 }
 
