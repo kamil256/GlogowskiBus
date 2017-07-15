@@ -65,6 +65,13 @@
         self.directions(null);
     };
 
+    self.copyRouteOfNewBusLine = function(route)
+    {
+        var copiedRoute = new Route(self.newBusLine(), route.getModel(), engine);
+        copiedRoute.isEditable(true);
+        self.newBusLine().routes.push(copiedRoute);
+    };
+
     self.deleteRouteOfNewBusLine = function(route)
     {
         self.newBusLine().routes.remove(route);

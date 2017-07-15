@@ -29,6 +29,7 @@
     <!-- ko if: isSelected -->
         <button class="btn btn-default" data-bind="click: function() { addBusLine(); }">DODAJ</button>
         <button class="btn btn-default" data-bind="click: function() { editBusLine(selectedBusLine()); }, enable: selectedBusLine">EDYTUJ</button>
+    <button class="btn btn-default" data-bind="click: function() { copyBusLine(selectedBusLine()); }, enable: selectedBusLine">EDYTUJ</button>
         <button class="btn btn-default" data-bind="click: function() { deleteBusLine(selectedBusLine()); }, enable: selectedBusLine">USUŃ</button>
         <div class="unselectableList" data-bind="foreach: busLines">
             <div>
@@ -45,6 +46,7 @@
                     </div>
                 </div>
                 <button class="btn btn-xs btn-default" data-bind="click: function() { $root.editBusLine($data); }">EDYTUJ</button>
+                <button class="btn btn-xs btn-default" data-bind="click: function() { $root.copyBusLine($data); }">KOPIUJ</button>
                 <button class="btn btn-xs btn-default" data-bind="click: function() { $root.deleteBusLine($data); }">USUŃ</button>
             </div>
         </div>
@@ -140,6 +142,7 @@
                             </tr>
                         </table>
 
+                        <button class="btn btn-xs btn-default" data-bind="click: function() { $root.copyRouteOfNewBusLine($data); }">KOPIUJ</button>
                         <button class="btn btn-xs btn-default" data-bind="click: function() { $root.deleteRouteOfNewBusLine($data); }">USUŃ</button>
                     </div>
                 </div>
@@ -247,6 +250,7 @@
                             </tr>
                         </table>
 
+                        <button class="btn btn-xs btn-default" data-bind="click: function() { $root.copyRouteOfExistingBusLine($data); }">KOPIUJ</button>
                         <button class="btn btn-xs btn-default" data-bind="click: function() { $root.deleteRouteOfExistingBusLine($data); }">USUŃ</button>
                     </div>
                 </div>

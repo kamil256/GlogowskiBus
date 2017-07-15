@@ -39,6 +39,23 @@
         navigationViewModel.selectView('EDYTOWANIE LINII');
     };
 
+    self.copyBusLine = function(busLine)
+    {
+        sendAjaxRequest('/api/BusLine', 'POST', busLine.getModel(), function(model)
+        {
+            if (model.Message)
+            {
+                alert(model.Message);
+            }
+            else
+            {
+                var newBusLine = new BusLine(model, engine);
+                engine.busLines.push(newBusLine);
+                engine.selectBusLine(newBusLine);
+            }
+        });
+    };
+
     self.deleteBusLine = function(busLine)
     {
         engine.selectBusLine(busLine);

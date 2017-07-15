@@ -19,10 +19,7 @@
             Routes: []
         };
         for (var i = 0; i < self.routes().length; i++)
-        {
             busLineModel.Routes.push(self.routes()[i].getModel());
-            calculateTimeOffsets(busLineModel.Routes[i])
-        }
         return busLineModel;
     };
 
