@@ -29,7 +29,7 @@
     <!-- ko if: isSelected -->
         <button class="btn btn-default" data-bind="click: function() { addBusLine(); }">DODAJ</button>
         <button class="btn btn-default" data-bind="click: function() { editBusLine(selectedBusLine()); }, enable: selectedBusLine">EDYTUJ</button>
-    <button class="btn btn-default" data-bind="click: function() { copyBusLine(selectedBusLine()); }, enable: selectedBusLine">EDYTUJ</button>
+    <button class="btn btn-default" data-bind="click: function() { copyBusLine(selectedBusLine()); }, enable: selectedBusLine">KOPIUJ</button>
         <button class="btn btn-default" data-bind="click: function() { deleteBusLine(selectedBusLine()); }, enable: selectedBusLine">USUŃ</button>
         <div class="unselectableList" data-bind="foreach: busLines">
             <div>

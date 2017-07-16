@@ -33,10 +33,10 @@
     if (model)
         for (var i = 0; i < model.Points.length; i++)
             self.points.push(new Point(self, model.Points[i], engine));
-    //self.points.sort(function(point1, point2)
-    //{
-    //    return point1.timeOffset() - point2.timeOffset()
-    //});
+    self.points.sort(function(point1, point2)
+    {
+        return point1.timeOffset() - point2.timeOffset()
+    });
 
     self.getModel = function()
     {
