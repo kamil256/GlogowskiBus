@@ -26,7 +26,7 @@
                         <table class="busStops" data-bind="foreach: selectedBusStops()">
                             <tr>
                                 <td data-bind="css: { active: timeOffset() == 0 }, text: timeOffset() == 0 ? timeOffset() : (timeOffset() > 0 ? '+' + timeOffset() : '')"></td>
-                                <td data-bind="click: function(data, event) { $root.selectedBusStop($root.selectedRoute().busStops()[$index()]); }, css: { active: timeOffset() == 0 }, text: name"></td>
+                                <td data-bind="click: function(data, event) { $root.selectBusStop($root.selectedRoute().busStops()[$index()]); }, css: { active: timeOffset() == 0 }, text: name"></td>
                             </tr>
                         </table>
                     </td>
@@ -65,7 +65,7 @@
         markerIcons = new MarkerIcons();
         serverTime = new ServerTime();
 
-        var engine = new Engine();
+        /*var*/ engine = new Engine();
 
         var timeTableViewModel = new TimeTableViewModel(engine);
         ko.applyBindings(timeTableViewModel, document.getElementById('timeTable'));

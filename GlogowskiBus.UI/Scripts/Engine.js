@@ -139,7 +139,16 @@
         self.selectedBusStop.subscribe(function(newValue)
         {
             if (newValue && self.selectedRoute() && self.selectedRoute().busStops().indexOf(newValue) === -1)
-                self.selectRoute(null);
+            {
+                var newRoute = null;
+                for (var i = 0; i < engine.selectedBusLine().routes().length; i++)
+                    if (engine.selectedBusLine().routes()[i].busStops().indexOf(newValue) !== -1)
+                    {
+                        newRoute = engine.selectedBusLine().routes()[i];
+                        break;
+                    }
+                self.selectRoute(newRoute);
+            }
         });
 
         self.selectedRoute.subscribe(function(newValue)

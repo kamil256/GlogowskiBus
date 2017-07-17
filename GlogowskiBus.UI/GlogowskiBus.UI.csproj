@@ -164,7 +164,9 @@
     <Content Include="Content\Images\bus.png" />
     <Content Include="Content\Images\bus_stop.png" />
     <Content Include="Content\Images\bus_stop_active.png" />
+    <Content Include="Content\Images\bus_stop_gray.png" />
     <Content Include="Content\Images\bus_stop_on_route.png" />
+    <Content Include="Content\Images\bus_stop_on_route_gray.png" />
     <Content Include="Content\Images\dsp2017-2.png" />
     <Content Include="Content\Images\favicon.png" />
     <Content Include="Content\Images\point.png" />

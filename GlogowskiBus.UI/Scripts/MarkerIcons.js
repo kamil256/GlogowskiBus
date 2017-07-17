@@ -10,6 +10,15 @@
         new google.maps.Point(5, 5)
     );
 
+    self.grayBusStop = new google.maps.MarkerImage
+    (
+        '/Content/Images/bus_stop_gray.png',
+        new google.maps.Size(18, 18),
+        new google.maps.Point(0, 0),
+
+        new google.maps.Point(9, 9)
+    );
+
     self.redBusStop = new google.maps.MarkerImage
     (
         '/Content/Images/bus_stop.png',
@@ -29,6 +38,14 @@
     self.redBusStopOnRoute = new google.maps.MarkerImage
     (
         '/Content/Images/bus_stop_on_route.png',
+        new google.maps.Size(18, 18),
+        new google.maps.Point(0, 0),
+        new google.maps.Point(9, 9)
+    );
+
+    self.grayBusStopOnRoute = new google.maps.MarkerImage
+    (
+        '/Content/Images/bus_stop_on_route_gray.png',
         new google.maps.Size(18, 18),
         new google.maps.Point(0, 0),
         new google.maps.Point(9, 9)

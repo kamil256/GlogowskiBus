@@ -83,8 +83,10 @@
             marker.setIcon(markerIcons.activeRedBusStop);
         else if (engine.selectedRoute() && self.routes().indexOf(engine.selectedRoute()) !== -1)
             marker.setIcon(markerIcons.redBusStopOnRoute);
+        else if (engine.selectedBusLine() && self.busLines().indexOf(engine.selectedBusLine()) !== -1)
+            marker.setIcon(markerIcons.grayBusStopOnRoute);
         else
-            marker.setIcon(markerIcons.redBusStop);
+            marker.setIcon(markerIcons.grayBusStop);
     };
 
     var updateMarkerMap = function()
@@ -120,6 +122,11 @@
         updateMarkerIcon();
     });
 
+    var engineSelectedBusLineSubscription = engine.selectedBusLine.subscribe(function()
+    {
+        updateMarkerIcon();
+    });
+
     var selfIsVisibleSubscription = self.isVisible.subscribe(function()
     {
         updateMarkerMap();
@@ -141,6 +148,7 @@
     {
         engineSelectedBusStopSubscription.dispose();
         engineSelectedRouteSubscription.dispose();
+        engineSelectedBusLineSubscription.dispose();
         selfIsVisibleSubscription.dispose();
         selfPositionSubscription.dispose();
         selfNameSubscription.dispose();
