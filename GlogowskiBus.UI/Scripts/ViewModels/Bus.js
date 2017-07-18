@@ -29,6 +29,7 @@
             var label = marker.getLabel();
             label.color = '#FF0000';
             marker.setLabel(label);
+            marker.setZIndex(12);
         }
         else if (engine.selectedBusLine() === self.departureTime.route.busLine)
         {
@@ -36,6 +37,7 @@
             var label = marker.getLabel();
             label.color = '#FF0000';
             marker.setLabel(label);
+            marker.setZIndex(11);
         }
         else
         {
@@ -43,6 +45,7 @@
             var label = marker.getLabel();
             label.color = '#404040';
             marker.setLabel(label);
+            marker.setZIndex(10);
         }
     };
 
