@@ -258,6 +258,6 @@
         {
             for (var i = 0; i < self.buses().length; i++)
                 self.buses()[i].update();
-        }, 100);
+        }, 500);
     }
 }
