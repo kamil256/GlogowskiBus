@@ -67,4 +67,22 @@
         anchor: new google.maps.Point(14, 33),
         labelOrigin: new google.maps.Point(14, 14)
     };
+
+    self.activeRedBus =
+    {
+        url: '/Content/Images/active_red_bus.png',
+        size: new google.maps.Size(28, 34),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(14, 33),
+        labelOrigin: new google.maps.Point(14, 14)
+    };
+
+    self.grayBus =
+    {
+        url: '/Content/Images/grayBus.png',
+        size: new google.maps.Size(28, 34),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(14, 33),
+        labelOrigin: new google.maps.Point(14, 14)
+    };
 };

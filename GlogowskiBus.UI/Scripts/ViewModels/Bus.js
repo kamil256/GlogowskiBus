@@ -21,6 +21,43 @@
         position: points()[0].position()
     });
 
+    var updateMarkerColor = function()
+    {
+        if (engine.selectedDepartureTime() === self.departureTime)
+        {
+            marker.setIcon(markerIcons.activeRedBus);
+            var label = marker.getLabel();
+            label.color = '#FF0000';
+            marker.setLabel(label);
+        }
+        else if (engine.selectedBusLine() === self.departureTime.route.busLine)
+        {
+            marker.setIcon(markerIcons.redBus);
+            var label = marker.getLabel();
+            label.color = '#FF0000';
+            marker.setLabel(label);
+        }
+        else
+        {
+            marker.setIcon(markerIcons.grayBus);
+            var label = marker.getLabel();
+            label.color = '#404040';
+            marker.setLabel(label);
+        }
+    };
+
+    updateMarkerColor();
+
+    var engineSelectedBusLineSubscription = engine.selectedBusLine.subscribe(function()
+    {
+        updateMarkerColor();
+    });
+
+    var engineSelectedDepartureTimeSubscription = engine.selectedDepartureTime.subscribe(function()
+    {
+        updateMarkerColor();
+    });
+
     marker.addListener('click', function()
     {
         engine.selectDepartureTime(self.departureTime);
@@ -55,5 +92,7 @@
     self.dispose = function()
     {
         marker.setMap(null);
+        engineSelectedBusLineSubscription.dispose();
+        engineSelectedDepartureTimeSubscription.dispose();
     };
 }
