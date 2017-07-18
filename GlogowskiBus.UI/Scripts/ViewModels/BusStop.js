@@ -91,16 +91,31 @@
         if (engine.selectedBusStop() === self)
         {
             if (engine.selectedRoute())
+            {
                 marker.setIcon(markerIcons.redActiveBusStopOnRoute);
+                marker.setZIndex(4);
+            }
             else
+            {
                 marker.setIcon(markerIcons.activeRedBusStop);
+                marker.setZIndex(1);
+            }
         }
         else if (engine.selectedRoute() && self.routes().indexOf(engine.selectedRoute()) !== -1)
+        {
             marker.setIcon(markerIcons.redBusStopOnRoute);
+            marker.setZIndex(3);
+        }
         else if (engine.selectedBusLine() && self.busLines().indexOf(engine.selectedBusLine()) !== -1)
+        {
             marker.setIcon(markerIcons.grayBusStopOnRoute);
+            marker.setZIndex(2);
+        }
         else
+        {
             marker.setIcon(markerIcons.grayBusStop);
+            marker.setZIndex(0);
+        }
     };
 
     var updateMarkerMap = function()
