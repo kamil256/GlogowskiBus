@@ -83,9 +83,8 @@
 
     var polyline = new google.maps.Polyline(
     {
-        strokeColor: '#CC181E',
         strokeOpacity: 0.8,
-        strokeWeight: 7
+        strokeWeight: 6
     });
 
     polyline.addListener('click', function(e)
@@ -131,12 +130,12 @@
             if (engine.selectedRoute() === self)
             {
                 polyline.setOptions({ strokeColor: '#CC181E' });
-                polyline.setOptions({ zIndex: 1000 });
+                polyline.setOptions({ zIndex: 2 });
             }
             else
             {
                 polyline.setOptions({ strokeColor: '#404040' });
-                polyline.setOptions({ zIndex: 100 });
+                polyline.setOptions({ zIndex: 1 });
             }
         }
         else
