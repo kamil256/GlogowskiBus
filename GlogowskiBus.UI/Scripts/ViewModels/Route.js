@@ -81,61 +81,85 @@
         return null;
     };
 
-    var polylines = [];
+    var polyline = new google.maps.Polyline(
+    {
+        strokeColor: '#CC181E',
+        strokeOpacity: 0.8,
+        strokeWeight: 7
+    });
+
+    polyline.addListener('click', function(e)
+    {
+        if (self.isEditable())
+        {
+            var newPoint = overlay.getProjection().fromLatLngToContainerPixel(e.latLng);
+            for (var i = 1; i < self.points().length; i++)
+            {
+                var point1 = overlay.getProjection().fromLatLngToContainerPixel(self.points()[i - 1].position());
+                var point2 = overlay.getProjection().fromLatLngToContainerPixel(self.points()[i].position());
+                if (Math.abs(getDistanceBetweenTwoPoints(point1, point2) - getDistanceBetweenTwoPoints(point1, newPoint) - getDistanceBetweenTwoPoints(newPoint, point2)) <= 4)
+                {
+                    var newPoint = new Point(self, null, engine);
+                    newPoint.position(e.latLng);
+                    self.points.splice(i, 0, newPoint);
+                    break;
+                }
+            }
+        }
+    });
+
+    var path = ko.computed(function()
+    {
+        var result = [];
+        for (var i = 0; i < self.points().length; i++)
+            result.push(self.points()[i].position());
+        return result;
+    });
+
+    var updatePolylinePath = function()
+    {
+        polyline.setPath(path());
+    }
+
+    updatePolylinePath();
 
     var updatePolylinesMaps = function()
     {
-        for (var i = 0; i < polylines.length; i++)
-            if (engine.selectedRoute() == self)
-                polylines[i].setMap(map);
-            else
-                polylines[i].setMap(null);
-    };
-
-    self.updatePolylines = function()
-    {
-        while (polylines.length > 0)
-            polylines.pop().setMap(null);
-
-        for (var i = 0; i < self.points().length - 1; i++)
+        if (engine.selectedBusLine() == self.busLine)
         {
-            var polyline = new google.maps.Polyline(
+            polyline.setMap(map);
+            if (engine.selectedRoute() === self)
             {
-                path: [new google.maps.LatLng(self.points()[i].position().lat(), self.points()[i].position().lng()), new google.maps.LatLng(self.points()[i + 1].position().lat(), self.points()[i + 1].position().lng())],
-                strokeColor: '#CC181E',
-                strokeOpacity: 1,
-                strokeWeight: 4
-            });
-
-            polyline.addListener('click', function(e)
+                polyline.setOptions({ strokeColor: '#CC181E' });
+                polyline.setOptions({ zIndex: 1000 });
+            }
+            else
             {
-                if (self.isEditable())
-                    for (var i = 0; i < polylines.length; i++)
-                        if (this == polylines[i])
-                        {
-                            var newPoint = new Point(self, null, engine);
-                            newPoint.position(new google.maps.LatLng(e.latLng.lat(), e.latLng.lng()));
-                            self.points.splice(i + 1, 0, newPoint);
-                            break;
-                        }
-            });
-
-            polylines.push(polyline);
+                polyline.setOptions({ strokeColor: '#404040' });
+                polyline.setOptions({ zIndex: 100 });
+            }
         }
-
-        updatePolylinesMaps();
+        else
+        {
+            polyline.setMap(null);
+        }
     };
 
-    self.updatePolylines();
+    updatePolylinesMaps();
 
     var engineSelectedRouteSubscription = engine.selectedRoute.subscribe(function()
     {
         updatePolylinesMaps();
     });
 
-    var selfPointsSubscription = self.points.subscribe(function()
+    var engineSelectedRouteSubscription = engine.selectedBusLine.subscribe(function()
+        {
+        updatePolylinesMaps();
+    });
+
+    var pathSubscription = path.subscribe(function()
     {
-        self.updatePolylines();
+        updatePolylinePath();
     });
 
     self.getDepartureTimesForDayOfWeek = function(dayOfWeek)
@@ -195,6 +219,6 @@
         for (var i = 0; i < self.points().length; i++)
             self.points()[i].dispose();
         self.points([]);
-        self.updatePolylines();
+        self.polyline.setMap(null);
     };
 }

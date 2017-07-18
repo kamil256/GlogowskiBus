@@ -28,6 +28,7 @@
     self.busStops = engine.busStops;
     self.busLines = engine.busLines;
     self.selectedBusStop = engine.selectedBusStop;
+    self.selectBusStop = engine.selectBusStop;
     self.selectedBusLine = engine.selectedBusLine;
     self.selectedRoute = engine.selectedRoute;
     self.selectedDepartureTime = engine.selectedDepartureTime;

@@ -41,6 +41,13 @@ function getPositionBetweenTwoPoints(startPoint, endPoint, currentTimeOffset)
     return new google.maps.LatLng(newPointLatitude, newPointLongitude);
 }
 
+function getDistanceBetweenTwoPoints(point1, point2)
+{
+    var dx = point2.x - point1.x;
+    var dy = point2.y - point1.y;
+    return Math.sqrt(dx * dx + dy * dy)
+}
+
 var numberOfUnansweredAjaxRequests = 0;
 
 function sendAjaxRequest(url, method, data, onSuccess)

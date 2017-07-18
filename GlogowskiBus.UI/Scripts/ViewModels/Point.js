@@ -121,7 +121,7 @@
     var selfPositionSubscription = self.position.subscribe(function()
     {
         updateMarkerPosition();
-        self.route.updatePolylines();
+        //self.route.updatePolylines();
     });
 
     self.dispose = function()

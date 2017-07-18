@@ -141,10 +141,10 @@
             if (newValue && self.selectedRoute() && self.selectedRoute().busStops().indexOf(newValue) === -1)
             {
                 var newRoute = null;
-                for (var i = 0; i < engine.selectedBusLine().routes().length; i++)
-                    if (engine.selectedBusLine().routes()[i].busStops().indexOf(newValue) !== -1)
+                for (var i = 0; i < self.selectedBusLine().routes().length; i++)
+                    if (self.selectedBusLine().routes()[i].busStops().indexOf(newValue) !== -1)
                     {
-                        newRoute = engine.selectedBusLine().routes()[i];
+                        newRoute = self.selectedBusLine().routes()[i];
                         break;
                     }
                 self.selectRoute(newRoute);
