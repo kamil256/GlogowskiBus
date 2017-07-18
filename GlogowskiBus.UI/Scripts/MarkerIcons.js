@@ -43,6 +43,14 @@
         new google.maps.Point(9, 9)
     );
 
+    self.redActiveBusStopOnRoute = new google.maps.MarkerImage
+    (
+        '/Content/Images/bus_stop_active_on_route.png',
+        new google.maps.Size(18, 18),
+        new google.maps.Point(0, 0),
+        new google.maps.Point(9, 9)
+    );
+
     self.grayBusStopOnRoute = new google.maps.MarkerImage
     (
         '/Content/Images/bus_stop_on_route_gray.png',

@@ -80,7 +80,12 @@
     var updateMarkerIcon = function()
     {
         if (engine.selectedBusStop() === self)
-            marker.setIcon(markerIcons.activeRedBusStop);
+        {
+            if (engine.selectedRoute())
+                marker.setIcon(markerIcons.redActiveBusStopOnRoute);
+            else
+                marker.setIcon(markerIcons.activeRedBusStop);
+        }
         else if (engine.selectedRoute() && self.routes().indexOf(engine.selectedRoute()) !== -1)
             marker.setIcon(markerIcons.redBusStopOnRoute);
         else if (engine.selectedBusLine() && self.busLines().indexOf(engine.selectedBusLine()) !== -1)
@@ -125,6 +130,10 @@
     var engineSelectedBusLineSubscription = engine.selectedBusLine.subscribe(function()
     {
         updateMarkerIcon();
+        if (!engine.selectedBusLine() || engine.selectedBusLine().busStops().indexOf(self) !== -1)
+            self.isVisible(true);
+        else
+            self.isVisible(false);
     });
 
     var selfIsVisibleSubscription = self.isVisible.subscribe(function()
