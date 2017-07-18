@@ -45,6 +45,15 @@
         for (var i = 0; i < self.routes().length; i++)
             if (result.indexOf(self.routes()[i].busLine) === -1)
                 result.push(self.routes()[i].busLine);
+        result.sort(function(busLine1, busLine2)
+        {
+            if (busLine1.busNumber() > busLine2.busNumber())
+                return 1;
+            else if (busLine1.busNumber() < busLine2.busNumber())
+                return -1;
+            else
+                return 0;
+        });
         return result;
     });
 
