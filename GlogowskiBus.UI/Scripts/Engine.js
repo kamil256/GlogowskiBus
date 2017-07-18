@@ -214,6 +214,15 @@
                 var busStop = new BusStop(model[i], self);
                 self.busStops.push(busStop);
             }
+            self.busStops.sort(function(busStop1, busStop2)
+            {
+                if (busStop1.name() > busStop2.name())
+                    return 1;
+                else if (busStop1.name() < busStop2.name())
+                    return -1;
+                else
+                    return 0;
+            });
 
             sendAjaxRequest('/api/BusLine', 'GET', null, function(model)
             {
