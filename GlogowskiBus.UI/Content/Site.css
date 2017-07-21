@@ -408,7 +408,7 @@ footer > .logoDescription > a {
     display: block;
     font-size: 24px;
     font-weight: bold;
-    line-height: initial;
+    line-height: normal;
     padding-top: 10px;
     padding-bottom: 8px;
 }
@@ -416,7 +416,7 @@ footer > .logoDescription > a {
 footer > .logoDescription > div {
     color: black;
     font-size: 12px;
-    line-height: initial;
+    line-height: normal;
 }
 
 footer > .dspLogo img {
@@ -429,7 +429,7 @@ footer > .copyright {
 }
 
 footer > .copyright > p {
-    line-height: initial;
+    line-height: normal;
     margin: 10px 0;
     text-align: right;
 }
@@ -443,7 +443,7 @@ footer > .copyright > p:last-child {
 }
 
 footer > .lastUpdate {
-    line-height: initial;
+    line-height: normal;
     padding-top: 10px;
 }
 

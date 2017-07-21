@@ -1,6 +1,9 @@
-﻿function Engine(disableBuses)
+﻿function Engine(disableBuses, busStopsAlwaysVisible)
 {
     var self = this;
+
+    self.dataLoaded = ko.observable(false);
+    self.busStopsAlwaysVisible = busStopsAlwaysVisible;
 
     defineObjects();
     defineDependencies();
@@ -15,6 +18,9 @@
 
         self.routes = ko.computed(function()
         {
+            if (!self.dataLoaded())
+                return [];
+
             var result = [];
             for (var i = 0; i < self.busLines().length; i++)
                 result = result.concat(self.busLines()[i].routes());
@@ -23,6 +29,9 @@
 
         self.departureTimes = ko.computed(function()
         {
+            if (!self.dataLoaded())
+                return [];
+
             var result = [];
             for (var i = 0; i < self.routes().length; i++)
                 result = result.concat(self.routes()[i].departureTimes());
@@ -35,6 +44,9 @@
 
         self.points = ko.computed(function()
         {
+            if (!self.dataLoaded())
+                return [];
+
             var result = [];
             for (var i = 0; i < self.routes().length; i++)
                 result = result.concat(self.routes()[i].points());
@@ -153,7 +165,7 @@
 
         self.selectedRoute.subscribe(function(newValue)
         {
-            if (newValue && self.selectedBusStop() && self.selectedBusStop().routes().indexOf(newValue) === -1)
+            if (newValue && self.selectedBusStop() && self.selectedRoute().busStops().indexOf(self.selectedBusStop()) === -1)//self.selectedBusStop().routes().indexOf(newValue) === -1)
                 self.selectBusStop(null);
         });
 
@@ -190,6 +202,19 @@
             self.selectedRoute(self.selectedDepartureTime() ? self.selectedDepartureTime().route : null);
             self.selectedBusLine(self.selectedRoute() ? self.selectedRoute().busLine : null);
         };
+
+        self.busNumbersForBusStop = function(busStop)
+        {
+            var busNumbers = [];
+            for (var i = 0; i < self.busLines().length; i++)
+            {
+                if (self.busLines()[i].busStops().indexOf(busStop) !== -1 && busNumbers.indexOf(self.busLines()[i].busNumber()) === -1)
+                {
+                    busNumbers.push(self.busLines()[i].busNumber());
+                }
+            }
+            return busNumbers;
+        };
     }
 
     function defineEventListeners()
@@ -207,8 +232,10 @@
 
     function loadData()
     {
+        
         sendAjaxRequest('/api/BusStop', 'GET', null, function(model)
         {
+            var start = new Date().getTime();
             for (var i = 0; i < model.length; i++)
             {
                 var busStop = new BusStop(model[i], self);
@@ -228,10 +255,20 @@
             {
                 for (var i = 0; i < model.length; i++)
                     self.busLines.push(new BusLine(model[i], self));
+
+                
+                
+
+                self.dataLoaded(true);
+
                 if (!disableBuses)
                     updateBuses();
+                
+                var end = new Date().getTime();
+                console.log(end - start);
             });
         });
+        
     }
 
     function updateBuses()

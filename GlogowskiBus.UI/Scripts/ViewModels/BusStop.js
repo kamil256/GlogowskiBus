@@ -20,63 +20,66 @@
         return busStopModel;
     };
 
-    self.points = ko.computed(function()
-    {
-        var result = [];
-        if (engine.busStops.indexOf(self) !== -1)
-            for (var i = 0; i < engine.points().length; i++)
-                if (engine.points()[i].busStopId() === self.id && result.indexOf(engine.points()[i]) === -1)
-                    result.push(engine.points()[i]);
-        return result;
-    });
+    //self.points = [];
 
-    self.routes = ko.computed(function()
-    {
-        var result = [];
-        for (var i = 0; i < self.points().length; i++)
-            if (result.indexOf(self.points()[i].route) === -1)
-                result.push(self.points()[i].route);
-        return result;
-    });
+    //self.points2 = ko.computed(function()
+    //{
+    //    var result = [];
+    //    if (engine.busStops.indexOf(self) !== -1)
+    //        for (var i = 0; i < engine.points().length; i++)
+    //            if (engine.points()[i].busStopId() === self.id && result.indexOf(engine.points()[i]) === -1)
+    //                result.push(engine.points()[i]);
+    //    return result;
+    //});
 
-    self.busLines = ko.computed(function()
-    {
-        var result = [];
-        for (var i = 0; i < self.routes().length; i++)
-            if (result.indexOf(self.routes()[i].busLine) === -1)
-                result.push(self.routes()[i].busLine);
-        result.sort(function(busLine1, busLine2)
-        {
-            if (busLine1.busNumber() > busLine2.busNumber())
-                return 1;
-            else if (busLine1.busNumber() < busLine2.busNumber())
-                return -1;
-            else
-                return 0;
-        });
-        return result;
-    });
+    //self.routes = ko.computed(function()
+    //{
+    //    var result = [];
+    //    for (var i = 0; i < self.points().length; i++)
+    //        if (result.indexOf(self.points()[i].route) === -1)
+    //            result.push(self.points()[i].route);
+    //    return result;
+    //});
 
-    self.busNumbers = ko.computed(function()
-    {
-        var result = [];
-        for (var i = 0; i < self.busLines().length; i++)
-            if (result.indexOf(self.busLines()[i].busNumber()) === -1)
-                result.push(self.busLines()[i].busNumber());
-        result.sort(function(busNumber1, busNumber2)
-        {
-            if (busNumber1 > busNumber2)
-                return 1;
-            else if (busNumber1 < busNumber2)
-                return -1;
-            else
-                return 0;
-        });
-        return result;
-    });
+    //self.busLines = ko.computed(function()
+    //{
+    //    var result = [];
+    //    for (var i = 0; i < self.routes().length; i++)
+    //        if (result.indexOf(self.routes()[i].busLine) === -1)
+    //            result.push(self.routes()[i].busLine);
+    //    result.sort(function(busLine1, busLine2)
+    //    {
+    //        if (busLine1.busNumber() > busLine2.busNumber())
+    //            return 1;
+    //        else if (busLine1.busNumber() < busLine2.busNumber())
+    //            return -1;
+    //        else
+    //            return 0;
+    //    });
+    //    return result;
+    //});
+
+    //self.busNumbers = ko.computed(function()
+    //{
+    //    var result = [];
+    //    for (var i = 0; i < self.busLines().length; i++)
+    //        if (result.indexOf(self.busLines()[i].busNumber()) === -1)
+    //            result.push(self.busLines()[i].busNumber());
+    //    result.sort(function(busNumber1, busNumber2)
+    //    {
+    //        if (busNumber1 > busNumber2)
+    //            return 1;
+    //        else if (busNumber1 < busNumber2)
+    //            return -1;
+    //        else
+    //            return 0;
+    //    });
+    //    return result;
+    //});
 
     var marker = new google.maps.Marker(
     {
+        map: map,
         zIndex: 0
     });
 
@@ -101,12 +104,12 @@
                 marker.setZIndex(1);
             }
         }
-        else if (engine.selectedRoute() && self.routes().indexOf(engine.selectedRoute()) !== -1)
+        else if (engine.selectedRoute() && engine.selectedRoute().busStops().indexOf(self) !== -1)//self.routes().indexOf(engine.selectedRoute()) !== -1)
         {
             marker.setIcon(markerIcons.redBusStopOnRoute);
             marker.setZIndex(3);
         }
-        else if (engine.selectedBusLine() && self.busLines().indexOf(engine.selectedBusLine()) !== -1)
+        else if (engine.selectedBusLine() && engine.selectedBusLine().busStops().indexOf(self) !== -1)//self.busLines().indexOf(engine.selectedBusLine()) !== -1)
         {
             marker.setIcon(markerIcons.grayBusStopOnRoute);
             marker.setZIndex(2);
@@ -118,12 +121,12 @@
         }
     };
 
-    var updateMarkerMap = function()
+    var updateMarkerVisibility = function()
     {
-        if (self.isVisible())
-            marker.setMap(map);
+        if (self.isVisible() || engine.busStopsAlwaysVisible)
+            marker.setVisible(true);
         else
-            marker.setMap(null);
+            marker.setVisible(false);
     };
 
     var updateMarkerPosition = function()
@@ -137,7 +140,7 @@
     };
 
     updateMarkerIcon();
-    updateMarkerMap();
+    updateMarkerVisibility();
     updateMarkerPosition();
     updateMarkerTitle();
 
@@ -162,14 +165,14 @@
 
     var selfIsVisibleSubscription = self.isVisible.subscribe(function()
     {
-        updateMarkerMap();
+        updateMarkerVisibility();
     });
 
     var selfPositionSubscription = self.position.subscribe(function()
     {
         updateMarkerPosition();
-        for (var i = 0; i < self.points().length; i++)
-            self.points()[i].position(self.position());
+        //for (var i = 0; i < self.points().length; i++)
+        //    self.points()[i].position(self.position());
     });
 
     var selfNameSubscription = self.name.subscribe(function()
@@ -185,6 +188,7 @@
         selfIsVisibleSubscription.dispose();
         selfPositionSubscription.dispose();
         selfNameSubscription.dispose();
+        marker.setVisible(false);
         marker.setMap(null);
     };
 }

@@ -16,7 +16,7 @@
                 <div>
                     <p data-bind="text: 'PRZYSTANEK ' + name()"></p>
                     <p data-bind="text: 'Pozycja: ' + position().lat() + ', ' + position().lng()"></p>
-                    <p data-bind="text: 'Linie: ' + (busNumbers().join(', ') || '-')"></p>
+                    <p data-bind="text: 'Linie: ' + ($root.busNumbersForBusStop($data).join(', ') || '-')"></p>
                     <button class="btn btn-xs btn-default" data-bind="click: function() { $root.editBusStop($data); }">EDYTUJ</button>
                     <button class="btn btn-xs btn-default" data-bind="click: function() { $root.deleteBusStop($data); }">USUŃ</button>
                 </div>
@@ -323,7 +323,7 @@
         markerIcons = new MarkerIcons();
         serverTime = new ServerTime();
 
-        var engine = new Engine(true);
+        var engine = new Engine(true, true);
 
         var busStopsListViewModel = new BusStopsListViewModel(engine);
         ko.applyBindings(busStopsListViewModel, document.getElementById('busStopsList'));

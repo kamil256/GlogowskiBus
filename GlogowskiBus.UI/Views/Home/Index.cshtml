@@ -10,9 +10,16 @@
 
         <!-- ko if: selectedBusStop() -->
             <p>LINIA</p>
-            <ul class="busLinesTiles" data-bind="foreach: selectedBusStop().busLines">
-                <li data-bind="attr: { title: busStops()[0].name() + ' - ' + busStops()[busStops().length - 1].name() }, click: function() { $root.selectDepartureTime($data.getNextDepartureTime()); }, css: { active: $root.selectedBusLine() === $data }, text: busNumber()"></li>
+
+            <ul class="busLinesTiles" data-bind="foreach: busLines">
+                <!-- ko if: busStops().indexOf($root.selectedBusStop()) !== -1 -->
+                    <li data-bind="attr: { title: busStops()[0].name() + ' - ' + busStops()[busStops().length - 1].name() }, click: function() { $root.selectDepartureTime($data.getNextDepartureTime()); }, css: { active: $root.selectedBusLine() === $data }, text: busNumber()"></li>
+                <!-- /ko -->
             </ul>
+
+            @*<ul class="busLinesTiles" data-bind="foreach: selectedBusStop().busLines">
+                <li data-bind="attr: { title: busStops()[0].name() + ' - ' + busStops()[busStops().length - 1].name() }, click: function() { $root.selectDepartureTime($data.getNextDepartureTime()); }, css: { active: $root.selectedBusLine() === $data }, text: busNumber()"></li>
+            </ul>*@
         <!-- /ko -->
 
         <!-- ko if: selectedBusStop() && selectedBusLine() -->

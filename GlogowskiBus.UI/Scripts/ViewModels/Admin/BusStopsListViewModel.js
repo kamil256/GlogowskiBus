@@ -26,7 +26,7 @@
     self.busStops = engine.busStops;
     self.selectedBusStop = engine.selectedBusStop;
     self.selectBusStop = engine.selectBusStop;
-
+    self.busNumbersForBusStop = engine.busNumbersForBusStop;
 
 
 

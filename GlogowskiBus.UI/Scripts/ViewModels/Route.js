@@ -83,6 +83,7 @@
 
     var polyline = new google.maps.Polyline(
     {
+        map: map,
         strokeOpacity: 0.8,
         strokeWeight: 6
     });
@@ -122,11 +123,11 @@
 
     updatePolylinePath();
 
-    var updatePolylinesMaps = function()
+    var updatePolylinesVisibility = function()
     {
         if (engine.selectedBusLine() == self.busLine)
         {
-            polyline.setMap(map);
+            polyline.setVisible(true);
             if (engine.selectedRoute() === self)
             {
                 polyline.setOptions({ strokeColor: '#CC181E' });
@@ -140,20 +141,20 @@
         }
         else
         {
-            polyline.setMap(null);
+            polyline.setVisible(false);
         }
     };
 
-    updatePolylinesMaps();
+    updatePolylinesVisibility();
 
     var engineSelectedRouteSubscription = engine.selectedRoute.subscribe(function()
     {
-        updatePolylinesMaps();
+        updatePolylinesVisibility();
     });
 
     var engineSelectedRouteSubscription = engine.selectedBusLine.subscribe(function()
         {
-        updatePolylinesMaps();
+        updatePolylinesVisibility();
     });
 
     var pathSubscription = path.subscribe(function()
@@ -218,6 +219,7 @@
         for (var i = 0; i < self.points().length; i++)
             self.points()[i].dispose();
         self.points([]);
+        self.polyline.setVisible(false);
         self.polyline.setMap(null);
     };
 }
