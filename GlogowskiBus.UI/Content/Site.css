@@ -19,7 +19,6 @@ html, body {
 aside {
     background-color: white;
     border-radius: 3px;
-    border-top-left-radius: 0;
     bottom: 80px;
     box-shadow: 0 0 10px 2px #000;
     max-width: calc(100% - 50px);
@@ -68,7 +67,7 @@ aside > .asideHandle > div {
 /***** Aside tabs *****/
 
 aside .tabs{
-    border-top-left-radius: 0px;
+    border-top-left-radius: 3px;
     border-top-right-radius: 3px;
     list-style-type: none;
     margin: 0;
@@ -98,7 +97,7 @@ aside .tabs > .tab.active {
 }
 
 aside .tabs > .tab:first-child {
-    border-top-left-radius: 0px;
+    border-top-left-radius: 3px;
 }
 
 aside .tabs > .tab:last-child {
@@ -279,6 +278,12 @@ aside > .progressIndicator > img {
     border-right-width: 0;
     border-top-left-radius: 4px;
     width: 100%;
+}
+
+@media screen and (max-width: 500px) {
+    .timeTable > tbody > tr > td:first-child {
+        display: none;
+    }
 }
 
 .timeTable > tbody > tr > td:last-child {

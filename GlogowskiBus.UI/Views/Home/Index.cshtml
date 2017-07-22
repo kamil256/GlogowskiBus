@@ -76,7 +76,7 @@
                     <td>
                         <table class="departureTimes" data-bind="foreach: departureTimesOfSelectedBusLine">
                             <tr data-bind="visible: $root.departureTimesOfSelectedBusLine()[$index()].length > 0">
-                                <td>
+                                <td class="">
                                     <div data-bind="text: $index"></div>
                                 </td>
                                 <td data-bind="foreach: $root.departureTimesOfSelectedBusLine()[$index()]">
