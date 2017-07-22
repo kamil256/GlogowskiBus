@@ -5,22 +5,57 @@
 
 <div id="timeTable">
     <!-- ko if: isSelected -->
-        <p>PRZYSTANEK</p>
+        <p>PRZYSTANKI</p>
         <select class="form-control" data-bind="options: busStops, optionsText: 'name', optionsCaption: '-', value: selectedBusStop"></select>
 
-        <!-- ko if: selectedBusStop() -->
-            <p>LINIA</p>
+        @*<!-- ko if: selectedBusStop() -->*@
+            <p>LINIE</p>
 
-            <ul class="busLinesTiles" data-bind="foreach: busLines">
-                <!-- ko if: busStops().indexOf($root.selectedBusStop()) !== -1 -->
-                    <li data-bind="attr: { title: busStops()[0].name() + ' - ' + busStops()[busStops().length - 1].name() }, click: function() { $root.selectDepartureTime($data.getNextDepartureTime()); }, css: { active: $root.selectedBusLine() === $data }, text: busNumber()"></li>
-                <!-- /ko -->
-            </ul>
+            <div class="busLinesTiles" data-bind="foreach: busLines">
+                @*<!-- ko if: busStops().indexOf($root.selectedBusStop()) !== -1 -->*@
+                    <div data-bind="attr: { title: busStops()[0].name() + ' - ' + busStops()[busStops().length - 1].name() }, click: function() { $root.selectBusLine($data);@*$root.selectDepartureTime($data.getNextDepartureTime());*@ }, css: { active: $root.selectedBusLine() === $data, inactive: $data.busStops().indexOf($root.selectedBusStop()) === -1 }, text: busNumber()"></div>
+                @*<!-- /ko -->*@
+            </div>
 
             @*<ul class="busLinesTiles" data-bind="foreach: selectedBusStop().busLines">
                 <li data-bind="attr: { title: busStops()[0].name() + ' - ' + busStops()[busStops().length - 1].name() }, click: function() { $root.selectDepartureTime($data.getNextDepartureTime()); }, css: { active: $root.selectedBusLine() === $data }, text: busNumber()"></li>
             </ul>*@
+        @*<!-- /ko -->*@
+
+        <!-- ko if: !(selectedBusStop() && selectedBusLine()) -->
+            <p><b>Wybierz przystanek i linię, aby wyświetlić rozkład jazdy.</b></p>
+
+            <p>LEGENDA</p>
+            <div class="busLinesTiles">
+                <table>
+                    <tr>
+                        <td>
+                            <div class="inactive">A</div>
+                        </td>
+                        <td>
+                            Linia <u>nie</u> kursuje przez wybrany przystanek lub przystanek nie został wybrany.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div>A</div>
+                        </td>
+                        <td>
+                            Linia kursuje przez wybrany przystanek.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="active">A</div>
+                        </td>
+                        <td>
+                            Wybrana linia.
+                        </td>
+                    </tr>
+                </table>
+            </div>
         <!-- /ko -->
+
 
         <!-- ko if: selectedBusStop() && selectedBusLine() -->
             <ul class="dayOfWeek" data-bind="foreach: serverTime.daysOfWeek">
