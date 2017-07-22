@@ -371,12 +371,12 @@ aside > .progressIndicator > img {
 /***** New departure time *****/
 
 .newDepartureTime {
-    margin: 10px 0;
+    margin-bottom: 20px;
     width: 100%;
 }
 
 .newDepartureTime input {
-    width: 116px;
+    /*width: 100px;*/
 }
 
 /***** Bus lines list *****/
