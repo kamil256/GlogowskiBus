@@ -34,25 +34,28 @@
     </aside>
 
     <footer>
+        <div class="copyright">
+            
+            @if (HttpContext.Current.User.Identity.IsAuthenticated)
+            {
+                <p>ZALOGOWANY JAKO <b style="text-transform: uppercase">@HttpContext.Current.User.Identity.Name</b> | @Html.ActionLink("WYLOGUJ", "Logout", "Account", null, new { @class = "btn btn-xs btn-primary" })</p>
+            }
+            else
+            {
+                <p>@Html.ActionLink("ZALOGUJ", "Login", "Account", null, new { @class = "btn btn-xs btn-primary" })</p>
+            }
+            <p>Copyright &copy; 2017 Kamil Dzierlęga. All rights reserved.</p>
+        </div>
+
         <div class="logoDescription">
             <a href="@Url.Action("Index", "Home")">GłogowskiBUS</a>
             <div>ROZKŁAD JAZDY AUTOBUSÓW MIEJSKICH W GŁOGOWIE</div>
         </div>
         
-        <div class="copyright">
-            <p>Copyright &copy; 2017 Kamil Dzierlęga. All rights reserved.</p>
-            @if (HttpContext.Current.User.Identity.IsAuthenticated)
-            {
-                <p>Zalogowany jako <code>@HttpContext.Current.User.Identity.Name</code> | @Html.ActionLink("wyloguj", "Logout", "Account")</p>
-            }
-            else
-            {
-                <p><b>Sprawdź wersję demo panelu administratora</b> <img src="~/Content/Images/red_arrow.gif" width="40" height="20" /> @Html.ActionLink("zaloguj", "Login", "Account")</p>
-            }
-        </div>
         <div class="dspLogo">
             <a href="https://devstyle.pl/daj-sie-poznac/" target="_blank"><img src="~/Content/Images/dsp2017-2.png" /></a>
         </div>
+
         <div class="lastUpdate">
             <div>Ostatnia aktualizacja rozkładu:</div>
             <div>16 lipca 2017</div>
