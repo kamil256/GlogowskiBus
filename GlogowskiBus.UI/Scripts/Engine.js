@@ -39,7 +39,7 @@
 
             if (self.selectedRoute())
             {
-                var busStopPoint = self.selectedRoute().getBusStopPoint(self.selectedBusStop() || self.selectedRoute().busStops()[0]);
+                var busStopPoint = self.selectedRoute().getBusStopPoint(self.selectedBusStop() || (route.busStops().length > 0 ? route.busStops()[0] : null));
                 if (busStopPoint)
                     for (var i = 0; i < self.selectedRoute().points().length; i++)
                         if (self.selectedRoute().points()[i].busStop())
