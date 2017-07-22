@@ -28,10 +28,10 @@
         var result = [];
         for (var i = 0; i < self.routes().length; i++)
             result = result.concat(self.routes()[i].departureTimes());
-        result.sort(function(departureTime1, departureTime2)
-        {
-            return departureTime1.minutesSinceMidnight() - departureTime2.minutesSinceMidnight();
-        });
+        //result.sort(function(departureTime1, departureTime2)
+        //{
+        //    return departureTime1.minutesSinceMidnight() - departureTime2.minutesSinceMidnight();
+        //});
         return result;
     });
 

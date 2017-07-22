@@ -20,7 +20,7 @@ namespace GlogowskiBus.BLL.Concrete
 
         public IList<BusStopBL> Get()
         {
-            return unitOfWork.BusStopRepository.Get().Select(x => (BusStopBL)x).ToList();
+            return unitOfWork.BusStopRepository.Get().OrderBy(x => x.Name).Select(x => (BusStopBL)x).ToList();
         }
 
         public BusStopBL GetById(int id)

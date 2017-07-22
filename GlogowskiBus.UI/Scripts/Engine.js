@@ -2,7 +2,6 @@
 {
     var self = this;
 
-    self.dataLoaded = ko.observable(false);
     self.busStopsAlwaysVisible = busStopsAlwaysVisible;
 
     defineObjects();
@@ -16,42 +15,11 @@
 
         self.busLines = ko.observableArray([]);
 
-        self.routes = ko.computed(function()
-        {
-            if (!self.dataLoaded())
-                return [];
+        self.routes = null;
 
-            var result = [];
-            for (var i = 0; i < self.busLines().length; i++)
-                result = result.concat(self.busLines()[i].routes());
-            return result;
-        });
+        self.departureTimes = null;
 
-        self.departureTimes = ko.computed(function()
-        {
-            if (!self.dataLoaded())
-                return [];
-
-            var result = [];
-            for (var i = 0; i < self.routes().length; i++)
-                result = result.concat(self.routes()[i].departureTimes());
-            result.sort(function(departureTime1, departureTime2)
-            {
-                return departureTime1.minutesSinceMidnight() - departureTime2.minutesSinceMidnight();
-            });
-            return result;
-        });
-
-        self.points = ko.computed(function()
-        {
-            if (!self.dataLoaded())
-                return [];
-
-            var result = [];
-            for (var i = 0; i < self.routes().length; i++)
-                result = result.concat(self.routes()[i].points());
-            return result;
-        });
+        self.points = null;
 
         self.buses = ko.observableArray([]);
 
@@ -110,6 +78,40 @@
             }
             return result;
         });
+
+        self.departureTimesOfRoute = function(route)
+        {
+            var result = [];
+            if (self.selectedBusLine() && self.selectedBusStop())
+            {
+                var originalDepartureTimes = self.selectedBusLine().departureTimes();
+                for (var i = 0; i < 24; i++)
+                    result[i] = [];
+                for (var i = 0; i < originalDepartureTimes.length; i++)
+                {
+                    var busStopPoint = originalDepartureTimes[i].route.getBusStopPoint(self.selectedBusStop());
+                    if (busStopPoint)
+                    {
+                        var minutes = originalDepartureTimes[i].minutes() + busStopPoint.timeOffset() / 60000;
+                        var hours = originalDepartureTimes[i].hours() + Math.floor(minutes / 60);
+                        var dayOfWeek = originalDepartureTimes[i].dayOfWeek();
+                        if (hours > 23)
+                            dayOfWeek = serverTime.nextDayOfWeek(dayOfWeek);
+                        if (dayOfWeek == self.selectedDayOfWeek())
+                        {
+                            hours %= 24;
+                            minutes %= 60;
+                            result[hours].push(
+                            {
+                                minutes: minutes,
+                                originalDepartureTime: originalDepartureTimes[i]
+                            });
+                        }
+                    }
+                }
+            }
+            return result;
+        };
 
         self.departureTimesOfSelectedBusLine = ko.computed(function()
         {
@@ -232,7 +234,6 @@
 
     function loadData()
     {
-        
         sendAjaxRequest('/api/BusStop', 'GET', null, function(model)
         {
             var start = new Date().getTime();
@@ -241,28 +242,52 @@
                 var busStop = new BusStop(model[i], self);
                 self.busStops.push(busStop);
             }
-            self.busStops.sort(function(busStop1, busStop2)
-            {
-                if (busStop1.name() > busStop2.name())
-                    return 1;
-                else if (busStop1.name() < busStop2.name())
-                    return -1;
-                else
-                    return 0;
-            });
 
             sendAjaxRequest('/api/BusLine', 'GET', null, function(model)
             {
                 for (var i = 0; i < model.length; i++)
                     self.busLines.push(new BusLine(model[i], self));
 
-                
-                
+                self.routes = ko.computed(function()
+                {
+                    var result = [];
+                    for (var i = 0; i < self.busLines().length; i++)
+                        result = result.concat(self.busLines()[i].routes());
+                    return result;
+                });
 
-                self.dataLoaded(true);
+                self.departureTimes = ko.computed(function()
+                {
+                    var result = [];
+                    for (var i = 0; i < self.routes().length; i++)
+                        result = result.concat(self.routes()[i].departureTimes());
+                    return result;
+                });
+
+                self.points = ko.computed(function()
+                {
+                    var result = [];
+                    for (var i = 0; i < self.routes().length; i++)
+                        result = result.concat(self.routes()[i].points());
+                    return result;
+                });
 
                 if (!disableBuses)
+                {
                     updateBuses();
+
+                    setInterval(function()
+                    {
+                        if (serverTime.now().getSeconds() === 0)
+                            updateBuses();
+                    }, 1000);
+
+                    setInterval(function()
+                    {
+                        for (var i = 0; i < self.buses().length; i++)
+                            self.buses()[i].update();
+                    }, 500);
+                }
                 
                 var end = new Date().getTime();
                 console.log(end - start);
@@ -291,19 +316,4 @@
                 }
             }
     };
-
-    if (!disableBuses)
-    {
-        setInterval(function()
-        {
-            if (serverTime.now().getSeconds() === 0)
-                updateBuses();
-        }, 1000);
-
-        setInterval(function()
-        {
-            for (var i = 0; i < self.buses().length; i++)
-                self.buses()[i].update();
-        }, 500);
-    }
 }

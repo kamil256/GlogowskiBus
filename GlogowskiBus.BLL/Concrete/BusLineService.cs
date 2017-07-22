@@ -20,14 +20,28 @@ namespace GlogowskiBus.BLL.Concrete
 
         public IList<BusLineBL> Get()
         {
-            return unitOfWork.BusLineRepository.Get().Select(x => (BusLineBL)x).ToList();
+            List<BusLineBL> busLines = unitOfWork.BusLineRepository.Get().OrderBy(x => x.BusNumber).Select(x => (BusLineBL)x).ToList();
+            foreach (BusLineBL busLine in busLines)
+                foreach (RouteBL route in busLine.Routes)
+                {
+                    route.Points = route.Points.OrderBy(x => x.TimeOffset).ToList();
+                    route.DepartureTimes = route.DepartureTimes.OrderBy(x => 60 * x.Hours + x.Minutes).ToList();
+                }
+            return busLines;
         }
 
         public BusLineBL GetById(int id)
         {
             BusLine busLine = unitOfWork.BusLineRepository.GetById(id);
             if (busLine != null)
+            {
+                foreach (Route route in busLine.Routes)
+                {
+                    route.Points = route.Points.OrderBy(x => x.TimeOffset).ToList();
+                    route.DepartureTimes = route.DepartureTimes.OrderBy(x => 60 * x.Hours + x.Minutes).ToList();
+                }
                 return (BusLineBL)busLine;
+            }
             return null;
         }
 
@@ -78,7 +92,7 @@ namespace GlogowskiBus.BLL.Concrete
             string error = GetValidationError(busLine);
             if (error != null)
                 throw new Exception(error);
-                       
+
             BusLine newBusLine = unitOfWork.BusLineRepository.Insert((BusLine)busLine);
             unitOfWork.Save();
 
