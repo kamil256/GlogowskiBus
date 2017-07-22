@@ -12,6 +12,10 @@
     <div id="map"></div>
 
     <aside>
+        <div class="asideHandle">
+            <div class="glyphicon glyphicon-resize-horizontal"></div>
+        </div>
+
         <div id="tabs">
             <!-- ko if: isStarted() === true -->
             <ul class="tabs" data-bind="css: { oneTab: selectedViewGroup().views.length == 1, twoTabs: selectedViewGroup().views.length == 2, threeTabs: selectedViewGroup().views.length == 3 }, foreach: selectedViewGroup().views">
@@ -89,5 +93,35 @@
     <script src="~/Scripts/ViewModels/Account/LoginViewModel.js"></script>
 
     <script src="~/Scripts/ViewModels/Shared/NavigationViewModel.js"></script>
+
+    <script>
+        $(document).ready(function()
+        {
+            var asideIsVisible = true;
+            $('aside > .asideHandle').click(function()
+            {
+                if (asideIsVisible)
+                {
+                    asideIsVisible = false;
+                    $('aside').animate(
+                    {
+                        width: '0',
+                        right: '0'
+                        
+                    }, 500);
+                }
+                else
+                {
+                    asideIsVisible = true;
+                    $('aside').animate(
+                    {
+                        width: '500px',
+                        right: '10px'
+                    }, 500);
+                }
+
+            });
+        });
+    </script>
 </body>
 </html>

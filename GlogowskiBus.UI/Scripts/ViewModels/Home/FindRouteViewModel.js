@@ -2,7 +2,7 @@
 {
     var self = this;
 
-    self.title = 'SZUKAJ POŁĄCZEŃ';
+    self.title = 'POŁĄCZENIA';
 
     self.isSelected = ko.observable(false);
 
