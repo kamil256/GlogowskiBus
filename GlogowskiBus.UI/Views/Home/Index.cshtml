@@ -58,9 +58,15 @@
 
 
         <!-- ko if: selectedBusStop() && selectedBusLine() -->
-            <ul class="dayOfWeek" data-bind="foreach: serverTime.daysOfWeek">
+            @*<ul class="dayOfWeek" data-bind="foreach: serverTime.daysOfWeek">
                 <li data-bind="css: { active: $data == $root.selectedDayOfWeek() }, click: function(data, event) { $root.selectedDayOfWeek($data); }, text: $data"></li>
-            </ul>
+            </ul>*@
+
+            <table class="dayOfWeek">
+                <tr data-bind="foreach: serverTime.daysOfWeek">
+                    <td data-bind="css: { active: $data == $root.selectedDayOfWeek() }, click: function(data, event) { $root.selectedDayOfWeek($data); }, text: $data"></td>
+                </tr>
+            </table>
 
             <table cellspacing="0" class="timeTable">
                 <tr>

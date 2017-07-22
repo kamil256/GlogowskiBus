@@ -31,7 +31,7 @@ aside {
 /***** Aside handle *****/
 aside > .asideHandle {
     width: 30px;
-    height: calc(100% - 100px);
+    height: calc(100% - 150px);
     /*line-height: calc(100%-100px);*/
     text-align: center;
     background-color: white;
@@ -39,7 +39,7 @@ aside > .asideHandle {
     border-bottom-left-radius: 5px;
     position: absolute;
     left: -30px;
-    top: 50px;
+    top: 75px;
     /*border: 3px solid #777;*/
     border-right: none;
     /*bottom: 10px;*/
@@ -47,8 +47,9 @@ aside > .asideHandle {
     /*z-index: -100;*/
     background-color: rgba(0, 0, 0, 0.4);
     box-shadow: inset 0 0 10px 3px #555 ;
-    color: white;
+    color: #DDD;
     cursor: pointer;
+    font-size: 18px;
 }
 
 aside > .asideHandle > div {
@@ -233,9 +234,11 @@ aside > .progressIndicator > img {
     margin-top: 20px;
     padding: 0;
     list-style-type: none;
+    clear: both;
+    width: 100%;
 }
 
-.dayOfWeek > li {
+/*.dayOfWeek > li {
     border-bottom: 1px solid #999;
     color: #999;
     float: left;
@@ -245,6 +248,23 @@ aside > .progressIndicator > img {
 }
 
 .dayOfWeek > li.active {
+    border-bottom: 3px solid rgba(204, 24, 30, 1);
+    color: rgba(204, 24, 30, 1);
+}*/
+
+
+
+.dayOfWeek td {
+    border-bottom: 1px solid #999;
+    color: #999;
+    font-weight: bold;
+    text-align: center;
+    width: 33%;
+    height: 100%;
+
+}
+
+.dayOfWeek td.active {
     border-bottom: 3px solid rgba(204, 24, 30, 1);
     color: rgba(204, 24, 30, 1);
 }
@@ -435,7 +455,7 @@ aside > .progressIndicator > img {
 /***** Footer ****/
 
 footer {
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.75);
     bottom: 0;
     border-top: 3px solid #999;
     height: 70px;
