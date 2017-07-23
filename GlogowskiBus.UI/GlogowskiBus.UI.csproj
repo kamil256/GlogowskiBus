@@ -158,6 +158,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Images\active_red_bus.png" />
@@ -177,13 +179,17 @@
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\ViewModels\Account\LoginViewModel.js" />
     <Content Include="Scripts\ViewModels\Admin\AddBusStopViewModel.js" />
     <Content Include="Scripts\ViewModels\Admin\EditBusLineViewModel.js" />
     <Content Include="Scripts\ViewModels\Admin\AddBusLineViewModel.js" />
     <Content Include="Scripts\ViewModels\Admin\EditBusStopViewModel.js" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-theme.min.css.map" />
+    <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Properties\PublishProfiles\GlogowskiBus - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\GlogowskiBus - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
