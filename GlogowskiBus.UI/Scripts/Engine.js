@@ -216,7 +216,6 @@
     {
         sendAjaxRequest('/api/BusStop', 'GET', null, function(model)
         {
-            var start = new Date().getTime();
             for (var i = 0; i < model.length; i++)
             {
                 var busStop = new BusStop(model[i], self);
@@ -268,9 +267,6 @@
                             self.buses()[i].update();
                     }, 500);
                 }
-                
-                var end = new Date().getTime();
-                console.log(end - start);
             });
         });
         
