@@ -100,7 +100,7 @@
                 if (Math.abs(getDistanceBetweenTwoPoints(point1, point2) - getDistanceBetweenTwoPoints(point1, newPoint) - getDistanceBetweenTwoPoints(newPoint, point2)) <= 4)
                 {
                     var newPoint = new Point(self, null, engine);
-                    newPoint.position(e.latLng);
+                    newPoint.pointPosition(e.latLng);
                     self.points.splice(i, 0, newPoint);
                     break;
                 }
