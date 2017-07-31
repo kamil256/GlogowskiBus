@@ -18,8 +18,20 @@
             </div>
         @*<!-- /ko -->*@
 
+        <!-- ko if: buses().length === 0  -->
+            <div class="alert alert-warning alert-dismissable">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <span class="glyphicon glyphicon-info-sign"></span>
+                Żaden autobus nie kursuje w tym momencie.
+            </div>
+        <!-- /ko -->
+
         <!-- ko if: !(selectedBusStop() && selectedBusLine()) -->
-            <p><b>Wybierz przystanek i linię, aby wyświetlić rozkład jazdy.</b></p>
+            <div class="alert alert-warning alert-dismissable">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <span class="glyphicon glyphicon-info-sign"></span>
+                Wybierz przystanek i linię, aby wyświetlić rozkład jazdy.
+            </div>
 
             <p>LEGENDA</p>
             <div class="busLinesTiles">
