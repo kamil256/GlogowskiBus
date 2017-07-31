@@ -8,15 +8,10 @@
         <p>PRZYSTANKI</p>
         <select class="form-control" data-bind="options: busStops, optionsText: 'name', optionsCaption: '-', value: selectedBusStop"></select>
 
-        @*<!-- ko if: selectedBusStop() -->*@
-            <p>LINIE</p>
-
-            <div class="busLinesTiles" data-bind="foreach: busLines">
-                @*<!-- ko if: busStops().indexOf($root.selectedBusStop()) !== -1 -->*@
-                    <div data-bind="attr: { title: busStops()[0].name() + ' - ' + busStops()[busStops().length - 1].name() }, click: function() { $root.selectBusLine($data);@*$root.selectDepartureTime($data.getNextDepartureTime());*@ }, css: { active: $root.selectedBusLine() === $data, inactive: $data.busStops().indexOf($root.selectedBusStop()) === -1 }, text: busNumber()"></div>
-                @*<!-- /ko -->*@
-            </div>
-        @*<!-- /ko -->*@
+        <p>LINIE</p>
+        <div class="busLinesTiles" data-bind="foreach: busLines">
+                <div data-bind="attr: { title: busStops()[0].name() + ' - ' + busStops()[busStops().length - 1].name() }, click: function() { $root.selectBusLine($data);@*$root.selectDepartureTime($data.getNextDepartureTime());*@ }, css: { active: $root.selectedBusLine() === $data, inactive: $data.busStops().indexOf($root.selectedBusStop()) === -1 }, text: busNumber()"></div>
+        </div>
 
         <!-- ko if: buses().length === 0  -->
             <div class="alert alert-warning alert-dismissable">
