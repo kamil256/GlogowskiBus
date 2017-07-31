@@ -7,16 +7,12 @@
     self.timeOffset = ko.observable(model ? model.TimeOffset : 0);
     self.busStopId = ko.observable(model ? model.BusStopId : null);
 
-
     self.busStop = ko.computed(function()
     {
-        //console.log("Point.BusStop");
         if (self.busStopId())
             for (var i = 0; i < engine.busStops().length; i++)
                 if (engine.busStops()[i].id === self.busStopId())
                 {
-                    
-                    //engine.busStops()[i].points.push(self); 
                     return engine.busStops()[i];
                 }
         return null;
@@ -84,7 +80,6 @@
             }
         self.pointPosition(marker.position);
         self.busStopId(null);
-        
     });
 
     var updateMarkerIcon = function()
@@ -124,13 +119,6 @@
         self.timeOffsetInMinutes((self.timeOffset() / 60000).toFixed(0));
     });
 
-    //var selfBusStopSubscription = self.busStop.subscribe(function(newValue)
-    //{
-    //    console.log(newValue);
-    //    if (newValue)
-    //        self.position(newValue);
-    //});
-
     var engineSelectedRouteSubscription = engine.selectedRoute.subscribe(function(newValue)
     {
         updateMarkerVisibility();
@@ -144,18 +132,10 @@
     var selfPositionSubscription = self.position.subscribe(function()
     {
         updateMarkerPosition();
-        //self.route.updatePolylines();
     });
-
-    //var busStopPositionSubscription = busStop.position.subscribe(function()
-    //{
-    //    updateMarkerPosition();
-    //    //self.route.updatePolylines();
-    //});
 
     self.dispose = function()
     {
-        
         selfBusStopIdSubscription.dispose();
         engineSelectedRouteSubscription.dispose();
         selfRouteIsEditableSubscription.dispose();
