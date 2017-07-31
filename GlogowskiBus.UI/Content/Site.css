@@ -345,6 +345,18 @@ aside > .progressIndicator > img {
     width: 100%;
 }
 
+.newDepartureTime td {
+    padding: 2px;
+}
+
+.newDepartureTime td:first-child {
+    padding-left: 0;
+}
+
+.newDepartureTime td:last-child {
+    padding-right: 0;
+}
+
 /***** Bus lines list *****/
 
 .unselectableList > div {
