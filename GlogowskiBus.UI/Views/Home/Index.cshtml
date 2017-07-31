@@ -16,10 +16,6 @@
                     <div data-bind="attr: { title: busStops()[0].name() + ' - ' + busStops()[busStops().length - 1].name() }, click: function() { $root.selectBusLine($data);@*$root.selectDepartureTime($data.getNextDepartureTime());*@ }, css: { active: $root.selectedBusLine() === $data, inactive: $data.busStops().indexOf($root.selectedBusStop()) === -1 }, text: busNumber()"></div>
                 @*<!-- /ko -->*@
             </div>
-
-            @*<ul class="busLinesTiles" data-bind="foreach: selectedBusStop().busLines">
-                <li data-bind="attr: { title: busStops()[0].name() + ' - ' + busStops()[busStops().length - 1].name() }, click: function() { $root.selectDepartureTime($data.getNextDepartureTime()); }, css: { active: $root.selectedBusLine() === $data }, text: busNumber()"></li>
-            </ul>*@
         @*<!-- /ko -->*@
 
         <!-- ko if: !(selectedBusStop() && selectedBusLine()) -->
@@ -58,10 +54,6 @@
 
 
         <!-- ko if: selectedBusStop() && selectedBusLine() -->
-            @*<ul class="dayOfWeek" data-bind="foreach: serverTime.daysOfWeek">
-                <li data-bind="css: { active: $data == $root.selectedDayOfWeek() }, click: function(data, event) { $root.selectedDayOfWeek($data); }, text: $data"></li>
-            </ul>*@
-
             <table class="dayOfWeek">
                 <tr data-bind="foreach: serverTime.daysOfWeek">
                     <td data-bind="css: { active: $data == $root.selectedDayOfWeek() }, click: function(data, event) { $root.selectedDayOfWeek($data); }, text: $data"></td>
@@ -113,7 +105,7 @@
         markerIcons = new MarkerIcons();
         serverTime = new ServerTime();
 
-        /*var*/ engine = new Engine();
+        var engine = new Engine();
 
         var timeTableViewModel = new TimeTableViewModel(engine);
         ko.applyBindings(timeTableViewModel, document.getElementById('timeTable'));
