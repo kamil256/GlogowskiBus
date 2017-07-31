@@ -175,7 +175,6 @@
     <Content Include="Content\Images\favicon.png" />
     <Content Include="Content\Images\grayBus.png" />
     <Content Include="Content\Images\point.png" />
-    <Content Include="Content\Images\red_arrow.gif" />
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
