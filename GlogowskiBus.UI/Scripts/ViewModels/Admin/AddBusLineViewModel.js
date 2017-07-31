@@ -90,7 +90,6 @@
             newDepartureTime.minutes(minutes);
             newDepartureTime.dayOfWeek(engine.selectedDayOfWeek());
             self.selectedRoute().departureTimes.push(newDepartureTime);
-            //self.selectedRoute().sortDepartureTimes();
         }
     }
 
