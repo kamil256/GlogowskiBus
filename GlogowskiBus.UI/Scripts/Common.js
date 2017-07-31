@@ -87,3 +87,28 @@ function sendAjaxRequest(url, method, data, onSuccess)
         }
     });
 }
+
+var asideIsVisible = true;
+
+function toggleAsideVisibility()
+{
+    if (asideIsVisible)
+    {
+        asideIsVisible = false;
+        $('aside').animate(
+        {
+            width: '0',
+            right: '0'
+
+        }, 500);
+    }
+    else
+    {
+        asideIsVisible = true;
+        $('aside').animate(
+        {
+            width: '500px',
+            right: '10px'
+        }, 500);
+    }
+}
